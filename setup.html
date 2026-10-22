@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Alert Key</title>
+<meta name="description" content="Makes the key the daily update uses to send alerts to the family app. Made on this device and never sent anywhere.">
+<meta name="theme-color" content="#0f3d3a">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root { --bg: #f4f1ea; --card: #ffffff; --ink: #1d2a2a; --muted: #5b6b6a; --line: #e2ddd2;
+          --brand: #0f3d3a; --brand-ink: #ffffff; --good: #2f9e5b; --radius: 18px; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #0e1615; --card: #182322; --ink: #eef3f2; --muted: #9db0ae; --line: #2a3836; --brand: #0b2b29; --good: #3fbf74; }
+  }
+  :root[data-theme="dark"] { --bg: #0e1615; --card: #182322; --ink: #eef3f2; --muted: #9db0ae; --line: #2a3836; --brand: #0b2b29; --good: #3fbf74; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font: 17px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  header { background: var(--brand); color: var(--brand-ink); padding: 18px 16px 16px; }
+  header h1 { font-size: 24px; margin: 0 auto; max-width: 640px; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; }
+  p { margin: 0 0 10px; }
+  .muted { color: var(--muted); font-size: 15px; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 12px 20px;
+           background: var(--brand); color: var(--brand-ink); }
+  button.quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  textarea { width: 100%; font: 16px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 12px;
+             border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); resize: none; word-break: break-all; }
+  code { font: 15px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--bg); padding: 2px 6px; border-radius: 6px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .ok { color: var(--good); font-weight: 600; }
+</style>
+</head>
+<body>
+<header><h1>Alert key</h1></header>
+<main>
+  <section>
+    <h2>Once, by the owner</h2>
+    <p>This makes the key the daily update uses to send alerts to the family's devices.</p>
+    <p class="muted">It's made here, on this device, and isn't sent anywhere. You copy it into GitHub yourself, as the secret <code>VAPID_PRIVATE_KEY</code>. Nobody else needs it, Claude included.</p>
+    <div class="row"><button id="make">Make the key</button></div>
+  </section>
+  <section id="result" hidden>
+    <h2>The key</h2>
+    <textarea id="key" rows="2" readonly aria-label="The alert key"></textarea>
+    <div class="row"><button id="copy">Copy</button><span id="copied" class="ok" role="status"></span></div>
+    <p class="muted" style="margin-top:12px">Next, in GitHub: a new repository secret named <code>VAPID_PRIVATE_KEY</code>, with this pasted as its value (the walk-through has the link). Then close this page: the key isn't kept anywhere else.</p>
+    <p class="muted">Making a new key later means each device has to turn alerts on again.</p>
+  </section>
+  <section id="unsupported" hidden>
+    <p>This browser can't make the key. Try Chrome or Safari, up to date.</p>
+  </section>
+</main>
+<script>
+"use strict";
+// The key is a P-256 private key, written as its 32-byte number in base64url (43 characters).
+// The daily job's sender (pywebpush) reads that form directly.
+async function makeKey() {
+  const pair = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const jwk = await crypto.subtle.exportKey("jwk", pair.privateKey);
+  return jwk.d;
+}
+
+function copy(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+  const box = document.getElementById("key");
+  box.select();
+  return document.execCommand("copy") ? Promise.resolve() : Promise.reject(new Error("copy"));
+}
+
+if (!(window.crypto && crypto.subtle)) {
+  document.getElementById("unsupported").hidden = false;
+  document.getElementById("make").disabled = true;
+}
+
+document.getElementById("make").onclick = async () => {
+  const key = await makeKey();
+  document.getElementById("key").value = key;
+  document.getElementById("result").hidden = false;
+  document.getElementById("copied").textContent = "";
+  document.getElementById("make").textContent = "Make a different key";
+  document.getElementById("make").className = "quiet";
+};
+
+document.getElementById("copy").onclick = () => {
+  const key = document.getElementById("key").value;
+  copy(key).then(() => { document.getElementById("copied").textContent = "Copied"; })
+    .catch(() => { document.getElementById("copied").textContent = "Press and hold the key to copy it"; });
+};
+</script>
+</body>
+</html>

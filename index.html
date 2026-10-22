@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Home Energy</title>
+<meta name="description" content="The house's solar, battery and electricity: best times to use power, costs and savings.">
+<meta name="theme-color" content="#0f3d3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Energy">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root {
+    --bg: #f4f1ea; --card: #ffffff; --ink: #1d2a2a; --muted: #5b6b6a; --line: #e2ddd2;
+    --brand: #0f3d3a; --brand-ink: #ffffff;
+    --best: #2f9e5b; --good: #a8d5b0; --normal: #dcd7cc; --past: #eeebe4;
+    --problem: #c2410c; --money: #1d6fa5; --watch: #b7791f; --reminder: #6b7280;
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1615; --card: #182322; --ink: #eef3f2; --muted: #9db0ae; --line: #2a3836;
+      --brand: #0b2b29; --best: #3fbf74; --good: #2f6b45; --normal: #33403e; --past: #1c2726;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1615; --card: #182322; --ink: #eef3f2; --muted: #9db0ae; --line: #2a3836;
+    --brand: #0b2b29; --best: #3fbf74; --good: #2f6b45; --normal: #33403e; --past: #1c2726;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font: 17px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  header { background: var(--brand); color: var(--brand-ink); padding: 18px 16px 16px; }
+  header .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 26px; margin: 0; letter-spacing: -0.01em; }
+  .updated { opacity: 0.8; font-size: 14px; }
+  .pill { background: rgba(255,255,255,0.14); border-radius: 999px; padding: 6px 12px; font-weight: 600; white-space: nowrap; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 760px) { main { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
+  section.card { background: var(--card); border-radius: var(--radius); padding: 18px; border: 1px solid var(--line); min-width: 0; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; }
+  .big { font-size: 21px; font-weight: 650; margin: 0 0 6px; }
+  .muted { color: var(--muted); font-size: 15px; }
+  .stale { background: #fff4e5; color: #7a4b00; border: 1px solid #f3d19c; border-radius: var(--radius); padding: 12px 16px; }
+  .alert { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); }
+  .alert:first-of-type { border-top: 0; padding-top: 0; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 7px; flex: none; }
+  .alert .text { flex: 1; min-width: 0; }
+  .alert .title { font-weight: 650; }
+  .alert button { flex: none; border: 1px solid var(--line); background: transparent; color: var(--muted);
+                  border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; }
+  .strip { display: grid; grid-template-columns: repeat(18, 1fr); gap: 3px; margin: 12px 0 4px; }
+  .strip div { height: 34px; border-radius: 6px; background: var(--normal); }
+  .strip .best { background: var(--best); } .strip .good { background: var(--good); } .strip .past { background: var(--past); }
+  .hours { display: grid; grid-template-columns: repeat(18, 1fr); gap: 3px; font-size: 12px; color: var(--muted); }
+  .hours span { text-align: center; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .day + .day { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tabs button { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px;
+                 padding: 8px 14px; font: inherit; font-size: 15px; }
+  .tabs button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .tile { border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+  .tile .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tile .v small { font-size: 15px; font-weight: 600; color: var(--muted); margin-left: 3px; }
+  .tile .l { font-size: 14px; color: var(--muted); }
+  .tile.money .v { color: var(--best); }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  td { padding: 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 12px; }
+  footer { max-width: 1100px; margin: 0 auto; padding: 0 16px 28px; color: var(--muted); font-size: 13px; }
+  .empty { color: var(--muted); }
+  .field { display: block; margin: 12px 0 0; font-size: 15px; color: var(--muted); }
+  .field input { display: block; width: 100%; margin-top: 6px; font: inherit; font-size: 17px; color: var(--ink); background: var(--bg);
+                 border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 6px; }
+  .btn { font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 12px 20px; background: var(--brand); color: var(--brand-ink); }
+  .btn.quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  footer button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: transparent; color: var(--ink);
+                  border-radius: 999px; padding: 4px 10px; margin: 4px 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <div>
+      <h1>Home energy</h1>
+      <div class="updated" id="updated">Loading…</div>
+    </div>
+    <div class="pill" id="battery" hidden></div>
+  </div>
+</header>
+<main id="main">
+  <section class="card wide"><p class="empty">Loading the latest figures…</p></section>
+</main>
+<footer id="footer"></footer>
+<script>
+"use strict";
+const DATA_PARAM = new URLSearchParams(location.search).get("data");
+const DATA_URL = DATA_PARAM || "app-data.json";
+// Where the figures come from (the owner's choice, 2026-10-22: "GitHub only"): a private GitHub
+// repository, read with a key that can only see that repository. Each device's key is pasted into
+// the set-up card once and kept on that device only. On an iPad the Home Screen app has its own
+// storage, separate from Safari's, so the key is pasted inside the app.
+// The public page has no figures, so there it always needs a key.
+const NEEDS_KEY = location.hostname.endsWith(".github.io") && !DATA_PARAM;
+const PLAYBOOK = "rrlouisp/life-playbook";     // a key that can see this is refused
+const SOURCE_KEY = "private-source";
+const HIDDEN_KEY = "hidden-alerts";
+const COLOURS = { problem: "var(--problem)", money: "var(--money)", watch: "var(--watch)", reminder: "var(--reminder)" };
+const PERIODS = [["yesterday", "Yesterday"], ["this_month", "This month"], ["last_month", "Last month"], ["last_12_months", "12 months"]];
+
+function esc(text) {
+  return String(text ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function store(key, value) {
+  try { if (value === undefined) return JSON.parse(localStorage.getItem(key) || "null"); localStorage.setItem(key, JSON.stringify(value)); }
+  catch (e) { return null; }
+}
+function when(stamp) {
+  const d = new Date(stamp.replace(" ", "T"));
+  return isNaN(d) ? stamp : d.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+function kwh(v) { return v == null ? "–" : (v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(1)); }
+function gbp(v) { return v == null ? "–" : "£" + (Math.abs(v) >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(2)); }
+
+function alertsCard(alerts) {
+  const hidden = store(HIDDEN_KEY) || {};
+  const shown = alerts.filter(a => !hidden[a.id]);
+  if (!shown.length) return `<section class="card"><h2>Alerts</h2><p class="big">Nothing needs you</p>
+    <p class="muted">Alerts appear here when something needs a look: a fault, a cheaper deal, a contract ending.</p></section>`;
+  return `<section class="card"><h2>Alerts (${shown.length})</h2>${shown.map(a => `
+    <div class="alert"><span class="dot" style="background:${COLOURS[a.level] || "var(--muted)"}"></span>
+      <div class="text"><div class="title">${esc(a.text)}</div><div class="muted">${esc(a.details)}</div></div>
+      <button data-hide="${esc(a.id)}" aria-label="Hide this alert">Hide</button></div>`).join("")}</section>`;
+}
+
+function dayBlock(day) {
+  const byHour = Object.fromEntries((day.hours || []).map(h => [h.hour.slice(0, 2), h]));
+  const cells = [], labels = [];
+  for (let h = 6; h < 24; h++) {
+    const key = String(h).padStart(2, "0"), hour = byHour[key];
+    const cls = hour ? hour.rating : "past";
+    const tip = hour ? `${key}:00 · about ${Math.round(hour.pence)}p a unit · solar ${hour.solar_kwh} kWh` : `${key}:00 · gone`;
+    cells.push(`<div class="${cls}" title="${esc(tip)}"></div>`);
+    labels.push(`<span>${h % 3 === 0 ? key : ""}</span>`);
+  }
+  return `<div class="day"><p class="big">${esc(day.label)}: ${esc(day.text)}</p>
+    <p class="muted">Solar forecast about ${kwh(day.solar_kwh)} kWh${day.spare_kwh ? `, about ${kwh(day.spare_kwh)} kWh to spare` : ""}.</p>
+    <div class="strip" role="img" aria-label="${esc(day.label)}, hour by hour from 6am">${cells.join("")}</div>
+    <div class="hours">${labels.join("")}</div></div>`;
+}
+
+function bestTimesCard(plan) {
+  if (!plan || !plan.days) return `<section class="card wide"><h2>Best times to use power</h2><p class="empty">No forecast yet.</p></section>`;
+  const tonight = plan.battery_tonight && plan.battery_tonight.text
+    ? `<div class="day"><p class="big">Battery tonight</p><p>${esc(plan.battery_tonight.text)}</p>
+       <p class="muted">A suggestion only: nothing is changed on the inverter.</p></div>` : "";
+  return `<section class="card wide"><h2>Best times to use power</h2>${plan.days.map(dayBlock).join("")}${tonight}
+    <div class="legend"><span><i style="background:var(--best)"></i>Best: spare solar</span>
+      <span><i style="background:var(--good)"></i>Good: partly solar or a cheaper rate</span>
+      <span><i style="background:var(--normal)"></i>Normal price</span></div>
+    <p class="muted">For the washing machine, dishwasher and other big things. Worked out ${esc(when(plan.made || ""))}.</p></section>`;
+}
+
+function numbersCard(numbers, period, exportPaid) {
+  const n = numbers[period] || {};
+  const unit = " <small>kWh</small>";
+  const tiles = [["Solar made", kwh(n.solar_kwh) + unit], ["House used", kwh(n.used_kwh) + unit],
+    ["Bought", kwh(n.bought_kwh) + unit], ["Sold", kwh(n.sold_kwh) + unit],
+    ["Cost", gbp(n.cost_gbp)], exportPaid ? ["Export earned", gbp(n.export_gbp), "money"] : ["Export earned: not paid (no export tariff yet)", "£0"],
+    ["Saved", gbp(n.saved_gbp), "money"]];
+  return `<section class="card wide" id="numbers"><h2>The numbers</h2>
+    <div class="tabs" role="group">${PERIODS.map(([k, label]) =>
+      `<button data-period="${k}" aria-pressed="${k === period}">${label}</button>`).join("")}</div>
+    <div class="tiles">${tiles.map(([l, v, cls]) => `<div class="tile ${cls || ""}"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("")}</div>
+    <p class="muted">Saved: what the same use would have cost with no solar or battery, less what was paid. At today's prices.</p></section>`;
+}
+
+function showerCard(s) {
+  if (!s || !s.rates || !s.rates.length) return "";
+  return `<section class="card"><h2>The shower</h2><p class="big">About ${esc(s.kw)} kW</p>
+    <table>${s.rates.map(r => `<tr><td>${r.label === "all day" ? "Each minute" : "Each minute, " + esc(r.label)}</td>
+      <td class="num">${r.p_per_minute.toFixed(1)}p · 10 minutes ${Math.round(r.p_per_minute * 10)}p</td></tr>`).join("")}</table>
+    <p class="muted">At ${s.rates.map(r => r.p_per_unit.toFixed(2) + "p").join(" / ")} a unit. Cheaper when there's solar to spare.</p></section>`;
+}
+
+function tariffCard(t) {
+  if (!t) return "";
+  const rows = [];
+  if (t.now_gbp_a_year) rows.push(`<tr><td>Now: ${esc(t.import)}</td><td class="num">about £${t.now_gbp_a_year.toLocaleString("en-GB")} a year</td></tr>`);
+  (t.options || []).forEach((o, i) => rows.push(`<tr><td>Option ${i + 1}: ${esc(o.import)}<div class="muted">with ${esc(o.export)}${o.fixed_months ? `; fixed ${o.fixed_months} months` : ""}${o.exit_fee_gbp ? `, £${o.exit_fee_gbp} to leave` : ""}</div></td><td class="num">£${o.gbp_a_year.toLocaleString("en-GB")}</td></tr>`));
+  const caveat = t.whole_market ? "Every tariff on the market was compared."
+    : "Not a recommendation yet: some tariffs couldn't be priced, so the whole market isn't compared.";
+  return `<section class="card"><h2>Tariff</h2>${rows.length ? `<table>${rows.join("")}</table>` : `<p class="big">${esc(t.import)}</p>`}
+    <p class="muted">${esc(caveat)}${t.compared ? ` Compared ${esc(t.compared)}.` : ""}${t.contract_end ? ` Contract ends ${esc(t.contract_end)}.` : ""}</p></section>`;
+}
+
+function render(data, stale) {
+  document.getElementById("updated").textContent = "Updated " + when(data.made);
+  const bat = document.getElementById("battery");
+  if (data.battery) { bat.hidden = false; bat.textContent = `Battery ${data.battery.percent}%`; }
+  const period = store("period") || "yesterday";
+  const age = (Date.now() - new Date(data.made.replace(" ", "T"))) / 3600000;
+  const warn = stale || age > 30 ? `<div class="stale wide">Not updated since ${esc(when(data.made))}. The daily update may have stopped, or there's no internet.</div>` : "";
+  document.getElementById("main").innerHTML = warn + bestTimesCard(data.best_times) + alertsCard(data.alerts || [])
+    + tariffCard(data.tariff) + showerCard(data.shower)
+    + numbersCard(data.numbers || {}, period, !/^(none|no export tariff)?$/i.test(((data.tariff || {}).export || "").trim()));
+  const source = store(SOURCE_KEY);
+  document.getElementById("footer").innerHTML = (source ? `Figures from the private repository ${esc(source.repo)}. <button id="forget">Forget the key</button><br><span id="alerts-status"></span><br>` : "")
+    + (data.notes || []).map(esc).join(" ")
+    + "<br>Sources: " + (data.sources || []).map(esc).join(" · ");
+  document.querySelectorAll("[data-hide]").forEach(b => b.onclick = () => {
+    const hidden = store(HIDDEN_KEY) || {}; hidden[b.dataset.hide] = Date.now(); store(HIDDEN_KEY, hidden); render(data, stale);
+  });
+  document.querySelectorAll("[data-period]").forEach(b => b.onclick = () => { store("period", b.dataset.period); render(data, stale); });
+  const forget = document.getElementById("forget");
+  if (forget) forget.onclick = () => { forgetSource(); location.reload(); };
+  if (source) showAlertsStatus(source);
+}
+
+// ---- alerts (web push): the device's sign-up is saved in the private repository, where the daily job reads it
+function b64uToBytes(text) {
+  const pad = "=".repeat((4 - text.length % 4) % 4);
+  const raw = atob((text + pad).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from(raw, c => c.charCodeAt(0));
+}
+
+function deviceId() {
+  let id = store("device-id");
+  if (!id) { id = "device-" + Math.random().toString(36).slice(2, 10); store("device-id", id); }
+  return id;
+}
+
+async function github(source, path, options = {}) {
+  const headers = Object.assign({ Authorization: `Bearer ${source.key}`, "X-GitHub-Api-Version": "2022-11-28" }, options.headers || {});
+  return fetch(`https://api.github.com/repos/${source.repo}/contents/${path}`, Object.assign({}, options, { headers, cache: "no-store" }));
+}
+
+async function saveSignUp(source, subscription) {
+  const path = `subscriptions/${deviceId()}.json`;
+  const body = Object.assign(subscription.toJSON(), { device: deviceId(), saved: new Date().toISOString() });
+  const existing = await github(source, path);
+  const sha = existing.ok ? (await existing.json()).sha : undefined;
+  const response = await github(source, path, { method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: `Alert sign-up from ${deviceId()}`, content: btoa(JSON.stringify(body, null, 1)), sha }) });
+  if (!response.ok) throw new Error(`GitHub said ${response.status} when saving the sign-up (does the key allow writing?)`);
+  store("signup-saved", { endpoint: subscription.endpoint, at: Date.now() });
+}
+
+async function alertKey(source) {
+  // the public half of the alert key, written to the private repository by the daily job
+  const response = await github(source, "push/vapid-public-key.txt", { headers: { Accept: "application/vnd.github.raw+json" } });
+  return response.ok ? (await response.text()).trim() : "";
+}
+
+function sameKey(subscription, key) {
+  const current = subscription.options && subscription.options.applicationServerKey;
+  if (!current || !key) return true;                      // can't tell, so leave it
+  const a = new Uint8Array(current), b = b64uToBytes(key);
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+}
+
+async function lastAlert() {
+  try {
+    const cached = await (await caches.open("home-energy-data")).match("last-alert");
+    if (cached) { const a = await cached.json(); return ` Last alert ${new Date(a.at).toLocaleString("en-GB")}.`; }
+  } catch (e) {}
+  return "";
+}
+
+async function showAlertsStatus(source) {
+  const box = document.getElementById("alerts-status");
+  if (!box) return;
+  if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+    box.textContent = "Alerts: on an iPad or iPhone they work in the app opened from the Home Screen (Share → Add to Home Screen).";
+    return;
+  }
+  // the app's background helper (sw.js) receives the alerts; give it a few seconds to start
+  const registration = await Promise.race([navigator.serviceWorker.ready, new Promise(done => setTimeout(() => done(null), 8000))]);
+  if (!registration) { box.textContent = "Alerts: the app's background helper hasn't started. Close the app fully and open it again."; return; }
+  let subscription = await registration.pushManager.getSubscription();
+  const key = await alertKey(source).catch(() => "");
+  if (subscription && key && !sameKey(subscription, key)) {        // the alert key was changed: sign up again
+    await subscription.unsubscribe().catch(() => {});
+    subscription = null;
+  }
+  if (subscription && Notification.permission === "granted") {
+    box.textContent = "Alerts: on." + await lastAlert();
+    // the sign-up can change without warning: save it again when it does, and weekly
+    const saved = store("signup-saved") || {};
+    if (saved.endpoint !== subscription.endpoint || Date.now() - (saved.at || 0) > 7 * 24 * 3600 * 1000) {
+      saveSignUp(source, subscription).catch(e => { box.textContent = "Alerts: on, but " + e.message; });
+    }
+    return;
+  }
+  if (!key) { box.textContent = "Alerts: not ready yet. They start once the alert key is saved in GitHub and the daily update has run."; return; }
+  if (Notification.permission === "denied") { box.textContent = "Alerts: blocked on this device. Settings → Notifications → Energy turns them on."; return; }
+  box.innerHTML = `Alerts: off. <button id="alerts-on">Turn on alerts</button>`;
+  document.getElementById("alerts-on").onclick = () => {
+    // asked straight from the tap: Safari only shows the question in direct response to one
+    Notification.requestPermission()
+      .then(permission => {
+        if (permission !== "granted") throw new Error("not allowed. Settings → Notifications → Energy turns them on.");
+        return registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToBytes(key) });
+      })
+      .then(sub => saveSignUp(source, sub))
+      .then(() => { box.textContent = "Alerts: on. New alerts arrive with the morning update."; })
+      .catch(e => { box.textContent = "Alerts: " + (e.message || e); });
+  };
+}
+
+// ---- setting up a device: its key is pasted once and kept on that device only
+class SetupError extends Error {
+  constructor(message, keep) { super(message); this.keep = !!keep; }
+}
+
+function forgetSource() { try { localStorage.removeItem(SOURCE_KEY); } catch (e) {} }
+
+function defaultRepo() {
+  const owner = location.hostname.endsWith(".github.io") ? location.hostname.split(".")[0] : "";
+  return owner ? `${owner}/home-energy-data` : "";
+}
+
+function showSetup(message, keep) {
+  document.getElementById("updated").textContent = "Not set up on this device yet";
+  document.getElementById("battery").hidden = true;
+  document.getElementById("footer").innerHTML = "";
+  const main = document.getElementById("main");
+  if (keep) {
+    // the key works but there's nothing to show yet
+    main.innerHTML = `<section class="card wide"><h2>Set up this device</h2><p class="big">Nearly there</p>
+      <p>${esc(message)}</p><div class="actions"><button class="btn" id="setup-retry">Try again</button>
+      <button class="btn quiet" id="setup-change">Change the key</button></div></section>`;
+    document.getElementById("setup-retry").onclick = () => load();
+    document.getElementById("setup-change").onclick = () => { forgetSource(); showSetup(); };
+    return;
+  }
+  main.innerHTML = `<section class="card wide" id="setup"><h2>Set up this device</h2>
+    <p class="big">Paste this device's key</p>
+    <p class="muted">The key lets this device read the house's figures, and nothing else. It stays on this device.
+      On an iPad, do this in the app opened from the Home Screen, not in Safari: the two keep separate storage.</p>
+    <label class="field">Repository<input id="setup-repo" value="${esc(defaultRepo())}" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"></label>
+    <label class="field">Key<input id="setup-key" type="password" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="github_pat_…"></label>
+    <div class="actions"><button class="btn" id="setup-save">Save on this device</button></div>
+    <p class="muted" id="setup-status" role="status">${esc(message || "")}</p></section>`;
+  document.getElementById("setup-save").onclick = () => {
+    const repo = document.getElementById("setup-repo").value.trim();
+    const key = document.getElementById("setup-key").value.trim();
+    const status = document.getElementById("setup-status");
+    if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { status.textContent = "The repository should look like owner/name."; return; }
+    if (key.startsWith("ghp_")) { status.textContent = "That's a classic key, which can see every repository. Make a fine-grained one (the walk-through's link)."; return; }
+    if (!/^github_pat_\w{20,}$/.test(key)) { status.textContent = "That doesn't look like a GitHub key: they start github_pat_."; return; }
+    store(SOURCE_KEY, { repo, key, checked: 0 });
+    status.textContent = "Checking the key…";
+    load();
+  };
+}
+
+async function privateSource() {
+  const source = store(SOURCE_KEY);
+  if (!source || !source.repo || !source.key) return null;
+  const headers = { Authorization: `Bearer ${source.key}`, "X-GitHub-Api-Version": "2022-11-28" };
+  if (Date.now() - (source.checked || 0) > 24 * 3600 * 1000) {
+    // refuse a key that can also open the playbook: it should only see the energy figures
+    const probe = await fetch(`https://api.github.com/repos/${PLAYBOOK}`, { headers, cache: "no-store" });
+    if (probe.ok) {
+      forgetSource();
+      throw new SetupError("That key can also see the owner's private playbook, so it was refused and forgotten. Make a key that can only see the energy figures.");
+    }
+    if (probe.status === 401) {
+      forgetSource();
+      throw new SetupError("GitHub didn't accept that key: it may be mistyped, expired or deleted. Paste a new one.");
+    }
+    const own = await fetch(`https://api.github.com/repos/${source.repo}`, { headers, cache: "no-store" });
+    if (own.status === 404) {
+      forgetSource();
+      throw new SetupError(`That key can't see ${source.repo}. Check the name, or make the key again with that repository picked.`);
+    }
+    if (!own.ok) throw new Error(`GitHub answered ${own.status}`);    // e.g. no internet: try again later
+    source.checked = Date.now();
+    store(SOURCE_KEY, source);
+  }
+  return { repo: source.repo, url: `https://api.github.com/repos/${source.repo}/contents/app-data.json`,
+           headers: Object.assign({ Accept: "application/vnd.github.raw+json" }, headers) };
+}
+
+async function load() {
+  try {
+    const source = await privateSource();
+    if (!source && NEEDS_KEY) { showSetup(); return; }
+    const response = source ? await fetch(source.url, { headers: source.headers, cache: "no-store" })
+                            : await fetch(DATA_URL, { cache: "no-store" });
+    if (source && response.status === 404) {
+      throw new SetupError(`The key works, but there are no figures in ${source.repo} yet. They appear after the daily update has run.`, true);
+    }
+    if (!response.ok) throw new Error(`the figures couldn't be fetched (${response.status})`);
+    const data = await response.json();
+    store("last-data", data);
+    render(data, false);
+  } catch (error) {
+    if (error instanceof SetupError) { showSetup(error.message, error.keep); return; }
+    const last = store("last-data");
+    if (last) render(last, true);
+    else document.getElementById("main").innerHTML = `<section class="card wide"><p class="big">Couldn't load the figures.</p><p class="muted">${esc(error.message || error)}</p></section>`;
+  }
+}
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+load();
+// refresh every half hour and on coming back to the app, but never while a key is being pasted
+function refresh() { if (!document.getElementById("setup-key")) load(); }
+setInterval(refresh, 30 * 60 * 1000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+</script>
+</body>
+</html>
