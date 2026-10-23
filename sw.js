@@ -1,5 +1,5 @@
 // Home Energy: keeps the page working offline, and shows push notifications once they're set up.
-const SHELL = "home-energy-shell-v3";
+const SHELL = "home-energy-shell-v4";
 const DATA = "home-energy-data";
 const FILES = ["./", "index.html", "setup.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
@@ -17,8 +17,8 @@ self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;     // e.g. the private figures from GitHub: never cached here
-  if (url.pathname.endsWith("app-data.json")) {
-    // the figures: always try the network first, fall back to the last copy
+  if (url.pathname.endsWith("app-data.json") || url.pathname.endsWith("live.json")) {
+    // the figures (and, away from GitHub, the live link): always try the network first, fall back to the last copy
     event.respondWith(fetch(event.request).then(response => {
       const copy = response.clone();
       caches.open(DATA).then(cache => cache.put(event.request, copy));

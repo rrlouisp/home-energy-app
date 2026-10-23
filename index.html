@@ -72,6 +72,10 @@
   .tile .v small { font-size: 15px; font-weight: 600; color: var(--muted); margin-left: 3px; }
   .tile .l { font-size: 14px; color: var(--muted); }
   .tile.money .v { color: var(--best); }
+  .tile .s { font-size: 13px; color: var(--muted); }
+  .awake { font: inherit; font-size: 14px; border: 1px solid var(--line); background: transparent; color: var(--ink);
+           border-radius: 999px; padding: 4px 12px; margin: 4px 0 0; }
+  .awake[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
   table { width: 100%; border-collapse: collapse; font-size: 16px; }
   td { padding: 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
   td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 12px; }
@@ -116,6 +120,12 @@ const SOURCE_KEY = "private-source";
 const HIDDEN_KEY = "hidden-alerts";
 const COLOURS = { problem: "var(--problem)", money: "var(--money)", watch: "var(--watch)", reminder: "var(--reminder)" };
 const PERIODS = [["yesterday", "Yesterday"], ["this_month", "This month"], ["last_month", "Last month"], ["last_12_months", "12 months"]];
+// Live figures (#165): the inverter's latest reading, about every 5 minutes, from a small script in the
+// house's own Google account. Its address is private: it's read from the figures repository with this
+// device's key, never written into this public page.
+const LIVE_EVERY = 5 * 60 * 1000;
+const live = { reading: store("live-last"), error: "", url: "", asked: 0 };
+let wakeLock = null;
 
 function esc(text) {
   return String(text ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -130,6 +140,40 @@ function when(stamp) {
 }
 function kwh(v) { return v == null ? "–" : (v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(1)); }
 function gbp(v) { return v == null ? "–" : "£" + (Math.abs(v) >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(2)); }
+
+function kw(v) {
+  const n = Number(v);
+  return v == null || isNaN(n) ? "–" : n.toFixed(Math.abs(n) >= 1 ? 1 : 2);
+}
+function readingTime(text) {
+  // FoxESS's time, e.g. "2026-10-23 17:00:27 BST+0100"
+  const m = /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}).*([+-]\d{2})(\d{2})$/.exec(text || "");
+  return m ? new Date(`${m[1]}T${m[2]}${m[3]}:${m[4]}`) : null;
+}
+
+function liveCard() {
+  const r = live.reading;
+  if (!live.url && !r) return "";                          // not set up: nothing to show
+  if (!r) return `<section class="card wide" id="live"><h2>Right now</h2>
+    <p class="muted">${esc(live.error || "Getting the latest reading…")}</p></section>`;
+  const at = readingTime(r.time);
+  const clock = at ? at.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/London" }) : "an unknown time";
+  const minutes = at ? (Date.now() - at) / 60000 : Infinity;
+  const buying = Number(r.buying_kw) || 0, selling = Number(r.selling_kw) || 0;
+  const charging = Number(r.battery_charge_kw) || 0, giving = Number(r.battery_discharge_kw) || 0;
+  const unit = " <small>kW</small>";
+  const grid = buying >= 0.05 ? [kw(buying) + unit, "Buying from the grid"]
+             : selling >= 0.05 ? [kw(selling) + unit, "Selling to the grid"] : ["0" + unit, "Grid: nothing in or out"];
+  const battery = charging >= 0.05 ? `charging ${kw(charging)} kW` : giving >= 0.05 ? `giving ${kw(giving)} kW` : "resting";
+  const tiles = [[kw(r.solar_kw) + unit, "Solar now"], [kw(r.house_kw) + unit, "House using"], grid,
+                 [`${Math.round(Number(r.battery_percent) || 0)}<small>%</small>`, "Battery", battery]];
+  const old = minutes > 20 ? `<div class="stale">FoxESS's last reading was at ${esc(clock)}: the inverter or its internet connection may be off.</div>` : "";
+  const problem = live.error ? `<p class="muted">${esc(live.error)} Showing the last reading.</p>` : "";
+  const awake = "wakeLock" in navigator ? `<button class="awake" id="keep-awake" aria-pressed="${!!store("keep-awake")}">${store("keep-awake") ? "Screen stays on" : "Keep the screen on"}</button>` : "";
+  return `<section class="card wide" id="live"><h2>Right now</h2>${old}
+    <div class="tiles">${tiles.map(([v, l, s]) => `<div class="tile"><div class="v">${v}</div><div class="l">${l}</div>${s ? `<div class="s">${esc(s)}</div>` : ""}</div>`).join("")}</div>
+    <p class="muted">FoxESS's reading at ${esc(clock)}. It updates about every 5 minutes.</p>${problem}${awake}</section>`;
+}
 
 function alertsCard(alerts) {
   const hidden = store(HIDDEN_KEY) || {};
@@ -207,10 +251,11 @@ function render(data, stale) {
   document.getElementById("updated").textContent = "Updated " + when(data.made);
   const bat = document.getElementById("battery");
   if (data.battery) { bat.hidden = false; bat.textContent = `Battery ${data.battery.percent}%`; }
+  livePill();
   const period = store("period") || "yesterday";
   const age = (Date.now() - new Date(data.made.replace(" ", "T"))) / 3600000;
   const warn = stale || age > 30 ? `<div class="stale wide">Not updated since ${esc(when(data.made))}. The daily update may have stopped, or there's no internet.</div>` : "";
-  document.getElementById("main").innerHTML = warn + bestTimesCard(data.best_times) + alertsCard(data.alerts || [])
+  document.getElementById("main").innerHTML = liveCard() + warn + bestTimesCard(data.best_times) + alertsCard(data.alerts || [])
     + tariffCard(data.tariff) + showerCard(data.shower)
     + numbersCard(data.numbers || {}, period, !/^(none|no export tariff)?$/i.test(((data.tariff || {}).export || "").trim()));
   const source = store(SOURCE_KEY);
@@ -224,6 +269,73 @@ function render(data, stale) {
   const forget = document.getElementById("forget");
   if (forget) forget.onclick = () => { forgetSource(); location.reload(); };
   if (source) showAlertsStatus(source);
+  wireAwake();
+}
+
+// ---- live figures
+function livePill() {
+  const r = live.reading, bat = document.getElementById("battery");
+  if (r && r.battery_percent != null) { bat.hidden = false; bat.textContent = `Battery ${Math.round(Number(r.battery_percent))}%`; }
+}
+
+function updateLive() {
+  if (document.getElementById("setup")) return;            // a key is being pasted: leave the page alone
+  const html = liveCard(), box = document.getElementById("live"), main = document.getElementById("main");
+  if (box) box.outerHTML = html;
+  else if (html && main) main.insertAdjacentHTML("afterbegin", html);
+  livePill();
+  wireAwake();
+}
+
+async function liveUrl(source) {
+  // the live link is written to the private figures repository by the daily job (GitHub's LIVE_URL secret)
+  const saved = store("live-url");
+  // a found link is checked again every 6 hours; until there is one, every 10 minutes
+  if (saved && Date.now() - saved.at < (saved.url ? 6 * 3600 : 600) * 1000) return saved.url;
+  let url = "";
+  try {
+    const response = source ? await github(source, "live.json", { headers: { Accept: "application/vnd.github.raw+json" } })
+                            : await fetch("live.json", { cache: "no-store" });
+    if (response.ok) url = String(((await response.json()) || {}).url || "");
+    else if (response.status !== 404) throw new Error(`GitHub answered ${response.status}`);
+  } catch (e) { return saved ? saved.url : ""; }
+  if (url && !/^https:\/\/script\.google(usercontent)?\.com\//.test(url)) url = "";     // only the house's own Google script
+  store("live-url", { url, at: Date.now() });
+  return url;
+}
+
+async function refreshLive(force) {
+  if (!force && (document.hidden || Date.now() - live.asked < 60 * 1000)) return;
+  const source = store(SOURCE_KEY);
+  if (NEEDS_KEY && !(source && source.key)) return;          // this device isn't set up yet
+  live.asked = Date.now();
+  live.url = await liveUrl(source && source.key ? source : null);
+  if (!live.url) { live.reading = null; store("live-last", null); updateLive(); return; }   // no live link (any more)
+  try {
+    const response = await fetch(live.url, { cache: "no-store" });
+    const answer = await response.json();
+    if (!answer || !answer.ok) throw new Error((answer && answer.error) || `the live link answered ${response.status}`);
+    live.reading = answer;
+    live.error = "";
+    store("live-last", answer);
+  } catch (e) {
+    live.error = `Couldn't get a new reading: ${String(e.message || e).replace(/\.$/, "")}.`;
+  }
+  updateLive();
+}
+
+async function keepAwake(on) {
+  try {
+    if (on && !wakeLock && document.visibilityState === "visible") {
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", () => { wakeLock = null; });
+    } else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
+  } catch (e) {}
+}
+
+function wireAwake() {
+  const button = document.getElementById("keep-awake");
+  if (button) button.onclick = () => { const on = !store("keep-awake"); store("keep-awake", on); keepAwake(on); updateLive(); };
 }
 
 // ---- alerts (web push): the device's sign-up is saved in the private repository, where the daily job reads it
@@ -413,11 +525,18 @@ async function load() {
   }
 }
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
-load();
+load().then(() => refreshLive(true));
 // refresh every half hour and on coming back to the app, but never while a key is being pasted
 function refresh() { if (!document.getElementById("setup-key")) load(); }
 setInterval(refresh, 30 * 60 * 1000);
-document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+setInterval(() => refreshLive(), LIVE_EVERY);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) return;
+  refresh();
+  refreshLive();
+  if (store("keep-awake")) keepAwake(true);                  // the screen lock is let go whenever the app is hidden
+});
+if (store("keep-awake")) keepAwake(true);
 </script>
 </body>
 </html>
