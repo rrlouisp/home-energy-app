@@ -7,9 +7,9 @@
  * about every 5 minutes, which is as often as FoxESS's cloud updates.
  *
  * - It only reads: the two FoxESS calls below. Nothing here can change the inverter.
- * - The FoxESS key stays in this script's properties (Project Settings → Script
- *   Properties → FOXESS_API_KEY). It never leaves the Google account and is never
- *   sent to the app.
+ * - The FoxESS key stays in this script's properties (FOXESS_API_KEY). Nobody has to
+ *   type it: the playbook's daily job hands it over (doPost below), and it's only
+ *   kept once FoxESS has accepted it. It's never sent back out, to the app or anyone.
  * - Several screens share one FoxESS call: a reading is kept for 4 minutes.
  * - Deploy as a web app: Execute as "Me", Who has access "Anyone". Its address is
  *   the only thing the app needs, and it's kept private (in GitHub's secrets and the
@@ -21,6 +21,41 @@ var READ_ONLY = ["/op/v0/device/list", "/op/v0/device/real/query"];   // nothing
 var VARIABLES = ["pvPower", "loadsPower", "gridConsumptionPower", "feedinPower",
                  "batChargePower", "batDischargePower", "SoC"];
 var KEEP_SECONDS = 240;
+
+// The daily job hands over the FoxESS key here (a POST with {"foxess_key": "..."}).
+// A key is only kept once FoxESS has accepted it, and never replaces one that still
+// works, so the address alone can't be used to swap the key. The answer never
+// includes the key.
+function doPost(e) {
+  var posted = "";
+  try { posted = String(JSON.parse((e && e.postData && e.postData.contents) || "{}").foxess_key || "").trim(); }
+  catch (error) { return answer_({ ok: false, error: "That wasn't JSON." }); }
+  if (!posted) return answer_({ ok: false, error: "No key was sent." });
+  var properties = PropertiesService.getScriptProperties();
+  var current = (properties.getProperty("FOXESS_API_KEY") || "").trim();
+  if (posted === current) return answer_({ ok: true, key: "already saved" });
+  if (current && inverter_(current)) return answer_({ ok: true, key: "kept: the saved key still works" });
+  var sn = inverter_(posted);
+  if (!sn) return answer_({ ok: false, error: "FoxESS refused the key that was sent." });
+  properties.setProperty("FOXESS_API_KEY", posted);
+  properties.setProperty("FOXESS_SN", sn);
+  CacheService.getScriptCache().remove("live");
+  return answer_({ ok: true, key: "saved" });
+}
+
+// The inverter's serial number if FoxESS accepts this key, or "" if not.
+function inverter_(key) {
+  try {
+    var list = call_("/op/v0/device/list", { currentPage: 1, pageSize: 10 }, key);
+    return (list && list.data && list.data[0] && list.data[0].deviceSN) || "";
+  } catch (error) {
+    return "";
+  }
+}
+
+function answer_(object) {
+  return ContentService.createTextOutput(JSON.stringify(object)).setMimeType(ContentService.MimeType.JSON);
+}
 
 // The family app asks here (a web app's GET request).
 function doGet() {
@@ -37,7 +72,7 @@ function doGet() {
   return ContentService.createTextOutput(text).setMimeType(ContentService.MimeType.JSON);
 }
 
-// Run this once from the editor (pick "test", then Run) to check the key works:
+// Optional: run this from the editor (pick "test", then Run) once the key is saved:
 // the reading shows in the Execution log.
 function test() {
   var r = reading_();
@@ -49,7 +84,7 @@ function test() {
 function reading_() {
   var properties = PropertiesService.getScriptProperties();
   var key = (properties.getProperty("FOXESS_API_KEY") || "").trim();
-  if (!key) throw new Error("No FoxESS key yet: add FOXESS_API_KEY in Project Settings → Script Properties.");
+  if (!key) throw new Error("No FoxESS key yet: the next daily update hands it over.");
   var sn = properties.getProperty("FOXESS_SN");
   if (!sn) {                                      // the inverter's serial number, found once and kept
     var list = call_("/op/v0/device/list", { currentPage: 1, pageSize: 10 }, key);
@@ -92,7 +127,7 @@ function call_(path, body, key) {
   });
   var code = response.getResponseCode();
   if (code === 401 || code === 403) {
-    throw new Error("FoxESS refused the key (" + code + "). Check FOXESS_API_KEY in Project Settings → Script Properties.");
+    throw new Error("FoxESS refused the key (" + code + "). A new key in GitHub's FOXESS_API_KEY reaches this script with the next daily update.");
   }
   var answer;
   try {
