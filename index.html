@@ -5,106 +5,308 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Home Energy</title>
-<meta name="description" content="The house's solar, battery and electricity: best times to use power, costs and savings.">
-<meta name="theme-color" content="#0f3d3a">
+<meta name="description" content="The house's solar, battery and electricity, live: where the power is coming from right now, today's charts, the best times to use power, costs and savings.">
+<meta name="theme-color" content="#eceeeb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e0f0e" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Energy">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <style>
+  /* A calm instrument panel: the device's own system type, quiet cool surfaces, and colour only on
+     the energy itself (solar, house, grid, battery) plus one deep teal for controls.
+     Layout: on a phone, one column with the live flow first; on a tablet, two columns; on a wide
+     screen (a tablet on the wall), the live flow and today's charts side by side.
+     The four energy colours and the two surfaces were checked with the dataviz palette validator
+     (colour-blind separation, contrast) in light and dark: change them only after re-checking. */
   :root {
-    --bg: #f4f1ea; --card: #ffffff; --ink: #1d2a2a; --muted: #5b6b6a; --line: #e2ddd2;
-    --brand: #0f3d3a; --brand-ink: #ffffff;
-    --best: #2f9e5b; --good: #a8d5b0; --normal: #dcd7cc; --past: #eeebe4;
-    --problem: #c2410c; --money: #1d6fa5; --watch: #b7791f; --reminder: #6b7280;
-    --radius: 18px;
+    color-scheme: light;
+    --page: #eceeeb;
+    --surface: #fcfcfb;
+    --well: #f1f2ef;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #74736e;
+    --line: rgba(11, 11, 11, 0.1);
+    --gridline: #e1e0d9;
+    --axis: #c3c2b7;
+    --brand: #0f3d3a;
+    --on-brand: #ffffff;
+    --brand-text: #0f5c55;
+    --c-solar: #eda100;
+    --c-home: #2a78d6;
+    --c-grid: #e87ba4;
+    --c-battery: #008300;
+    --good: #0ca30c;
+    --good-soft: #b4e0b0;
+    --cell: #e2e4df;
+    --warning: #fab219;
+    --critical: #d03b3b;
+    --good-text: #006300;
+    --note-bg: #fff4d6;
+    --note-ink: #5c4300;
+    --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 6px 18px rgba(11, 11, 11, 0.05);
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --r-card: 22px;
+    --r-tile: 14px;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0e1615; --card: #182322; --ink: #eef3f2; --muted: #9db0ae; --line: #2a3836;
-      --brand: #0b2b29; --best: #3fbf74; --good: #2f6b45; --normal: #33403e; --past: #1c2726;
+      color-scheme: dark;
+      --page: #0e0f0e; --surface: #1a1a19; --well: #232321; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #94938c;
+      --line: rgba(255, 255, 255, 0.1); --gridline: #2c2c2a; --axis: #45453f;
+      --brand: #8fd3c7; --on-brand: #0a1715; --brand-text: #8fd3c7;
+      --c-solar: #c98500; --c-home: #3987e5; --c-grid: #d55181; --c-battery: #008300;
+      --good-soft: #1d4d1d; --cell: #2c2c2a; --good-text: #0ca30c; --note-bg: #2e2510; --note-ink: #f2d690; --shadow: none;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0e1615; --card: #182322; --ink: #eef3f2; --muted: #9db0ae; --line: #2a3836;
-    --brand: #0b2b29; --best: #3fbf74; --good: #2f6b45; --normal: #33403e; --past: #1c2726;
+    color-scheme: dark;
+    --page: #0e0f0e; --surface: #1a1a19; --well: #232321; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #94938c;
+    --line: rgba(255, 255, 255, 0.1); --gridline: #2c2c2a; --axis: #45453f;
+    --brand: #8fd3c7; --on-brand: #0a1715; --brand-text: #8fd3c7;
+    --c-solar: #c98500; --c-home: #3987e5; --c-grid: #d55181; --c-battery: #008300;
+    --good-soft: #1d4d1d; --cell: #2c2c2a; --good-text: #0ca30c; --note-bg: #2e2510; --note-ink: #f2d690; --shadow: none;
   }
+
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); }
-  body { font: 17px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-         padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
-  header { background: var(--brand); color: var(--brand-ink); padding: 18px 16px 16px; }
-  header .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 1100px; margin: 0 auto; }
-  h1 { font-size: 26px; margin: 0; letter-spacing: -0.01em; }
-  .updated { opacity: 0.8; font-size: 14px; }
-  .pill { background: rgba(255,255,255,0.14); border-radius: 999px; padding: 6px 12px; font-weight: 600; white-space: nowrap; }
-  main { max-width: 1100px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; grid-template-columns: 1fr; }
-  @media (min-width: 760px) { main { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
-  section.card { background: var(--card); border-radius: var(--radius); padding: 18px; border: 1px solid var(--line); min-width: 0; }
-  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; }
-  .big { font-size: 21px; font-weight: 650; margin: 0 0 6px; }
-  .muted { color: var(--muted); font-size: 15px; }
-  .stale { background: #fff4e5; color: #7a4b00; border: 1px solid #f3d19c; border-radius: var(--radius); padding: 12px 16px; }
-  .alert { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); }
-  .alert:first-of-type { border-top: 0; padding-top: 0; }
-  .dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 7px; flex: none; }
-  .alert .text { flex: 1; min-width: 0; }
-  .alert .title { font-weight: 650; }
-  .alert button { flex: none; border: 1px solid var(--line); background: transparent; color: var(--muted);
-                  border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; }
-  .strip { display: grid; grid-template-columns: repeat(18, 1fr); gap: 3px; margin: 12px 0 4px; }
-  .strip div { height: 34px; border-radius: 6px; background: var(--normal); }
-  .strip .best { background: var(--best); } .strip .good { background: var(--good); } .strip .past { background: var(--past); }
-  .hours { display: grid; grid-template-columns: repeat(18, 1fr); gap: 3px; font-size: 12px; color: var(--muted); }
-  .hours span { text-align: center; }
-  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 10px; }
-  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
-  .day + .day { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
-  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-  .tabs button { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px;
-                 padding: 8px 14px; font: inherit; font-size: 15px; }
-  .tabs button[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
-  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-  .tile { border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
-  .tile .v { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .tile .v small { font-size: 15px; font-weight: 600; color: var(--muted); margin-left: 3px; }
-  .tile .l { font-size: 14px; color: var(--muted); }
-  .tile.money .v { color: var(--best); }
-  .tile .s { font-size: 13px; color: var(--muted); }
-  .awake { font: inherit; font-size: 14px; border: 1px solid var(--line); background: transparent; color: var(--ink);
-           border-radius: 999px; padding: 4px 12px; margin: 4px 0 0; }
-  .awake[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
-  table { width: 100%; border-collapse: collapse; font-size: 16px; }
-  td { padding: 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 12px; }
-  footer { max-width: 1100px; margin: 0 auto; padding: 0 16px 28px; color: var(--muted); font-size: 13px; }
-  .empty { color: var(--muted); }
-  .field { display: block; margin: 12px 0 0; font-size: 15px; color: var(--muted); }
-  .field input { display: block; width: 100%; margin-top: 6px; font: inherit; font-size: 17px; color: var(--ink); background: var(--bg);
-                 border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
-  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 6px; }
-  .btn { font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 12px 20px; background: var(--brand); color: var(--brand-ink); }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; background: var(--page); color: var(--ink); }
+  body { font: 16px/1.45 var(--font); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+         -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px));
+          padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  button { font: inherit; color: inherit; }
+  p { margin: 0; }
+  :focus-visible { outline: 2.5px solid var(--brand-text); outline-offset: 2px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .i { width: 20px; height: 20px; flex: none; }
+  .muted { color: var(--ink-2); }
+  .fine { font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+
+  /* the header */
+  .top { padding-block: 18px 4px; }
+  .top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .title { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .logo { width: 42px; height: 42px; border-radius: 13px; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; flex: none; }
+  .logo .i { width: 23px; height: 23px; }
+  h1 { font-size: 24px; line-height: 1.15; margin: 0; letter-spacing: -0.015em; font-weight: 700; }
+  .status { margin-top: 3px; font-size: 14px; color: var(--ink-2); display: flex; align-items: center; gap: 7px; min-height: 20px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+  .dot.live { background: var(--good); animation: pulse 2.4s ease-out infinite; }
+  .dot.late { background: var(--warning); }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(12, 163, 12, 0.45); } 70%, 100% { box-shadow: 0 0 0 7px rgba(12, 163, 12, 0); } }
+  .chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
+          padding: 8px 14px; font-size: 14px; font-weight: 550; cursor: pointer; white-space: nowrap; }
+  .chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); border-color: transparent; }
+  .chip .i { width: 17px; height: 17px; }
+  @media (max-width: 420px) { .chip .chip-text { display: none; } .chip { padding: 9px; } }
+
+  /* the cards */
+  .grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); grid-auto-flow: row dense; padding-block: 12px 20px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); padding: 18px; box-shadow: var(--shadow);
+          min-width: 0; container-type: inline-size; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; margin: 0 0 14px; min-height: 36px; flex-wrap: wrap; }
+  h2 { font-size: 19px; line-height: 1.25; margin: 0; font-weight: 650; letter-spacing: -0.01em; text-wrap: balance; }
+  .banner { display: flex; gap: 10px; align-items: flex-start; background: var(--note-bg); color: var(--note-ink); border-radius: 16px; padding: 12px 16px; font-size: 15px; }
+  .note { display: flex; gap: 9px; align-items: flex-start; background: var(--note-bg); color: var(--note-ink); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+  .note .i, .banner .i { width: 18px; height: 18px; margin-top: 1px; }
+  .stack { display: grid; gap: 14px; }
+
+  /* right now: the power flow */
+  .now-grid { display: grid; gap: 16px; align-items: center; }
+  @container (min-width: 600px) { .now-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; } }
+  .flow { margin: 0; }
+  .flow svg { display: block; width: 100%; max-width: 400px; height: auto; margin: 0 auto; }
+  .flow .track { stroke-width: 2; stroke-opacity: 0.22; stroke-linecap: round; }
+  .flow .dots { stroke-width: 4.5; stroke-linecap: round; stroke-dasharray: 0.01 13; animation: run var(--dur, 1s) linear infinite; }
+  .flow .chev { display: none; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes run { to { stroke-dashoffset: -13.01; } }
+  .flow .ring { fill: var(--surface); stroke: var(--c); stroke-width: 2.5; }
+  .flow .idle .ring { stroke-opacity: 0.35; }
+  .flow .glyph { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .flow .glyph .solid { fill: var(--c); stroke: none; }
+  .flow .idle .glyph { stroke: var(--muted); }
+  .flow .idle .glyph .solid { fill: var(--muted); }
+  .flow .hub { fill: var(--surface); stroke: var(--axis); stroke-width: 2; }
+  .flow .val { font-size: 20px; font-weight: 650; fill: var(--ink); text-anchor: middle; letter-spacing: -0.01em; }
+  .flow .val tspan { font-size: 13px; font-weight: 550; fill: var(--ink-2); letter-spacing: 0; }
+  .flow .lab { font-size: 13px; fill: var(--ink-2); text-anchor: middle; }
+  @media (prefers-reduced-motion: reduce) {
+    .flow .dots { display: none; }
+    .flow .track.on { stroke-opacity: 0.9; }
+    .flow .chev { display: inline; }
+    .dot.live { animation: none; }
+  }
+  .story { font-size: 18px; line-height: 1.4; font-weight: 550; text-wrap: pretty; }
+  .share-title { font-size: 13.5px; color: var(--ink-2); margin-bottom: 7px; }
+  .share-bar { display: flex; gap: 2px; height: 12px; border-radius: 6px; overflow: hidden; }
+  .share-bar span { min-width: 3px; background: var(--c); }
+  .keys { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 8px 0 0; padding: 0; list-style: none; font-size: 13.5px; color: var(--ink-2); }
+  .keys li { display: inline-flex; align-items: center; gap: 6px; }
+  .keys b { color: var(--ink); font-weight: 650; }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--c); flex: none; }
+  .lk { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--c); flex: none; }
+
+  /* tiles */
+  .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  @container (min-width: 540px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .tile { background: var(--well); border-radius: var(--r-tile); padding: 12px 14px 13px; min-width: 0; }
+  .tile-label { font-size: 13px; color: var(--ink-2); display: flex; align-items: center; gap: 7px; }
+  .tile-value { font-size: 26px; font-weight: 650; letter-spacing: -0.02em; margin-top: 4px; white-space: nowrap; line-height: 1.15; }
+  .tile-value small { font-size: 14px; font-weight: 550; color: var(--ink-2); margin-left: 3px; letter-spacing: 0; }
+  .tile-sub { font-size: 12.5px; color: var(--ink-2); margin-top: 3px; }
+
+  /* controls */
+  .tools { display: flex; align-items: center; gap: 8px; }
+  .seg { display: inline-flex; background: var(--well); border-radius: 999px; padding: 3px; gap: 2px; max-width: 100%; }
+  .seg button { border: 0; background: transparent; border-radius: 999px; padding: 7px 12px; font-size: 14px; font-weight: 550; color: var(--ink-2);
+                cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+  .seg button .i { width: 18px; height: 18px; }
+  .seg.icons button { padding: 6px 9px; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--line); }
+  .seg.full { display: grid; grid-template-columns: repeat(4, minmax(0, auto)); justify-content: start; }
+  @container (max-width: 380px) { .seg.full { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; }
+                                  .seg.full button { padding: 7px 4px; font-size: 13px; } }
+  .icon-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; width: 38px; height: 38px; display: inline-grid;
+              place-items: center; cursor: pointer; color: var(--ink); padding: 0; }
+  .icon-btn .i { width: 18px; height: 18px; }
+  .icon-btn:disabled { opacity: 0.35; cursor: default; }
+  .btn { font-weight: 600; border: 0; border-radius: 999px; padding: 12px 20px; background: var(--brand); color: var(--on-brand); cursor: pointer; }
   .btn.quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); }
-  footer button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: transparent; color: var(--ink);
-                  border-radius: 999px; padding: 4px 10px; margin: 4px 0; }
+  .link-btn { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; cursor: pointer; }
+
+  /* today's charts */
+  .card.busy .charts, .card.busy .tiles, .card.busy .table-wrap { opacity: 0.45; transition: opacity 0.2s; }
+  .charts { position: relative; margin-top: 16px; touch-action: pan-y; -webkit-user-select: none; user-select: none; border-radius: 12px; }
+  .readout { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; min-height: 44px; padding: 9px 12px; background: var(--well);
+             border-radius: 12px; font-size: 13.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .readout .when { font-weight: 650; color: var(--ink); margin-right: 2px; }
+  .readout .ro { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .readout b { color: var(--ink); font-weight: 650; }
+  .panel { margin-top: 12px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 10px; flex-wrap: wrap; font-size: 13.5px; margin-bottom: 2px; }
+  .panel-title { font-weight: 600; color: var(--ink); }
+  .panel-title small { font-weight: 400; color: var(--ink-2); font-size: 12.5px; margin-left: 4px; }
+  .panel-head .keys { margin: 0; font-size: 13px; }
+  .plot { display: block; overflow: visible; }
+  .plot .gl { stroke: var(--gridline); stroke-width: 1; shape-rendering: crispEdges; }
+  .plot .zero { stroke: var(--axis); stroke-width: 1; shape-rendering: crispEdges; }
+  .plot .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .plot .dir { fill: var(--muted); font-size: 11px; }
+  .plot .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .plot .ar { stroke: none; fill-opacity: 0.12; }
+  .plot .end { stroke: var(--surface); stroke-width: 2; }
+  .plot .cross { stroke: var(--ink-2); stroke-width: 1; shape-rendering: crispEdges; }
+  .plot .seg-a { stroke: none; }
+  .plot .hit { fill: transparent; cursor: pointer; }
+  .plot .picked { fill: var(--ink); fill-opacity: 0.06; }
+
+  /* tables */
+  .table-wrap { overflow-x: auto; margin-top: 14px; border-radius: 12px; border: 1px solid var(--line); }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  table.data th, table.data td { padding: 7px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+  table.data th:first-child, table.data td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface); }
+  table.data thead th:first-child { background: var(--well); }
+  table.data thead th { font-weight: 600; color: var(--ink-2); background: var(--well); }
+  table.data tfoot th, table.data tfoot td { font-weight: 650; border-bottom: 0; }
+  details.more { margin-top: 12px; }
+  details.more summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--brand-text); }
+
+  /* best times */
+  .bt-day + .bt-day { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .bt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+  .bt-name { font-weight: 650; font-size: 16px; }
+  .bt-text { margin-top: 4px; font-size: 16px; text-wrap: pretty; }
+  .strip { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 3px; margin: 12px 0 5px; }
+  .strip span { height: 30px; border-radius: 5px; background: var(--cell); }
+  .strip .best { background: var(--good); }
+  .strip .good { background: var(--good-soft); }
+  .strip .past { opacity: 0.35; }
+  .strip .now { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--ink); }
+  .hours { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 3px; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .hours span { white-space: nowrap; overflow: visible; }
+
+  /* alerts */
+  .alert { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--line); }
+  .alert-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 30px; }
+  .alert:first-child { border-top: 0; padding-top: 2px; }
+  .badge { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: #ffffff; background: var(--s); }
+  .badge.dark-icon { color: #0b0b0b; }
+  .badge.plain { background: var(--well); color: var(--ink-2); }
+  .badge .i { width: 18px; height: 18px; }
+  .alert-title { font-weight: 600; text-wrap: pretty; }
+  .alert-kind { font-size: 12.5px; color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .alert-details { font-size: 14px; color: var(--ink-2); margin-top: 3px; text-wrap: pretty; }
+  .calm { display: flex; gap: 12px; align-items: center; }
+
+  /* tariff bars */
+  .tbars { display: grid; gap: 12px; }
+  .tb-name { font-size: 14.5px; font-weight: 600; }
+  .tb-sub { font-size: 13px; color: var(--ink-2); }
+  .tb-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 5px; }
+  .tb-track { height: 14px; }
+  .tb-fill { height: 14px; border-radius: 0 4px 4px 0; background: var(--brand-text); min-width: 2px; }
+  .tb-fill.now { background: var(--axis); }
+  .tb-val { font-size: 14.5px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .headline { font-size: 18px; font-weight: 600; margin-bottom: 12px; text-wrap: balance; }
+
+  /* the shower */
+  .big-figure { font-size: 30px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; }
+  .big-figure small { font-size: 15px; font-weight: 550; color: var(--ink-2); letter-spacing: 0; margin-left: 4px; }
+
+  /* the footer and setting up */
+  footer { padding-block: 4px 32px; font-size: 13px; color: var(--ink-2); display: grid; gap: 10px; }
+  footer p { max-width: 75ch; }
+  details.customise summary { cursor: pointer; font-weight: 600; color: var(--ink); font-size: 14px; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; }
+  .checks label { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; color: var(--ink); }
+  .checks input { width: 18px; height: 18px; accent-color: var(--brand-text); }
+  .field { display: block; margin: 14px 0 0; font-size: 15px; color: var(--ink-2); }
+  .field input { display: block; width: 100%; margin-top: 6px; font: inherit; font-size: 17px; color: var(--ink); background: var(--well);
+                 border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 8px; }
+  .lead { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+
+  #banner:not(:empty) { padding-top: 12px; }
+  @media (min-width: 720px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .card { padding: 22px; }
+    #card-now, #card-today, #card-best, #card-numbers, .wide { grid-column: 1 / -1; }
+    #card-alerts, #card-shower { align-self: start; }
+  }
+  @media (min-width: 1100px) {
+    .grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    #card-best, #card-numbers { grid-column: span 7; }
+    #card-alerts, #card-tariff, #card-shower { grid-column: span 5; }
+    /* a wall screen: the live flow with the alerts under it, today's charts beside both */
+    .grid.live { grid-template-rows: auto 1fr; }
+    .grid.live #card-now { grid-column: 1 / span 5; grid-row: 1; align-self: start; }
+    .grid.live #card-alerts { grid-column: 1 / span 5; grid-row: 2; }
+    .grid.live #card-today { grid-column: 6 / span 7; grid-row: 1 / span 2; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <div class="row">
-    <div>
-      <h1>Home energy</h1>
-      <div class="updated" id="updated">Loading…</div>
+<header class="top wrap">
+  <div class="top-row">
+    <div class="title">
+      <span class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+      <div>
+        <h1>Home energy</h1>
+        <p class="status" id="status">Loading…</p>
+      </div>
     </div>
-    <div class="pill" id="battery" hidden></div>
+    <button class="chip" id="keep-awake" aria-pressed="false" hidden></button>
   </div>
 </header>
-<main id="main">
-  <section class="card wide"><p class="empty">Loading the latest figures…</p></section>
+<div class="wrap" id="banner"></div>
+<main class="grid wrap" id="main">
+  <section class="card wide"><p class="muted">Loading the latest figures…</p></section>
 </main>
-<footer id="footer"></footer>
+<footer class="wrap" id="footer"></footer>
 <script>
 "use strict";
 const DATA_PARAM = new URLSearchParams(location.search).get("data");
@@ -118,15 +320,29 @@ const NEEDS_KEY = location.hostname.endsWith(".github.io") && !DATA_PARAM;
 const PLAYBOOK = "rrlouisp/life-playbook";     // a key that can see this is refused
 const SOURCE_KEY = "private-source";
 const HIDDEN_KEY = "hidden-alerts";
-const COLOURS = { problem: "var(--problem)", money: "var(--money)", watch: "var(--watch)", reminder: "var(--reminder)" };
+const CARDS_KEY = "hidden-cards";
+const ZONE = "Europe/London";
 const PERIODS = [["yesterday", "Yesterday"], ["this_month", "This month"], ["last_month", "Last month"], ["last_12_months", "12 months"]];
-// Live figures (#165): the inverter's latest reading, about every 5 minutes, from a small script in the
+const CARDS = [["now", "Right now"], ["today", "Today's charts"], ["best", "Best times to use power"], ["alerts", "Alerts"],
+               ["numbers", "The numbers"], ["tariff", "Tariff"], ["shower", "The shower"]];
+// Live figures (#165): the inverter's readings, about every 5 minutes, from a small script in the
 // house's own Google account. Its address is private: it's read from the figures repository with this
-// device's key, never written into this public page.
+// device's key, never written into this public page. Version 2 of the script also gives each day's
+// 5-minute readings and totals, and each month's and year's totals, for the charts.
 const LIVE_EVERY = 5 * 60 * 1000;
-const live = { reading: store("live-last"), error: "", url: "", asked: 0 };
-let wakeLock = null;
+const LATE_MINUTES = 20;            // a reading older than this means the inverter may be off
+const ON_KW = 0.02;                 // anything less counts as nothing flowing
+const FIRST_DAY = "2023-07-01";     // the earliest day the charts go back to
+const live = { url: "", reading: store("live-last"), error: "", asked: 0, version: 0 };
+const days = { shown: "", drawn: "", loaded: {}, error: "" };     // the day charts: shown "" means today
+const extra = { months: {}, years: {} };                        // month and year totals, for the bar charts
+let daily = null, dailyStale = false, wakeLock = null, chart = null, bars = null, resizer = null;
+(() => {
+  const last = store("day-last");
+  if (last && last.date && last.points) { days.loaded[last.date] = last; live.version = last.version || 0; }
+})();
 
+// ---- small helpers
 function esc(text) {
   return String(text ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
@@ -134,16 +350,48 @@ function store(key, value) {
   try { if (value === undefined) return JSON.parse(localStorage.getItem(key) || "null"); localStorage.setItem(key, JSON.stringify(value)); }
   catch (e) { return null; }
 }
-function when(stamp) {
-  const d = new Date(stamp.replace(" ", "T"));
-  return isNaN(d) ? stamp : d.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-}
-function kwh(v) { return v == null ? "–" : (v >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(1)); }
-function gbp(v) { return v == null ? "–" : "£" + (Math.abs(v) >= 100 ? Math.round(v).toLocaleString("en-GB") : v.toFixed(2)); }
-
+function num(v) { const n = Number(v); return v == null || v === "" || isNaN(n) ? null : n; }
 function kw(v) {
-  const n = Number(v);
-  return v == null || isNaN(n) ? "–" : n.toFixed(Math.abs(n) >= 1 ? 1 : 2);
+  const n = num(v);
+  if (n == null) return "–";
+  const a = Math.abs(n);
+  return a < 0.005 ? "0" : n.toFixed(a >= 10 ? 0 : a >= 1 ? 1 : 2);
+}
+function kwh(v) { const n = num(v); return n == null ? "–" : Math.abs(n) >= 100 ? Math.round(n).toLocaleString("en-GB") : n.toFixed(1); }
+function gbp(v) {
+  const n = num(v);
+  if (n == null) return "–";
+  const a = Math.abs(n);
+  return (n < -0.005 ? "−£" : "£") + (a >= 100 ? Math.round(a).toLocaleString("en-GB") : a.toFixed(2));
+}
+function pence(p) { return (Math.round(p * 100) / 100) + "p"; }
+function and(list) { return list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : (list[0] || ""); }
+function message(e) { return String((e && e.message) || e).replace(/\.$/, ""); }
+const DAY_FMT = new Intl.DateTimeFormat("en-CA", { timeZone: ZONE, year: "numeric", month: "2-digit", day: "2-digit" });
+const CLOCK_FMT = new Intl.DateTimeFormat("en-GB", { timeZone: ZONE, hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+const PARTS_FMT = new Intl.DateTimeFormat("en-GB", { timeZone: ZONE, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit",
+                                                    hour: "2-digit", minute: "2-digit", second: "2-digit" });
+function londonDate(d = new Date()) { return DAY_FMT.format(d); }
+function clock(d) { return CLOCK_FMT.format(d); }
+function clockMinute(seconds) { const [h, m] = clock(new Date(seconds * 1000)).split(":"); return +h * 60 + +m; }
+function ukOffset(seconds) {        // seconds ahead of UTC at that moment (3600 in summer time)
+  const p = Object.fromEntries(PARTS_FMT.formatToParts(new Date(seconds * 1000)).map(x => [x.type, x.value]));
+  return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) / 1000 - Math.floor(seconds);
+}
+function shiftDate(date, n) {
+  return new Date(Date.UTC(+date.slice(0, 4), +date.slice(5, 7) - 1, +date.slice(8, 10) + n)).toISOString().slice(0, 10);
+}
+function shortDate(date, withDay = true) {
+  return new Date(date + "T12:00:00Z").toLocaleDateString("en-GB", Object.assign({ day: "numeric", month: "short", timeZone: "UTC" },
+                                                                                withDay ? { weekday: "short" } : {}));
+}
+function dayName(date) {
+  const today = londonDate();
+  return date === today ? "Today" : date === shiftDate(today, -1) ? "Yesterday" : shortDate(date);
+}
+function when(stamp) {
+  const d = new Date(String(stamp || "").replace(" ", "T"));
+  return isNaN(d) ? stamp : d.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 function readingTime(text) {
   // FoxESS's time, e.g. "2026-10-23 17:00:27 BST+0100"
@@ -151,144 +399,747 @@ function readingTime(text) {
   return m ? new Date(`${m[1]}T${m[2]}${m[3]}:${m[4]}`) : null;
 }
 
-function liveCard() {
-  const r = live.reading;
-  if (!live.url && !r) return "";                          // not set up: nothing to show
-  if (!r) return `<section class="card wide" id="live"><h2>Right now</h2>
-    <p class="muted">${esc(live.error || "Getting the latest reading…")}</p></section>`;
-  const at = readingTime(r.time);
-  const clock = at ? at.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/London" }) : "an unknown time";
-  const minutes = at ? (Date.now() - at) / 60000 : Infinity;
-  const buying = Number(r.buying_kw) || 0, selling = Number(r.selling_kw) || 0;
-  const charging = Number(r.battery_charge_kw) || 0, giving = Number(r.battery_discharge_kw) || 0;
-  const unit = " <small>kW</small>";
-  const grid = buying >= 0.05 ? [kw(buying) + unit, "Buying from the grid"]
-             : selling >= 0.05 ? [kw(selling) + unit, "Selling to the grid"] : ["0" + unit, "Grid: nothing in or out"];
-  const battery = charging >= 0.05 ? `charging ${kw(charging)} kW` : giving >= 0.05 ? `giving ${kw(giving)} kW` : "resting";
-  const tiles = [[kw(r.solar_kw) + unit, "Solar now"], [kw(r.house_kw) + unit, "House using"], grid,
-                 [`${Math.round(Number(r.battery_percent) || 0)}<small>%</small>`, "Battery", battery]];
-  const old = minutes > 20 ? `<div class="stale">FoxESS's last reading was at ${esc(clock)}: the inverter or its internet connection may be off.</div>` : "";
-  const problem = live.error ? `<p class="muted">${esc(live.error)} Showing the last reading.</p>` : "";
-  const awake = "wakeLock" in navigator ? `<button class="awake" id="keep-awake" aria-pressed="${!!store("keep-awake")}">${store("keep-awake") ? "Screen stays on" : "Keep the screen on"}</button>` : "";
-  return `<section class="card wide" id="live"><h2>Right now</h2>${old}
-    <div class="tiles">${tiles.map(([v, l, s]) => `<div class="tile"><div class="v">${v}</div><div class="l">${l}</div>${s ? `<div class="s">${esc(s)}</div>` : ""}</div>`).join("")}</div>
-    <p class="muted">FoxESS's reading at ${esc(clock)}. It updates about every 5 minutes.</p>${problem}${awake}</section>`;
+// Line icons (24 × 24, drawn with the text colour)
+const ICONS = {
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  house: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5.5h4V20"/>',
+  grid: '<path d="M12 2v20"/><path d="M2 5h20"/><path d="M3 3v2M7 3v2M17 3v2M21 3v2"/><path d="m19 5-7 7-7-7"/>',
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
+  pound: '<path d="M18 7c0-5.33-8-5.33-8 0"/><path d="M10 7v14"/><path d="M6 21h12"/><path d="M6 13h10"/>',
+  eye: '<path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/>',
+  bell: '<path d="M10.27 21a2 2 0 0 0 3.46 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  left: '<path d="m15 18-6-6 6-6"/>',
+  right: '<path d="m9 18 6-6-6-6"/>',
+  chart: '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/>',
+  table: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M12 3v18"/>',
+  screen: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
+};
+function icon(name, label) {
+  return `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${label ? `role="img" aria-label="${esc(label)}"` : 'aria-hidden="true"'}>${ICONS[name]}</svg>`;
+}
+function card(id, title, body, tools = "", cls = "") {
+  return `<section class="card ${cls}" id="card-${id}" aria-labelledby="h-${id}"><div class="card-head"><h2 id="h-${id}">${title}</h2>${tools}</div>${body}</section>`;
+}
+function tile(label, value, unit, key, sub) {
+  return `<div class="tile"><div class="tile-label">${key ? `<i class="sw" style="--c: var(--c-${key})"></i>` : ""}${esc(label)}</div>
+    <div class="tile-value">${value}${unit ? `<small>${unit}</small>` : ""}</div>${sub ? `<div class="tile-sub">${esc(sub)}</div>` : ""}</div>`;
+}
+function shareBar(title, parts) {
+  // a part-to-whole bar: [[colour key, label, amount], ...]
+  const shown = parts.filter(p => p[2] > 0.005), total = shown.reduce((a, p) => a + p[2], 0);
+  if (!total) return "";
+  const pct = shown.map(p => Math.round(p[2] / total * 100));
+  return `<div class="share"><div class="share-title">${esc(title)}</div>
+    <div class="share-bar" role="img" aria-label="${esc(title + ": " + shown.map((p, i) => `${p[1]} ${pct[i]}%`).join(", "))}">${shown.map(p =>
+      `<span style="flex: ${(p[2] / total * 1000).toFixed(1)} 1 0; --c: var(--c-${p[0]})"></span>`).join("")}</div>
+    <ul class="keys">${shown.map((p, i) => `<li><i class="sw" style="--c: var(--c-${p[0]})"></i><b>${pct[i]}%</b>${esc(p[1])}</li>`).join("")}</ul></div>`;
 }
 
+// ---- right now: where the power is going
+function flows(r) {
+  const v = k => Math.max(0, num(r[k]) || 0);
+  return { solar: v("solar_kw"), house: v("house_kw"), buy: v("buying_kw"), sell: v("selling_kw"),
+           charge: v("battery_charge_kw"), give: v("battery_discharge_kw"), pct: num(r.battery_percent) };
+}
+
+function story(r) {
+  const f = flows(r);
+  if (f.house < ON_KW) {
+    const spare = [f.charge >= ON_KW && "charging the battery", f.sell >= ON_KW && "going to the grid"].filter(Boolean);
+    return f.solar >= 0.05 && spare.length ? `Solar is making ${kw(f.solar)} kW. The house needs almost nothing, so it's ${and(spare)}.`
+                                           : "The house is using almost nothing right now.";
+  }
+  const from = [f.give >= ON_KW && "the battery", f.buy >= ON_KW && "the grid"].filter(Boolean);
+  const spare = [f.charge >= ON_KW && "charging the battery", f.sell >= ON_KW && "going to the grid"].filter(Boolean);
+  let text;
+  if (f.solar < 0.05) text = `No solar right now: the house is running on ${and(from) || "the battery"}.`;
+  else if (f.solar >= f.house * 0.97) text = `Solar is covering everything the house is using${spare.length ? `, and the spare is ${and(spare)}` : ""}.`;
+  else text = `Solar is covering about ${Math.round(f.solar / f.house * 100)}% of what the house is using. The rest is coming from ${and(from) || "the battery"}.`;
+  if (f.charge >= ON_KW && f.buy >= ON_KW && f.solar < 0.05) text += " The battery is charging from the grid.";
+  return text;
+}
+
+function flowSvg(r) {
+  const f = flows(r);
+  const grid = f.buy >= ON_KW ? { kw: f.buy, out: false, lab: "Buying" } : f.sell >= ON_KW ? { kw: f.sell, out: true, lab: "Selling" }
+                              : { kw: 0, lab: "Grid idle" };
+  const bat = f.give >= ON_KW ? { kw: f.give, out: false, lab: `Giving ${kw(f.give)} kW` }
+            : f.charge >= ON_KW ? { kw: f.charge, out: true, lab: `Charging ${kw(f.charge)} kW` } : { kw: 0, lab: "Resting" };
+  // each line runs from where the power comes from to where it goes, so its dots move forwards
+  const lines = [
+    ["solar", f.solar, [180, 114], [180, 165]],
+    ["home", f.house, [187, 172], [267, 172]],
+    ["grid", grid.kw].concat(grid.out ? [[173, 172], [93, 172]] : [[93, 172], [173, 172]]),
+    ["battery", bat.kw].concat(bat.out ? [[180, 179], [180, 227]] : [[180, 227], [180, 179]]),
+  ];
+  const line = ([key, power, a, b]) => {
+    const on = power >= ON_KW, speed = 12 + 18 * Math.sqrt(Math.min(power, 12));      // pixels a second
+    const style = `style="stroke: var(--c-${key})${on ? `; --dur: ${(13.01 / speed).toFixed(2)}s` : ""}"`;
+    const xy = `x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"`;
+    if (!on) return `<line class="track" ${xy} ${style}/>`;
+    const deg = Math.round(Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI);
+    return `<line class="track on" ${xy} ${style}/><line class="dots" ${xy} ${style}/>` +
+      `<path class="chev" d="M-3.5 -4.5 L1.5 0 L-3.5 4.5" transform="translate(${(a[0] + b[0]) / 2} ${(a[1] + b[1]) / 2}) rotate(${deg})" ${style}/>`;
+  };
+  const node = (key, x, y, glyph, on) => `<g class="node${on ? "" : " idle"}" style="--c: var(--c-${key})">
+      <circle class="ring" cx="${x}" cy="${y}" r="30"/><g class="glyph" transform="translate(${x - 12} ${y - 12})">${glyph}</g></g>`;
+  const words = (x, y1, value, unit, y2, label) =>
+    `<text class="val" x="${x}" y="${y1}">${value}${unit ? `<tspan dx="3">${unit}</tspan>` : ""}</text><text class="lab" x="${x}" y="${y2}">${esc(label)}</text>`;
+  const pct = f.pct == null ? null : Math.max(0, Math.min(100, f.pct));
+  const level = pct == null ? "" : `<rect class="solid" x="4.5" y="9" width="${(13 * pct / 100).toFixed(1)}" height="6" rx="1"/>`;
+  const label = `Solar ${kw(f.solar)} kW, house ${kw(f.house)} kW, ${grid.kw ? `${grid.lab.toLowerCase()} ${kw(grid.kw)} kW ${grid.out ? "to" : "from"} the grid`
+    : "nothing to or from the grid"}, battery ${pct == null ? "level unknown" : Math.round(pct) + "%"} and ${bat.lab.toLowerCase()}.`;
+  return `<svg viewBox="0 0 360 340" role="img" aria-label="${esc(label)}">
+    ${lines.map(line).join("")}
+    <circle class="hub" cx="180" cy="172" r="6"/>
+    ${node("solar", 180, 84, ICONS.sun, f.solar >= ON_KW)}
+    ${node("grid", 62, 172, ICONS.grid, grid.kw >= ON_KW)}
+    ${node("home", 298, 172, ICONS.house, f.house >= ON_KW)}
+    ${node("battery", 180, 258, `<rect x="2" y="6.5" width="18" height="11" rx="2.5"/><path d="M22.5 10.5v3"/>${level}`, bat.kw >= ON_KW || (pct || 0) > 0)}
+    ${words(180, 42, kw(f.solar), "kW", 18, "Solar")}
+    ${words(62, 226, kw(grid.kw), "kW", 245, grid.lab)}
+    ${words(298, 226, kw(f.house), "kW", 245, "House")}
+    ${words(180, 312, pct == null ? "–" : Math.round(pct) + "%", "", 331, bat.lab)}
+  </svg>`;
+}
+
+function nowCard() {
+  const r = live.reading;
+  if (!r) return live.url ? card("now", "Right now", `<p class="muted">${esc(live.error || "Getting the latest reading…")}</p>`) : "";
+  const at = readingTime(r.time);
+  const late = !at || Date.now() - at > LATE_MINUTES * 60000;
+  const time = at ? clock(at) + (londonDate(at) !== londonDate() ? " on " + shortDate(londonDate(at)) : "") : "an unknown time";
+  const f = flows(r);
+  const fromSolar = Math.min(f.solar, f.house), fromBattery = Math.min(f.give, f.house - fromSolar);
+  const share = f.house >= ON_KW ? shareBar("Where the house's power is coming from",
+    [["solar", "Solar", fromSolar], ["battery", "Battery", fromBattery], ["grid", "Grid", Math.max(0, f.house - fromSolar - fromBattery)]]) : "";
+  return card("now", "Right now", `<div class="now-grid">
+      <figure class="flow">${flowSvg(r)}</figure>
+      <div class="stack">
+        <p class="story">${esc(story(r))}</p>
+        ${share}
+        ${late ? `<div class="note">${icon("alert")}<span>FoxESS's last reading was at ${esc(time)}. The inverter or its internet connection may be off.</span></div>` : ""}
+        <p class="fine">FoxESS's reading at ${esc(time)}. New readings come about every 5 minutes.${live.error ? ` ${esc(live.error)} Showing the last reading.` : ""}</p>
+      </div></div>`);
+}
+
+// ---- today (or another day): totals, money and the 5-minute charts
+function usedKwh(t) {
+  const need = ["solar", "gave", "bought", "charged", "sold"];
+  return need.every(k => num(t[k]) != null) ? Math.max(0, t.solar + t.gave + t.bought - t.charged - t.sold) : null;
+}
+function priceAt(bands, minute) {
+  for (const [start, end, p] of bands || []) {
+    if (start === end) return p;
+    if (start < end && minute >= start && minute < end) return p;
+    if (start > end && (minute >= start || minute < end)) return p;
+  }
+  return null;
+}
+function steps(d, fn) {
+  // each 5-minute step of a day: its length in hours and its middle (seconds after midnight)
+  const t = d.points.t;
+  for (let i = 1; i < t.length; i++) {
+    const h = (t[i] - t[i - 1]) / 3600;
+    if (h > 0 && h <= 0.5) fn(i, h, (t[i] + t[i - 1]) / 2);
+  }
+}
+function at(d, col, i) { const a = d.points[col]; return a && a[i] != null ? Math.max(0, +a[i]) : 0; }
+function energy(d, col, i, h) { return (at(d, col, i) + at(d, col, i - 1)) / 2 * h; }
+
+function dayMoney(d) {
+  // the day's money at today's prices: FoxESS's meter totals, priced by when the power was used
+  const prices = daily && daily.prices;
+  if (!prices || !prices.import_bands || !d.points || !d.totals) return null;
+  const sum = { buy: [0, 0], sell: [0, 0], use: [0, 0] };
+  steps(d, (i, h, mid) => {
+    const minute = clockMinute(d.start + mid);
+    const pi = priceAt(prices.import_bands, minute), pe = priceAt(prices.export_bands, minute) || 0;
+    if (pi == null) return;
+    for (const [k, col, p] of [["buy", "buying", pi], ["sell", "selling", pe], ["use", "house", pi]]) {
+      const e = energy(d, col, i, h);
+      sum[k][0] += e; sum[k][1] += e * p;
+    }
+  });
+  const flat = priceAt(prices.import_bands, 12 * 60) || 0;
+  const avg = (k, fallback) => sum[k][0] > 0.01 ? sum[k][1] / sum[k][0] : fallback;
+  const t = d.totals, used = usedKwh(t);
+  if (num(t.bought) == null || used == null) return null;
+  const paid = t.bought * avg("buy", flat), earned = (t.sold || 0) * avg("sell", priceAt(prices.export_bands, 12 * 60) || 0);
+  const standing = prices.standing_p_day || 0;
+  return { spent: (paid + standing - earned) / 100, saved: (used * avg("use", flat) - paid + earned) / 100, standing };
+}
+
+function priceWords() {
+  const p = daily && daily.prices;
+  if (!p) return "";
+  const rates = [...new Set((p.import_bands || []).map(b => b[2]))].sort((a, b) => a - b);
+  const exp = [...new Set((p.export_bands || []).map(b => b[2]))];
+  const unit = rates.length === 1 ? `${pence(rates[0])} a unit` : `${pence(rates[0])} to ${pence(rates[rates.length - 1])} a unit`;
+  return `Money at today's prices (${esc(p.import)}: ${unit}, ${pence(p.standing_p_day)} a day; ${exp.every(v => !v) ? "exports aren't paid" : `exports earn ${exp.map(pence).join(" to ")}`}).`;
+}
+
+function todayCard() {
+  if (!live.url && !live.reading) return "";
+  const today = londonDate(), want = days.shown || today;
+  const date = days.loaded[want] ? want : days.loaded[days.drawn] ? days.drawn : want;     // keep the last chart while another day loads
+  const d = days.loaded[date];
+  days.drawn = d ? date : "";
+  const view = store("day-view") === "table" ? "table" : "chart";
+  if (live.version === 1) {
+    return card("today", "Today's charts", `<p class="muted">The charts need the live script's update: part 5 of the walk-through, about 3 minutes at a computer.
+      Right now's figures keep working until then.</p>`);
+  }
+  const tools = `<div class="tools">
+      <button class="icon-btn" id="day-back" aria-label="The day before"${want <= FIRST_DAY ? " disabled" : ""}>${icon("left")}</button>
+      <button class="icon-btn" id="day-next" aria-label="The day after"${want >= today ? " disabled" : ""}>${icon("right")}</button>
+      <div class="seg icons" role="group" aria-label="Show the day as">
+        <button data-view="chart" aria-pressed="${view === "chart"}" aria-label="Charts">${icon("chart")}</button>
+        <button data-view="table" aria-pressed="${view === "table"}" aria-label="A table">${icon("table")}</button>
+      </div></div>`;
+  const title = esc(dayName(want));
+  if (!d) return card("today", title, `<p class="muted">${esc(days.error || "Getting the day's readings…")}</p>`, tools);
+  const t = d.totals || {}, money = dayMoney(d), isToday = d.date === today;
+  const tiles = [tile("Solar made", kwh(t.solar), "kWh", "solar"), tile("House used", kwh(usedKwh(t)), "kWh", "home"),
+                 tile("Bought", kwh(t.bought), "kWh", "grid"), tile("Sold", kwh(t.sold), "kWh", "grid")];
+  if (money) tiles.push(tile(isToday ? "Spent so far" : "Spent", gbp(money.spent), "", "", `with the ${pence(money.standing)} daily charge`),
+                        tile("Saved", gbp(money.saved), "", "", "by the solar and battery"));
+  const body = `<div class="tiles">${tiles.join("")}</div>` +
+    (view === "table" ? dayTable(d) : `<div class="charts" id="today-charts" tabindex="0" role="group"
+       aria-label="${esc(dayName(date))}'s readings every 5 minutes. Use the left and right arrow keys to move along the day."></div>`) +
+    `<p class="fine" style="margin-top: 12px">${view === "chart" ? "Drag across the charts to see any 5 minutes. " : ""}Readings every 5 minutes from FoxESS; the day's totals from its meters. ${priceWords()}</p>` +
+    (days.error ? `<p class="fine" role="status" style="margin-top: 6px">${esc(days.error)}</p>` : "");
+  return card("today", title, body, tools, want !== date ? "busy" : "");
+}
+
+function hourRows(d) {
+  // kWh in each hour from the 5-minute readings, scaled so each column adds up to FoxESS's meter total
+  const cols = { solar: "solar", house: "house", bought: "buying", sold: "selling", charged: "charging", gave: "giving" };
+  const rows = [];
+  steps(d, (i, h, mid) => {
+    const n = Math.floor(mid / 3600);
+    const row = rows[n] || (rows[n] = { n, level: null });
+    for (const [name, col] of Object.entries(cols)) row[name] = (row[name] || 0) + energy(d, col, i, h);
+    const level = d.points.battery && d.points.battery[i];
+    if (level != null) row.level = level;
+  });
+  const t = d.totals || {}, meter = { solar: t.solar, house: usedKwh(t), bought: t.bought, sold: t.sold, charged: t.charged, gave: t.gave };
+  const list = rows.filter(Boolean);
+  for (const [name, total] of Object.entries(meter)) {
+    const sum = list.reduce((a, r) => a + (r[name] || 0), 0);
+    if (num(total) != null && sum > 0.05) list.forEach(r => { r[name] = (r[name] || 0) * total / sum; });
+  }
+  return list;
+}
+
+function dayTable(d) {
+  const rows = hourRows(d), t = d.totals || {};
+  const cell = v => `<td>${v == null ? "–" : v < 0.05 ? "0" : v.toFixed(1)}</td>`;
+  return `<div class="table-wrap"><table class="data">
+    <caption class="sr-only">${esc(dayName(d.date))}, kWh in each hour</caption>
+    <thead><tr><th scope="col">Hour</th><th scope="col">Solar</th><th scope="col">House</th><th scope="col">Bought</th><th scope="col">Sold</th>
+      <th scope="col">Battery in</th><th scope="col">Battery out</th><th scope="col">Level</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${clock(new Date((d.start + r.n * 3600) * 1000))}</td>${cell(r.solar)}${cell(r.house)}${cell(r.bought)}${cell(r.sold)}${cell(r.charged)}${cell(r.gave)}<td>${r.level == null ? "–" : Math.round(r.level) + "%"}</td></tr>`).join("")}</tbody>
+    <tfoot><tr><th scope="row">Day</th>${cell(num(t.solar))}${cell(usedKwh(t))}${cell(num(t.bought))}${cell(num(t.sold))}${cell(num(t.charged))}${cell(num(t.gave))}<td></td></tr></tfoot>
+  </table></div><p class="fine" style="margin-top: 8px">kWh in each hour, worked out from the 5-minute readings and scaled to FoxESS's meters for the day. Level: the battery at the end of the hour.</p>`;
+}
+
+// ---- the charts (drawn once the page knows how wide they are)
+function niceStep(peak) {
+  const p = Math.pow(10, Math.floor(Math.log10(peak / 4)));
+  let best = null;
+  for (const m of [1, 2, 5, 2.5, 4, 3, 10, 20]) {        // the nicer steps first, so they win a tie
+    const step = m * p, n = Math.ceil(peak / step - 1e-9);
+    if (n >= 3 && n <= 5 && (!best || n * step < best[1] - 1e-9)) best = [step, n * step];
+  }
+  return best ? best[0] : 10 * p;
+}
+function lineAndArea(t, vals, x, y, y0) {
+  // paths that break where a reading is missing or the gap is over 20 minutes
+  let line = "", area = "", seg = [];
+  const flush = () => {
+    if (seg.length > 1) {
+      const pts = seg.map(p => p.join(",")).join("L");
+      line += "M" + pts;
+      area += `M${seg[0][0]},${y0}L${pts}L${seg[seg.length - 1][0]},${y0}Z`;
+    }
+    seg = [];
+  };
+  for (let i = 0; i < t.length; i++) {
+    if (vals[i] == null || (i && t[i] - t[i - 1] > 1200)) flush();
+    if (vals[i] != null) seg.push([x(t[i]).toFixed(1), y(vals[i]).toFixed(1)]);
+  }
+  flush();
+  return { line, area };
+}
+
+function buildChart(d, W) {
+  const P = d.points, t = P.t;
+  // FoxESS sometimes puts the house below zero for a few minutes on sunny days: every power is drawn as zero or more
+  const col = name => t.map((_, i) => P[name] && P[name][i] != null ? Math.max(0, +P[name][i]) : null);
+  const net = (a, b) => t.map((_, i) => (P[a] && P[a][i] != null) || (P[b] && P[b][i] != null)
+    ? Math.max(0, +(P[a] && P[a][i]) || 0) - Math.max(0, +(P[b] && P[b][i]) || 0) : null);
+  const S = { solar: col("solar"), house: col("house"), grid: net("buying", "selling"), battery: net("giving", "charging"), level: col("battery"),
+              roof1: col("roof1"), roof2: col("roof2") };
+  const span = (d.end - d.start) || 86400, padL = 30, padR = 8, plotW = Math.max(60, W - padL - padR), PT = 6, PB = 6;
+  const x = s => padL + Math.max(0, Math.min(span, s)) / span * plotW;
+  const hi = a => Math.max(0, ...a.filter(v => v != null && v > 0.05)), lo = a => Math.max(0, ...a.filter(v => v != null && v < -0.05).map(v => -v));
+  const step = niceStep(Math.max(hi(S.solar), hi(S.house), hi(S.grid), lo(S.grid), hi(S.battery), lo(S.battery), 0.4));
+  const up = v => Math.ceil(v / step - 1e-9) * step;
+  const top1 = up(Math.max(hi(S.solar), hi(S.house))) || step;
+  const k = (W < 520 ? 128 : 156) / top1;           // pixels a kW, the same in the three power charts
+  const last = (() => { for (let i = t.length - 1; i >= 0; i--) if (S.house[i] != null || S.solar[i] != null) return i; return t.length - 1; })();
+  const isToday = d.date === londonDate();
+  // clock hours along the bottom (summer-time changes make two days a year 23 or 25 hours long)
+  const hours = (W < 520 ? [0, 6, 12, 18, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24]).map(h => {
+    const s = h * 3600 - (ukOffset(d.start + h * 3600) - ukOffset(d.start));
+    return { h, s: Math.min(span, s) };
+  });
+  const sumKwh = vals => { let e = 0; for (let i = 1; i < t.length; i++) { const h = (t[i] - t[i - 1]) / 3600; if (h > 0 && h <= 0.5) e += ((vals[i] || 0) + (vals[i - 1] || 0)) / 2 * h; } return e; };
+  const kwPanel = (spec) => {
+    if (!spec.top && !spec.bottom) spec.top = step;
+    const top = spec.top, bottom = spec.bottom || 0, h = Math.max(spec.min || 40, (top + bottom) * k);
+    const kk = h / (top + bottom);
+    const y = v => PT + (top - v) * kk;
+    const ticks = [];
+    for (let v = -bottom; v <= top + 1e-9; v += step) ticks.push(Math.round(v * 100) / 100);
+    return Object.assign(spec, { h: h + PT + PB, y, y0: y(0), ticks, fmt: v => String(Math.abs(v)) });
+  };
+  const roofs = S.roof1.some(v => v) || S.roof2.some(v => v);
+  const solarTotal = num((d.totals || {}).solar), r1 = sumKwh(S.roof1), r2 = sumKwh(S.roof2), scale = solarTotal && r1 + r2 > 0.05 ? solarTotal / (r1 + r2) : 1;
+  const panels = [
+    kwPanel({ title: "Solar and house", unit: "kW", top: top1, series: [["solar", S.solar, true], ["home", S.house, false]],
+              legend: [["solar", "Solar"], ["home", "House"]],
+              note: roofs ? `Roof 1 ${kwh(r1 * scale)} · Roof 2 ${kwh(r2 * scale)} kWh` : "" }),
+    kwPanel({ title: "Grid", unit: "kW", top: up(hi(S.grid)), bottom: up(lo(S.grid)), series: [["grid", S.grid, true]],
+              dirs: ["Buying", "Selling"], min: 36 }),
+    kwPanel({ title: "Battery", unit: "kW", top: up(hi(S.battery)), bottom: up(lo(S.battery)), series: [["battery", S.battery, true]],
+              dirs: ["Giving", "Charging"], min: 36,
+              note: d.totals ? `In ${kwh(d.totals.charged)} · Out ${kwh(d.totals.gave)} kWh` : "" }),
+  ];
+  const lh = 64;
+  panels.push({ title: "Battery level", unit: "%", series: [["battery", S.level, true]], h: lh + PT + PB, y: v => PT + (100 - v) / 100 * lh,
+                y0: PT + lh, ticks: [0, 50, 100], fmt: v => String(v) });
+  return { d, W, t, S, span, padL, plotW, x, panels, hours, last, isToday };
+}
+
+function chartSvg(m, p, n) {
+  const W = m.W, right = m.padL + m.plotW;
+  let g = m.hours.map(hh => `<line class="gl" x1="${m.x(hh.s).toFixed(1)}" x2="${m.x(hh.s).toFixed(1)}" y1="${p.y(p.ticks[p.ticks.length - 1])}" y2="${p.y(p.ticks[0])}"/>`).join("");
+  g += p.ticks.map(v => `<line class="${v === 0 && p.unit === "kW" ? "zero" : "gl"}" x1="${m.padL}" x2="${right}" y1="${p.y(v).toFixed(1)}" y2="${p.y(v).toFixed(1)}"/>` +
+    `<text class="tick" x="${m.padL - 6}" y="${(p.y(v) + 3.5).toFixed(1)}" text-anchor="end">${p.fmt(v)}</text>`).join("");
+  if (p.dirs) {
+    if (p.top) g += `<text class="dir" x="${m.padL + 5}" y="${(p.y(p.top) + 12).toFixed(1)}">${p.dirs[0]}</text>`;
+    if (p.bottom) g += `<text class="dir" x="${m.padL + 5}" y="${(p.y(-p.bottom) - 5).toFixed(1)}">${p.dirs[1]}</text>`;
+  }
+  let marks = "";
+  for (const [key, vals, area] of p.series) {
+    const { line, area: fill } = lineAndArea(m.t, vals, m.x, p.y, p.y0);
+    if (area && fill) marks += `<path class="ar" d="${fill}" style="fill: var(--c-${key})"/>`;
+    if (line) marks += `<path class="ln" d="${line}" style="stroke: var(--c-${key})"/>`;
+    const v = vals[m.last];
+    if (m.isToday && v != null) marks += `<circle class="end" cx="${m.x(m.t[m.last]).toFixed(1)}" cy="${p.y(v).toFixed(1)}" r="4" style="fill: var(--c-${key})"/>`;
+  }
+  const label = `${p.title}, ${p.unit}, through the day.` + (p.dirs ? ` Above the line: ${p.dirs[0].toLowerCase()}; below: ${p.dirs[1].toLowerCase()}.` : "");
+  return `<svg class="plot" id="plot-${n}" width="${W}" height="${p.h.toFixed(0)}" viewBox="0 0 ${W} ${p.h.toFixed(0)}" role="img" aria-label="${esc(label)}">${g}${marks}<g class="hover"></g></svg>`;
+}
+
+function watchSize() {
+  // charts are drawn at their real width, so they're drawn again when it changes (turning a tablet).
+  // Only the charts on the page now are watched: a screen left on for days would otherwise keep
+  // every replaced chart in memory, one every 5 minutes.
+  if (!("ResizeObserver" in window)) return;
+  if (!resizer) {
+    resizer = new ResizeObserver(() => requestAnimationFrame(() => {
+      const b = document.getElementById("today-charts");
+      if (b && chart && Math.abs(b.clientWidth - chart.W) > 3) drawCharts();
+      const p = document.getElementById("period-bars");
+      if (p && bars && Math.abs(p.clientWidth - bars.W) > 3) drawBars();
+    }));
+  }
+  resizer.disconnect();
+  for (const id of ["today-charts", "period-bars"]) { const el = document.getElementById(id); if (el) resizer.observe(el); }
+}
+
+function drawCharts() {
+  const box = document.getElementById("today-charts");
+  if (!box) { chart = null; return; }
+  const d = days.loaded[days.drawn];
+  if (!d) return;
+  if (!d.points || !d.points.t || d.points.t.length < 2) { box.innerHTML = `<p class="muted">No readings for this day yet.</p>`; chart = null; return; }
+  const W = Math.floor(box.clientWidth);
+  if (W < 120) return;
+  chart = buildChart(d, W);
+  const m = chart;
+  const axis = `<svg class="plot" width="${W}" height="18" viewBox="0 0 ${W} 18" aria-hidden="true">${m.hours.map((hh, i) =>
+    `<text class="tick" x="${m.x(hh.s).toFixed(1)}" y="13" text-anchor="${i === 0 ? "start" : i === m.hours.length - 1 ? "end" : "middle"}">${String(hh.h).padStart(2, "0")}:00</text>`).join("")}</svg>`;
+  box.innerHTML = `<div class="readout" id="readout" aria-live="off"></div>` + m.panels.map((p, n) => `<div class="panel">
+      <div class="panel-head"><span class="panel-title">${p.title}<small>${p.unit}</small></span>${p.legend ? `<ul class="keys">${p.legend.map(([key, name]) =>
+        `<li><i class="lk" style="--c: var(--c-${key})"></i>${name}</li>`).join("")}</ul>` : ""}${p.note ? `<span class="fine">${p.note}</span>` : ""}</div>
+      ${chartSvg(m, p, n)}</div>`).join("") + axis;
+  watchSize();
+  wireCrosshair(box);
+  showAt(null);
+}
+
+function showAt(i) {
+  const m = chart, box = document.getElementById("readout");
+  if (!m || !box) return;
+  const k = i == null ? m.last : i, S = m.S;
+  const time = clock(new Date((m.d.start + m.t[k]) * 1000));
+  const g = S.grid[k], b = S.battery[k];
+  const row = (key, value, words) => `<span class="ro"><i class="lk" style="--c: var(--c-${key})"></i><b>${value}</b>${words}</span>`;
+  box.innerHTML = `<span class="when">${i == null && m.isToday ? "Latest, " : ""}${time}</span>` +
+    row("solar", kw(S.solar[k]), "kW solar") + row("home", kw(S.house[k]), "kW house") +
+    row("grid", Math.abs(g || 0) < ON_KW ? "0" : kw(Math.abs(g)), g > ON_KW ? "kW buying" : g < -ON_KW ? "kW selling" : "kW grid") +
+    row("battery", Math.abs(b || 0) < ON_KW ? "0" : kw(Math.abs(b)), b > ON_KW ? "kW from the battery" : b < -ON_KW ? "kW charging" : "kW battery") +
+    row("battery", S.level[k] == null ? "–" : Math.round(S.level[k]) + "%", "battery level");
+  m.panels.forEach((p, n) => {
+    const hover = document.querySelector(`#plot-${n} .hover`);
+    if (!hover) return;
+    if (i == null) { hover.innerHTML = ""; return; }
+    const x = m.x(m.t[k]).toFixed(1);
+    hover.innerHTML = `<line class="cross" x1="${x}" x2="${x}" y1="0" y2="${p.h.toFixed(0)}"/>` + p.series.map(([key, vals]) => vals[k] == null ? "" :
+      `<circle class="end" cx="${x}" cy="${p.y(vals[k]).toFixed(1)}" r="4" style="fill: var(--c-${key})"/>`).join("");
+  });
+  m.focus = i;
+}
+
+function nearest(t, s) {
+  let a = 0, b = t.length - 1;
+  while (b - a > 1) { const mid = (a + b) >> 1; if (t[mid] < s) a = mid; else b = mid; }
+  return Math.abs(t[a] - s) <= Math.abs(t[b] - s) ? a : b;
+}
+
+function wireCrosshair(box) {
+  let timer = null;
+  const pick = e => {
+    const m = chart, plot = box.querySelector(".plot");
+    if (!m || !plot) return;
+    const left = plot.getBoundingClientRect().left;
+    showAt(Math.min(m.last, nearest(m.t, (e.clientX - left - m.padL) / m.plotW * m.span)));
+  };
+  box.onpointerdown = e => { clearTimeout(timer); pick(e); };
+  box.onpointermove = e => { if (e.pointerType !== "pen" || e.pressure > 0) pick(e); };   // touch moves only come while touching
+  box.onpointerleave = e => { if (e.pointerType === "mouse") showAt(null); };
+  box.onpointerup = box.onpointercancel = e => { if (e.pointerType !== "mouse") { clearTimeout(timer); timer = setTimeout(() => showAt(null), 4000); } };
+  box.onkeydown = e => {
+    const m = chart;
+    if (!m) return;
+    const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -12, PageDown: 12 };
+    let k = m.focus == null ? m.last : m.focus;
+    if (e.key in moves) k += moves[e.key] * (e.shiftKey ? 12 : 1);
+    else if (e.key === "Home") k = 0;
+    else if (e.key === "End") k = m.last;
+    else if (e.key === "Escape") { showAt(null); return; }
+    else return;
+    e.preventDefault();
+    showAt(Math.max(0, Math.min(m.last, k)));
+  };
+  box.onblur = () => showAt(null);
+}
+
+// ---- the best times to use power
+function bestTimesCard(plan) {
+  if (!plan || !plan.days) return card("best", "Best times to use power", `<p class="muted">No forecast yet.</p>`);
+  const today = londonDate(), hourNow = +clock(new Date()).slice(0, 2);
+  const block = day => {
+    const byHour = Object.fromEntries((day.hours || []).map(h => [h.hour.slice(0, 2), h]));
+    const cells = [], labels = [];
+    for (let h = 6; h < 24; h++) {
+      const key = String(h).padStart(2, "0"), hour = byHour[key];
+      const cls = (hour ? hour.rating : "past") + (day.date === today && h === hourNow ? " now" : "");
+      const tip = hour ? `${key}:00, ${hour.rating}: about ${Math.round(hour.pence)}p a unit, solar ${hour.solar_kwh} kWh` : `${key}:00, gone`;
+      cells.push(`<span class="${esc(cls)}" title="${esc(tip)}"></span>`);
+      labels.push(`<span>${h % 3 === 0 ? key : ""}</span>`);
+    }
+    return `<div class="bt-day"><div class="bt-head"><span class="bt-name">${esc(day.label)}</span>
+        <span class="fine">Solar forecast about ${kwh(day.solar_kwh)} kWh${day.spare_kwh ? `, about ${kwh(day.spare_kwh)} kWh spare` : ""}</span></div>
+      <p class="bt-text">${esc(day.text)}</p>
+      <div class="strip" role="img" aria-label="${esc(`${day.label}, hour by hour from 6am: ${(day.hours || []).map(h => `${h.hour} ${h.rating}`).join(", ") || "no hours left"}`)}">${cells.join("")}</div>
+      <div class="hours" aria-hidden="true">${labels.join("")}</div></div>`;
+  };
+  const tonight = plan.battery_tonight && plan.battery_tonight.text
+    ? `<div class="bt-day"><div class="bt-head"><span class="bt-name">Battery tonight</span></div><p class="bt-text">${esc(plan.battery_tonight.text)}</p>
+       <p class="fine" style="margin-top: 4px">A suggestion only: nothing is changed on the inverter.</p></div>` : "";
+  return card("best", "Best times to use power", plan.days.map(block).join("") + tonight +
+    `<ul class="keys" style="margin-top: 12px"><li><i class="sw" style="--c: var(--good)"></i>Best: spare solar</li>
+      <li><i class="sw" style="--c: var(--good-soft)"></i>Good: partly solar or a cheaper rate</li><li><i class="sw" style="--c: var(--cell)"></i>Normal price</li></ul>
+    <p class="fine" style="margin-top: 8px">For the washing machine, dishwasher and other big things. Worked out ${esc(when(plan.made || ""))}.</p>`);
+}
+
+// ---- alerts
+const KINDS = { problem: ["alert", "var(--critical)", "Problem"], money: ["pound", "var(--good)", "Money"], watch: ["eye", "var(--warning)", "Keep an eye on"],
+                reminder: ["bell", "", "Reminder"] };
 function alertsCard(alerts) {
   const hidden = store(HIDDEN_KEY) || {};
   const shown = alerts.filter(a => !hidden[a.id]);
-  if (!shown.length) return `<section class="card"><h2>Alerts</h2><p class="big">Nothing needs you</p>
-    <p class="muted">Alerts appear here when something needs a look: a fault, a cheaper deal, a contract ending.</p></section>`;
-  return `<section class="card"><h2>Alerts (${shown.length})</h2>${shown.map(a => `
-    <div class="alert"><span class="dot" style="background:${COLOURS[a.level] || "var(--muted)"}"></span>
-      <div class="text"><div class="title">${esc(a.text)}</div><div class="muted">${esc(a.details)}</div></div>
-      <button data-hide="${esc(a.id)}" aria-label="Hide this alert">Hide</button></div>`).join("")}</section>`;
+  if (!shown.length) return card("alerts", "Alerts", `<div class="calm"><span class="badge" style="--s: var(--good)">${icon("check")}</span>
+      <div><p class="alert-title">Nothing needs you</p><p class="alert-details">Alerts appear here when something needs a look: a fault, a cheaper deal, a contract ending.</p></div></div>`);
+  return card("alerts", `Alerts <span class="muted">(${shown.length})</span>`, `<div>${shown.map(a => {
+    const [ic, colour, kind] = KINDS[a.level] || KINDS.reminder;
+    return `<div class="alert"><span class="badge${colour ? (a.level === "watch" ? " dark-icon" : "") : " plain"}" style="--s: ${colour || "var(--well)"}">${icon(ic)}</span>
+      <div><div class="alert-top"><p class="alert-kind">${kind}</p><button class="link-btn" data-hide="${esc(a.id)}" aria-label="Hide this alert">Hide</button></div>
+        <p class="alert-title">${esc(a.text)}</p>${a.details ? `<p class="alert-details">${esc(a.details)}</p>` : ""}</div></div>`;
+  }).join("")}</div>`);
 }
 
-function dayBlock(day) {
-  const byHour = Object.fromEntries((day.hours || []).map(h => [h.hour.slice(0, 2), h]));
-  const cells = [], labels = [];
-  for (let h = 6; h < 24; h++) {
-    const key = String(h).padStart(2, "0"), hour = byHour[key];
-    const cls = hour ? hour.rating : "past";
-    const tip = hour ? `${key}:00 · about ${Math.round(hour.pence)}p a unit · solar ${hour.solar_kwh} kWh` : `${key}:00 · gone`;
-    cells.push(`<div class="${cls}" title="${esc(tip)}"></div>`);
-    labels.push(`<span>${h % 3 === 0 ? key : ""}</span>`);
-  }
-  return `<div class="day"><p class="big">${esc(day.label)}: ${esc(day.text)}</p>
-    <p class="muted">Solar forecast about ${kwh(day.solar_kwh)} kWh${day.spare_kwh ? `, about ${kwh(day.spare_kwh)} kWh to spare` : ""}.</p>
-    <div class="strip" role="img" aria-label="${esc(day.label)}, hour by hour from 6am">${cells.join("")}</div>
-    <div class="hours">${labels.join("")}</div></div>`;
-}
-
-function bestTimesCard(plan) {
-  if (!plan || !plan.days) return `<section class="card wide"><h2>Best times to use power</h2><p class="empty">No forecast yet.</p></section>`;
-  const tonight = plan.battery_tonight && plan.battery_tonight.text
-    ? `<div class="day"><p class="big">Battery tonight</p><p>${esc(plan.battery_tonight.text)}</p>
-       <p class="muted">A suggestion only: nothing is changed on the inverter.</p></div>` : "";
-  return `<section class="card wide"><h2>Best times to use power</h2>${plan.days.map(dayBlock).join("")}${tonight}
-    <div class="legend"><span><i style="background:var(--best)"></i>Best: spare solar</span>
-      <span><i style="background:var(--good)"></i>Good: partly solar or a cheaper rate</span>
-      <span><i style="background:var(--normal)"></i>Normal price</span></div>
-    <p class="muted">For the washing machine, dishwasher and other big things. Worked out ${esc(when(plan.made || ""))}.</p></section>`;
-}
-
-function numbersCard(numbers, period, exportPaid) {
+// ---- the numbers: yesterday, this month, last month, 12 months
+function exportPaid() { return !/^(none|no export tariff)?$/i.test((((daily && daily.tariff) || {}).export || "").trim()); }
+function numbersCard() {
+  const numbers = daily.numbers || {};
+  const period = PERIODS.some(([k]) => k === store("period")) ? store("period") : "yesterday";
   const n = numbers[period] || {};
-  const unit = " <small>kWh</small>";
-  const tiles = [["Solar made", kwh(n.solar_kwh) + unit], ["House used", kwh(n.used_kwh) + unit],
-    ["Bought", kwh(n.bought_kwh) + unit], ["Sold", kwh(n.sold_kwh) + unit],
-    ["Cost", gbp(n.cost_gbp)], exportPaid ? ["Export earned", gbp(n.export_gbp), "money"] : ["Export earned: not paid (no export tariff yet)", "£0"],
-    ["Saved", gbp(n.saved_gbp), "money"]];
-  return `<section class="card wide" id="numbers"><h2>The numbers</h2>
-    <div class="tabs" role="group">${PERIODS.map(([k, label]) =>
-      `<button data-period="${k}" aria-pressed="${k === period}">${label}</button>`).join("")}</div>
-    <div class="tiles">${tiles.map(([l, v, cls]) => `<div class="tile ${cls || ""}"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("")}</div>
-    <p class="muted">Saved: what the same use would have cost with no solar or battery, less what was paid. At today's prices.</p></section>`;
+  const tiles = [tile("Solar made", kwh(n.solar_kwh), "kWh", "solar"), tile("House used", kwh(n.used_kwh), "kWh", "home"),
+                 tile("Bought", kwh(n.bought_kwh), "kWh", "grid"),
+                 tile("Sold", kwh(n.sold_kwh), "kWh", "grid", exportPaid() ? `Earned ${gbp(n.export_gbp)}` : "Not paid: no export tariff yet"),
+                 tile("Cost", gbp(n.cost_gbp), "", ""), tile("Saved", gbp(n.saved_gbp), "", "", "against no solar or battery")];
+  const share = num(n.used_kwh) > 0 && num(n.bought_kwh) != null ? shareBar("Where the house's power came from",
+    [["solar", "From solar, straight or stored", Math.max(0, n.used_kwh - n.bought_kwh)], ["grid", "Bought from the grid", n.bought_kwh]]) : "";
+  const chartBox = period !== "yesterday" && live.version >= 2 ? `<div class="charts" id="period-bars" data-bars="${period}" tabindex="0" role="group"
+      aria-label="Each ${period === "last_12_months" ? "month" : "day"}'s use. Use the left and right arrow keys to move between them."></div>` : "";
+  return card("numbers", "The numbers", `<div class="stack">
+      <div class="seg full" role="group" aria-label="Period">${PERIODS.map(([k, label]) => `<button data-period="${k}" aria-pressed="${k === period}">${label}</button>`).join("")}</div>
+      <div class="tiles">${tiles.join("")}</div>${share}</div>${chartBox}
+    <p class="fine" style="margin-top: 12px">Saved: what the same use would have cost with no solar or battery, less what was paid. At today's prices.</p>`);
+}
+
+async function getAnswer(store_, key, params, keepMinutes) {
+  const kept = store_[key];
+  if (kept && Date.now() - kept.at < keepMinutes * 60000) return kept.answer;
+  const answer = await ask(params);
+  store_[key] = { at: Date.now(), answer };
+  return answer;
+}
+function balanceRow(get, i) {
+  const v = k => num(get[k] && get[k][i]);
+  const solar = v("solar"), bought = v("bought"), sold = v("sold"), charged = v("charged"), gave = v("gave");
+  if ([solar, bought, sold, charged, gave].some(x => x == null)) return null;
+  return { solar, bought, sold, used: Math.max(0, solar + gave + bought - charged - sold) };
+}
+async function periodRows(period) {
+  const today = londonDate(), month = today.slice(0, 7);
+  const prevMonth = m => shiftDate(m + "-01", -1).slice(0, 7);
+  if (period === "this_month" || period === "last_month") {
+    const m = period === "this_month" ? month : prevMonth(month);
+    // "so far" copies are kept apart, so a month fetched on its last day isn't reused once it's over
+    const answer = await getAnswer(extra.months, m === month ? m + " so far" : m, { want: "month", date: m }, m === month ? 15 : 360);
+    const count = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0)).getUTCDate();
+    const rows = [];
+    for (let i = 0; i < count; i++) {
+      const date = `${m}-${String(i + 1).padStart(2, "0")}`;
+      if (date >= today) break;
+      const r = balanceRow(answer.days || {}, i);
+      if (r) rows.push(Object.assign(r, { name: shortDate(date), tick: String(i + 1), every: 7 }));
+    }
+    return rows;
+  }
+  const year = +today.slice(0, 4);
+  const [before, now] = await Promise.all([getAnswer(extra.years, String(year - 1), { want: "year", date: String(year - 1) }, 360),
+                                           getAnswer(extra.years, year + " so far", { want: "year", date: String(year) }, 60)]);
+  const rows = [];
+  for (let back = 11; back >= 0; back--) {
+    const d = new Date(Date.UTC(year, +month.slice(5, 7) - 1 - back, 1)), y = d.getUTCFullYear(), mi = d.getUTCMonth();
+    const r = balanceRow(((y === year ? now : before) || {}).months || {}, mi);
+    const name = d.toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" });
+    if (r) rows.push(Object.assign(r, { name: back ? name : name + " so far", tick: d.toLocaleDateString("en-GB", { month: "narrow", timeZone: "UTC" }), every: 1 }));
+  }
+  return rows;
+}
+
+async function drawBars() {
+  const box = document.getElementById("period-bars");
+  if (!box) { bars = null; return; }
+  const period = box.dataset.bars;
+  let rows;
+  try { rows = await periodRows(period); }
+  catch (e) { if (box.isConnected) box.innerHTML = `<p class="fine">Couldn't get the chart: ${esc(message(e))}.</p>`; return; }
+  if (!box.isConnected || !rows.length) { if (box.isConnected) box.innerHTML = ""; return; }
+  const W = Math.floor(box.clientWidth);
+  if (W < 120) return;
+  const padL = 30, padR = 4, plotW = W - padL - padR, H = W < 520 ? 140 : 170, PT = 8, PB = 20;
+  const peak = Math.max(...rows.map(r => r.used), 1), step = niceStep(peak), top = Math.ceil(peak / step) * step;
+  const y = v => PT + (top - v) / top * H, slot = plotW / rows.length, bw = Math.max(3, Math.min(24, slot * 0.66));
+  let svg = "";
+  for (let v = 0; v <= top + 1e-9; v += step) {
+    svg += `<line class="${v ? "gl" : "zero"}" x1="${padL}" x2="${W - padR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/>` +
+           `<text class="tick" x="${padL - 6}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${Math.round(v * 10) / 10}</text>`;
+  }
+  const column = (x, top, bottom, round) => {
+    const h = bottom - top;
+    if (h <= 0.3) return "";
+    const r = round ? Math.min(4, bw / 2, h) : 0, f = v => v.toFixed(1);
+    return `M${f(x)},${f(bottom)}V${f(top + r)}` + (r ? `q0,${f(-r)} ${f(r)},${f(-r)}h${f(bw - 2 * r)}q${f(r)},0 ${f(r)},${f(r)}` : `h${f(bw)}`) + `V${f(bottom)}Z`;
+  };
+  rows.forEach((r, i) => {
+    const cx = padL + slot * (i + 0.5), x0 = cx - bw / 2, home = Math.max(0, r.used - r.bought);
+    const yHome = y(home), yTop = y(r.used), base = y(0);
+    // from solar (straight or stored) at the bottom, bought on top, with a 2px gap in the surface colour between them
+    const a = column(x0, yHome, base, r.bought <= 0), b = column(x0, yTop, yHome - (home > 0 ? 2 : 0), true);
+    if (a) svg += `<path class="seg-a" d="${a}" style="fill: var(--c-solar)"/>`;
+    if (b) svg += `<path class="seg-a" d="${b}" style="fill: var(--c-grid)"/>`;
+    if (i % r.every === 0 || i === rows.length - 1 && r.every === 1) svg += `<text class="tick" x="${cx.toFixed(1)}" y="${PT + H + 14}" text-anchor="middle">${esc(r.tick)}</text>`;
+    svg += `<rect class="hit" data-i="${i}" x="${(padL + slot * i).toFixed(1)}" y="${PT}" width="${slot.toFixed(1)}" height="${H}"/>`;
+  });
+  const what = period === "last_12_months" ? "month" : "day";
+  box.innerHTML = `<div class="panel-head" style="margin-bottom: 6px"><span class="panel-title">House use each ${what}<small>kWh</small></span>
+      <ul class="keys"><li><i class="sw" style="--c: var(--c-solar)"></i>From solar</li><li><i class="sw" style="--c: var(--c-grid)"></i>Bought</li></ul></div>
+    <svg class="plot" width="${W}" height="${PT + H + PB}" viewBox="0 0 ${W} ${PT + H + PB}" role="img" aria-label="House use each ${what}, split into from solar and bought">${svg}<g class="hover"></g></svg>
+    <div class="readout" id="bars-readout"></div>
+    <details class="more"><summary>${what === "day" ? "Day by day" : "Month by month"}</summary><div class="table-wrap"><table class="data">
+      <thead><tr><th scope="col">${what === "day" ? "Day" : "Month"}</th><th scope="col">Solar</th><th scope="col">Used</th><th scope="col">Bought</th><th scope="col">Sold</th><th scope="col">From solar</th></tr></thead>
+      <tbody>${rows.map(r => `<tr><td>${esc(r.name)}</td><td>${kwh(r.solar)}</td><td>${kwh(r.used)}</td><td>${kwh(r.bought)}</td><td>${kwh(r.sold)}</td><td>${r.used ? Math.round(Math.max(0, r.used - r.bought) / r.used * 100) + "%" : "–"}</td></tr>`).join("")}</tbody>
+    </table></div></details>`;
+  bars = { W, rows, slot, padL, picked: null };
+  const pick = i => {
+    const out = document.getElementById("bars-readout"), hover = box.querySelector(".hover");
+    if (!out || !hover) return;
+    if (i == null) { out.innerHTML = `<span>Tap a bar to see that ${what}'s figures.</span>`; hover.innerHTML = ""; bars.picked = null; return; }
+    const r = rows[i], home = Math.max(0, r.used - r.bought);
+    out.innerHTML = `<span class="when">${esc(r.name)}</span><span class="ro"><b>${kwh(r.used)}</b>kWh used</span>
+      <span class="ro"><i class="sw" style="--c: var(--c-solar)"></i><b>${kwh(home)}</b>from solar (${r.used ? Math.round(home / r.used * 100) : 0}%)</span>
+      <span class="ro"><i class="sw" style="--c: var(--c-grid)"></i><b>${kwh(r.bought)}</b>bought</span><span class="ro"><b>${kwh(r.solar)}</b>kWh solar</span>`;
+    hover.innerHTML = `<rect class="picked" x="${(padL + slot * i).toFixed(1)}" y="${PT}" width="${slot.toFixed(1)}" height="${H}"/>`;
+    bars.picked = i;
+  };
+  box.onpointerdown = box.onpointermove = e => {
+    if (!e.target.closest || !e.target.closest(".plot")) return;              // not the table under it
+    if (e.type === "pointermove" && e.pointerType === "pen" && !(e.pressure > 0)) return;   // a pen hovering
+    const left = box.querySelector(".plot").getBoundingClientRect().left;
+    const i = Math.floor((e.clientX - left - padL) / slot);
+    if (i >= 0 && i < rows.length) pick(i);
+  };
+  box.onpointerleave = e => { if (e.pointerType === "mouse") pick(null); };
+  box.onkeydown = e => {
+    const moves = { ArrowLeft: -1, ArrowRight: 1 };
+    if (!(e.key in moves)) { if (e.key === "Escape") pick(null); return; }
+    e.preventDefault();
+    pick(Math.max(0, Math.min(rows.length - 1, (bars.picked == null ? rows.length : bars.picked) + moves[e.key])));
+  };
+  pick(null);
+  watchSize();
+}
+
+// ---- the tariff and the shower
+function tariffCard(t) {
+  if (!t) return "";
+  const rows = [];
+  if (t.now_gbp_a_year) rows.push({ name: `Now: ${t.import}`, sub: "", gbp: t.now_gbp_a_year, now: true });
+  (t.options || []).forEach(o => rows.push({ name: o.import, gbp: o.gbp_a_year,
+    sub: `with ${o.export}${o.fixed_months ? `; fixed ${o.fixed_months} months` : ""}${o.exit_fee_gbp ? `, £${o.exit_fee_gbp} to leave` : ""}` }));
+  const caveat = t.whole_market ? "Every tariff on the market was compared."
+    : "Not a recommendation yet: some tariffs couldn't be priced, so the whole market isn't compared.";
+  if (!rows.length) return card("tariff", "Tariff", `<p class="lead">${esc(t.import)}</p><p class="fine">${esc(caveat)}</p>`);
+  const max = Math.max(...rows.map(r => r.gbp)), cheapest = Math.min(...rows.filter(r => !r.now).map(r => r.gbp));
+  const headline = t.now_gbp_a_year && isFinite(cheapest) && cheapest < t.now_gbp_a_year
+    ? `<p class="headline">The cheapest option found costs about £${(t.now_gbp_a_year - cheapest).toLocaleString("en-GB")} a year less</p>` : "";
+  return card("tariff", "Tariff", headline + `<div class="tbars">${rows.map(r => `<div>
+      <div class="tb-name">${esc(r.name)}</div>${r.sub ? `<div class="tb-sub">${esc(r.sub)}</div>` : ""}
+      <div class="tb-row"><div class="tb-track"><div class="tb-fill${r.now ? " now" : ""}" style="width: ${(r.gbp / max * 100).toFixed(1)}%"></div></div>
+        <span class="tb-val">£${r.gbp.toLocaleString("en-GB")}<span class="fine"> a year</span></span></div></div>`).join("")}</div>
+    <p class="fine" style="margin-top: 12px">${esc(caveat)}${t.compared ? ` Compared ${esc(t.compared)}.` : ""}${t.contract_end ? ` Contract ends ${esc(t.contract_end)}.` : ""}</p>`);
 }
 
 function showerCard(s) {
   if (!s || !s.rates || !s.rates.length) return "";
-  return `<section class="card"><h2>The shower</h2><p class="big">About ${esc(s.kw)} kW</p>
-    <table>${s.rates.map(r => `<tr><td>${r.label === "all day" ? "Each minute" : "Each minute, " + esc(r.label)}</td>
-      <td class="num">${r.p_per_minute.toFixed(1)}p · 10 minutes ${Math.round(r.p_per_minute * 10)}p</td></tr>`).join("")}</table>
-    <p class="muted">At ${s.rates.map(r => r.p_per_unit.toFixed(2) + "p").join(" / ")} a unit. Cheaper when there's solar to spare.</p></section>`;
+  const first = s.rates[0];
+  return card("shower", "The shower", `<p class="big-figure">${first.p_per_minute.toFixed(1)}p<small>a minute${s.rates.length > 1 ? `, ${esc(first.label)}` : ""}</small></p>
+    <p class="muted" style="margin-top: 6px">${s.rates.map(r => `${r.label === "all day" ? "" : esc(r.label) + ": "}10 minutes costs about ${Math.round(r.p_per_minute * 10)}p`).join(" · ")}.</p>
+    <p class="fine" style="margin-top: 8px">About ${esc(s.kw)} kW, at ${s.rates.map(r => r.p_per_unit.toFixed(2) + "p").join(" or ")} a unit. Cheaper when there's spare solar.</p>`);
 }
 
-function tariffCard(t) {
-  if (!t) return "";
-  const rows = [];
-  if (t.now_gbp_a_year) rows.push(`<tr><td>Now: ${esc(t.import)}</td><td class="num">about £${t.now_gbp_a_year.toLocaleString("en-GB")} a year</td></tr>`);
-  (t.options || []).forEach((o, i) => rows.push(`<tr><td>Option ${i + 1}: ${esc(o.import)}<div class="muted">with ${esc(o.export)}${o.fixed_months ? `; fixed ${o.fixed_months} months` : ""}${o.exit_fee_gbp ? `, £${o.exit_fee_gbp} to leave` : ""}</div></td><td class="num">£${o.gbp_a_year.toLocaleString("en-GB")}</td></tr>`));
-  const caveat = t.whole_market ? "Every tariff on the market was compared."
-    : "Not a recommendation yet: some tariffs couldn't be priced, so the whole market isn't compared.";
-  return `<section class="card"><h2>Tariff</h2>${rows.length ? `<table>${rows.join("")}</table>` : `<p class="big">${esc(t.import)}</p>`}
-    <p class="muted">${esc(caveat)}${t.compared ? ` Compared ${esc(t.compared)}.` : ""}${t.contract_end ? ` Contract ends ${esc(t.contract_end)}.` : ""}</p></section>`;
+// ---- the page
+function setStatus() {
+  const el = document.getElementById("status"), r = live.reading, at = r && readingTime(r.time);
+  if (at) {
+    const late = Date.now() - at > LATE_MINUTES * 60000, day = londonDate(at) !== londonDate() ? shortDate(londonDate(at)) + " " : "";
+    el.innerHTML = `<span class="dot ${late ? "late" : "live"}"></span>${late ? "Last reading " + esc(day) : "Live · "}${esc(clock(at))}`;
+  } else if (daily) el.innerHTML = `<span class="dot"></span>Updated ${esc(when(daily.made))}`;
+  const button = document.getElementById("keep-awake");
+  if ("wakeLock" in navigator && daily) {
+    const on = !!store("keep-awake");
+    button.hidden = false;
+    button.setAttribute("aria-pressed", on);
+    button.innerHTML = `${icon("screen")}<span class="chip-text">${on ? "Screen stays on" : "Keep screen on"}</span>`;
+    button.title = on ? "The screen stays on while this is open" : "Keep the screen on, for a tablet on the wall";
+    button.setAttribute("aria-label", "Keep the screen on");
+  }
 }
 
-function render(data, stale) {
-  document.getElementById("updated").textContent = "Updated " + when(data.made);
-  const bat = document.getElementById("battery");
-  if (data.battery) { bat.hidden = false; bat.textContent = `Battery ${data.battery.percent}%`; }
-  livePill();
-  const period = store("period") || "yesterday";
-  const age = (Date.now() - new Date(data.made.replace(" ", "T"))) / 3600000;
-  const warn = stale || age > 30 ? `<div class="stale wide">Not updated since ${esc(when(data.made))}. The daily update may have stopped, or there's no internet.</div>` : "";
-  document.getElementById("main").innerHTML = liveCard() + warn + bestTimesCard(data.best_times) + alertsCard(data.alerts || [])
-    + tariffCard(data.tariff) + showerCard(data.shower)
-    + numbersCard(data.numbers || {}, period, !/^(none|no export tariff)?$/i.test(((data.tariff || {}).export || "").trim()));
-  const source = store(SOURCE_KEY);
-  document.getElementById("footer").innerHTML = (source ? `Figures from the private repository ${esc(source.repo)}. <button id="forget">Forget the key</button><br><span id="alerts-status"></span><br>` : "")
-    + (data.notes || []).map(esc).join(" ")
-    + "<br>Sources: " + (data.sources || []).map(esc).join(" · ");
-  document.querySelectorAll("[data-hide]").forEach(b => b.onclick = () => {
-    const hidden = store(HIDDEN_KEY) || {}; hidden[b.dataset.hide] = Date.now(); store(HIDDEN_KEY, hidden); render(data, stale);
-  });
-  document.querySelectorAll("[data-period]").forEach(b => b.onclick = () => { store("period", b.dataset.period); render(data, stale); });
+function cards() {
+  return { now: nowCard, today: todayCard, best: () => daily ? bestTimesCard(daily.best_times) : "", alerts: () => daily ? alertsCard(daily.alerts || []) : "",
+           numbers: () => daily ? numbersCard() : "", tariff: () => daily ? tariffCard(daily.tariff) : "", shower: () => daily ? showerCard(daily.shower) : "" };
+}
+
+function render() {
+  if (document.getElementById("setup")) return;              // a key is being pasted: leave the page alone
+  const hidden = store(CARDS_KEY) || {}, html = cards();
+  const age = daily ? (Date.now() - new Date(daily.made.replace(" ", "T"))) / 3600000 : 0;
+  const warn = daily && (dailyStale || age > 30) ? `<div class="banner">${icon("alert")}<span>The daily figures haven't updated since ${esc(when(daily.made))}. The daily update may have stopped, or there's no internet.</span></div>` : "";
+  const main = document.getElementById("main");
+  document.getElementById("banner").innerHTML = warn;
+  main.innerHTML = CARDS.filter(([id]) => !hidden[id]).map(([id]) => html[id]()).join("");
+  main.classList.toggle("live", !!document.getElementById("card-now") && !!document.getElementById("card-today"));
+  setStatus();
+  renderFooter();
+  wire();
+  drawCharts();
+  drawBars();
+}
+
+function refreshCards(...ids) {
+  // redraw some cards in place; if one appears or goes, redraw the page
+  if (document.getElementById("setup") || !daily) return;
+  const hidden = store(CARDS_KEY) || {}, html = cards();
+  for (const id of ids) {
+    if (hidden[id]) continue;
+    const el = document.getElementById("card-" + id), fresh = html[id]();
+    if (!el !== !fresh) { render(); return; }       // a card appeared or went: lay the page out again
+    if (el) el.outerHTML = fresh;
+  }
+  setStatus();
+  wire();
+  if (ids.includes("today")) drawCharts();
+  if (ids.includes("numbers")) drawBars();
+}
+
+function renderFooter() {
+  const source = store(SOURCE_KEY), hidden = store(CARDS_KEY) || {};
+  document.getElementById("footer").innerHTML = (daily ? `<p>Daily figures updated ${esc(when(daily.made))}.${source ? ` From the private repository ${esc(source.repo)}.` : ""}</p>` : "") +
+    (source ? `<p><span id="alerts-status"></span></p><p><button class="link-btn" id="forget">Forget this device's key</button></p>` : "") +
+    `<details class="customise"><summary>Choose what this screen shows</summary><div class="checks">${CARDS.map(([id, name]) =>
+      `<label><input type="checkbox" id="show-${id}" data-card="${id}"${hidden[id] ? "" : " checked"}>${esc(name)}</label>`).join("")}</div></details>` +
+    (daily ? `<p>${(daily.notes || []).map(esc).join(" ")}</p><p>Sources: ${(daily.sources || []).map(esc).join(" · ")}.</p>` : "");
   const forget = document.getElementById("forget");
   if (forget) forget.onclick = () => { forgetSource(); location.reload(); };
+  document.querySelectorAll("[data-card]").forEach(box => box.onchange = () => {
+    const now = store(CARDS_KEY) || {};
+    if (box.checked) delete now[box.dataset.card]; else now[box.dataset.card] = Date.now();
+    store(CARDS_KEY, now);
+    render();
+    const again = document.querySelector("details.customise");
+    if (again) again.open = true;
+  });
   if (source) showAlertsStatus(source);
-  wireAwake();
 }
 
-// ---- live figures
-function livePill() {
-  const r = live.reading, bat = document.getElementById("battery");
-  if (r && r.battery_percent != null) { bat.hidden = false; bat.textContent = `Battery ${Math.round(Number(r.battery_percent))}%`; }
+function wire() {
+  document.querySelectorAll("[data-hide]").forEach(b => b.onclick = () => {
+    const hidden = store(HIDDEN_KEY) || {}; hidden[b.dataset.hide] = Date.now(); store(HIDDEN_KEY, hidden); refreshCards("alerts");
+  });
+  document.querySelectorAll("button[data-period]").forEach(b => b.onclick = () => { store("period", b.dataset.period); refreshCards("numbers"); });
+  document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => { store("day-view", b.dataset.view); refreshCards("today"); });
+  const back = document.getElementById("day-back"), next = document.getElementById("day-next");
+  if (back) back.onclick = () => showDay(shiftDate(days.shown || londonDate(), -1));
+  if (next) next.onclick = () => showDay(shiftDate(days.shown || londonDate(), 1));
+  const awake = document.getElementById("keep-awake");
+  awake.onclick = () => { const on = !store("keep-awake"); store("keep-awake", on); keepAwake(on); setStatus(); };
 }
 
-function updateLive() {
-  if (document.getElementById("setup")) return;            // a key is being pasted: leave the page alone
-  const html = liveCard(), box = document.getElementById("live"), main = document.getElementById("main");
-  if (box) box.outerHTML = html;
-  else if (html && main) main.insertAdjacentHTML("afterbegin", html);
-  livePill();
-  wireAwake();
-}
-
+// ---- the live figures
 async function liveUrl(source) {
-  // the live link is written to the private figures repository by the daily job (GitHub's LIVE_URL secret)
+  // the live link is written to the private figures repository (GitHub's LIVE_URL secret, or saved there directly)
   const saved = store("live-url");
   // a found link is checked again every 6 hours; until there is one, every 10 minutes
   if (saved && Date.now() - saved.at < (saved.url ? 6 * 3600 : 600) * 1000) return saved.url;
@@ -304,24 +1155,68 @@ async function liveUrl(source) {
   return url;
 }
 
+async function ask(params) {
+  const url = live.url + (live.url.includes("?") ? "&" : "?") + new URLSearchParams(params);
+  const response = await fetch(url, { cache: "no-store" });
+  const answer = await response.json();
+  if (!answer || !answer.ok) throw new Error((answer && answer.error) || `the live link answered ${response.status}`);
+  return answer;
+}
+
 async function refreshLive(force) {
   if (!force && (document.hidden || Date.now() - live.asked < 60 * 1000)) return;
   const source = store(SOURCE_KEY);
   if (NEEDS_KEY && !(source && source.key)) return;          // this device isn't set up yet
   live.asked = Date.now();
+  const version = live.version;
   live.url = await liveUrl(source && source.key ? source : null);
-  if (!live.url) { live.reading = null; store("live-last", null); updateLive(); return; }   // no live link (any more)
+  if (!live.url) { live.reading = null; store("live-last", null); refreshCards("now", "today"); return; }
   try {
-    const response = await fetch(live.url, { cache: "no-store" });
-    const answer = await response.json();
-    if (!answer || !answer.ok) throw new Error((answer && answer.error) || `the live link answered ${response.status}`);
-    live.reading = answer;
+    const answer = await ask({ want: "day" });
+    if (answer.version >= 2) {
+      live.version = answer.version;
+      days.loaded[answer.date] = answer;
+      forgetOldDays(answer.date);
+      store("day-last", answer);
+      if (answer.now) { live.reading = answer.now; store("live-last", answer.now); }
+    } else {                                                  // the first version of the script: just the latest reading
+      live.version = 1;
+      live.reading = answer;
+      store("live-last", answer);
+    }
     live.error = "";
-    store("live-last", answer);
   } catch (e) {
-    live.error = `Couldn't get a new reading: ${String(e.message || e).replace(/\.$/, "")}.`;
+    live.error = `Couldn't get a new reading: ${message(e)}.`;
   }
-  updateLive();
+  refreshCards("now", "today", ...(live.version !== version ? ["numbers"] : []));
+}
+
+async function showDay(date) {
+  const today = londonDate();
+  if (date > today) date = today;
+  if (date < FIRST_DAY) return;
+  const before = days.shown;
+  days.shown = date === today ? "" : date;
+  days.error = "";
+  refreshCards("today");                                       // the new day's name, with the last charts dimmed until it arrives
+  if (days.loaded[date]) return;
+  try {
+    const answer = await ask({ want: "day", date });
+    if (!(answer.version >= 2)) throw new Error("the live script needs its update first");
+    days.loaded[answer.date] = answer;
+    forgetOldDays(answer.date);
+  } catch (e) {
+    if ((days.shown || londonDate()) !== date) return;         // another day was asked for since: leave that one
+    days.shown = before;
+    days.error = `Couldn't get ${dayName(date)}: ${message(e)}.`;
+  }
+  refreshCards("today");
+}
+
+function forgetOldDays(keep) {
+  // the 12 days fetched most recently stay in memory, plus today and the one just fetched
+  const today = londonDate(), old = Object.keys(days.loaded).filter(k => k !== today && k !== keep && k !== days.drawn);
+  old.slice(0, Math.max(0, old.length - 12)).forEach(k => { delete days.loaded[k]; });
 }
 
 async function keepAwake(on) {
@@ -331,11 +1226,6 @@ async function keepAwake(on) {
       wakeLock.addEventListener("release", () => { wakeLock = null; });
     } else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
   } catch (e) {}
-}
-
-function wireAwake() {
-  const button = document.getElementById("keep-awake");
-  if (button) button.onclick = () => { const on = !store("keep-awake"); store("keep-awake", on); keepAwake(on); updateLive(); };
 }
 
 // ---- alerts (web push): the device's sign-up is saved in the private repository, where the daily job reads it
@@ -397,9 +1287,11 @@ async function showAlertsStatus(source) {
   }
   // the app's background helper (sw.js) receives the alerts; give it a few seconds to start
   const registration = await Promise.race([navigator.serviceWorker.ready, new Promise(done => setTimeout(() => done(null), 8000))]);
+  if (!box.isConnected) return;                             // the footer was redrawn meanwhile: that one does its own
   if (!registration) { box.textContent = "Alerts: the app's background helper hasn't started. Close the app fully and open it again."; return; }
   let subscription = await registration.pushManager.getSubscription();
   const key = await alertKey(source).catch(() => "");
+  if (!box.isConnected) return;
   if (subscription && key && !sameKey(subscription, key)) {        // the alert key was changed: sign up again
     await subscription.unsubscribe().catch(() => {});
     subscription = null;
@@ -415,8 +1307,8 @@ async function showAlertsStatus(source) {
   }
   if (!key) { box.textContent = "Alerts: not ready yet. They start once the alert key is saved in GitHub and the daily update has run."; return; }
   if (Notification.permission === "denied") { box.textContent = "Alerts: blocked on this device. Settings → Notifications → Energy turns them on."; return; }
-  box.innerHTML = `Alerts: off. <button id="alerts-on">Turn on alerts</button>`;
-  document.getElementById("alerts-on").onclick = () => {
+  box.innerHTML = `Alerts: off. <button class="link-btn" id="alerts-on">Turn on alerts</button>`;
+  box.querySelector("#alerts-on").onclick = () => {
     // asked straight from the tap: Safari only shows the question in direct response to one
     Notification.requestPermission()
       .then(permission => {
@@ -431,7 +1323,7 @@ async function showAlertsStatus(source) {
 
 // ---- setting up a device: its key is pasted once and kept on that device only
 class SetupError extends Error {
-  constructor(message, keep) { super(message); this.keep = !!keep; }
+  constructor(text, keep) { super(text); this.keep = !!keep; }
 }
 
 function forgetSource() { try { localStorage.removeItem(SOURCE_KEY); } catch (e) {} }
@@ -441,28 +1333,30 @@ function defaultRepo() {
   return owner ? `${owner}/home-energy-data` : "";
 }
 
-function showSetup(message, keep) {
-  document.getElementById("updated").textContent = "Not set up on this device yet";
-  document.getElementById("battery").hidden = true;
+function showSetup(text, keep) {
+  document.getElementById("status").textContent = "Not set up on this device yet";
+  document.getElementById("keep-awake").hidden = true;
   document.getElementById("footer").innerHTML = "";
+  document.getElementById("banner").innerHTML = "";
   const main = document.getElementById("main");
+  main.classList.remove("live");
   if (keep) {
     // the key works but there's nothing to show yet
-    main.innerHTML = `<section class="card wide"><h2>Set up this device</h2><p class="big">Nearly there</p>
-      <p>${esc(message)}</p><div class="actions"><button class="btn" id="setup-retry">Try again</button>
+    main.innerHTML = `<section class="card wide"><div class="card-head"><h2>Set up this device</h2></div><p class="lead">Nearly there</p>
+      <p>${esc(text)}</p><div class="actions"><button class="btn" id="setup-retry">Try again</button>
       <button class="btn quiet" id="setup-change">Change the key</button></div></section>`;
     document.getElementById("setup-retry").onclick = () => load();
     document.getElementById("setup-change").onclick = () => { forgetSource(); showSetup(); };
     return;
   }
-  main.innerHTML = `<section class="card wide" id="setup"><h2>Set up this device</h2>
-    <p class="big">Paste this device's key</p>
+  main.innerHTML = `<section class="card wide" id="setup"><div class="card-head"><h2>Set up this device</h2></div>
+    <p class="lead">Paste this device's key</p>
     <p class="muted">The key lets this device read the house's figures, and nothing else. It stays on this device.
       On an iPad, do this in the app opened from the Home Screen, not in Safari: the two keep separate storage.</p>
     <label class="field">Repository<input id="setup-repo" value="${esc(defaultRepo())}" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"></label>
     <label class="field">Key<input id="setup-key" type="password" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="github_pat_…"></label>
     <div class="actions"><button class="btn" id="setup-save">Save on this device</button></div>
-    <p class="muted" id="setup-status" role="status">${esc(message || "")}</p></section>`;
+    <p class="fine" id="setup-status" role="status">${esc(text || "")}</p></section>`;
   document.getElementById("setup-save").onclick = () => {
     const repo = document.getElementById("setup-repo").value.trim();
     const key = document.getElementById("setup-key").value.trim();
@@ -514,14 +1408,16 @@ async function load() {
       throw new SetupError(`The key works, but there are no figures in ${source.repo} yet. They appear after the daily update has run.`, true);
     }
     if (!response.ok) throw new Error(`the figures couldn't be fetched (${response.status})`);
-    const data = await response.json();
-    store("last-data", data);
-    render(data, false);
+    daily = await response.json();
+    dailyStale = false;
+    store("last-data", daily);
+    document.getElementById("main").innerHTML = "";              // leaves a finished set-up card behind
+    render();
   } catch (error) {
     if (error instanceof SetupError) { showSetup(error.message, error.keep); return; }
     const last = store("last-data");
-    if (last) render(last, true);
-    else document.getElementById("main").innerHTML = `<section class="card wide"><p class="big">Couldn't load the figures.</p><p class="muted">${esc(error.message || error)}</p></section>`;
+    if (last) { daily = last; dailyStale = true; render(); }
+    else document.getElementById("main").innerHTML = `<section class="card wide"><p class="lead">Couldn't load the figures.</p><p class="muted">${esc(error.message || error)}</p></section>`;
   }
 }
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
