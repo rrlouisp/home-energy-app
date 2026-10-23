@@ -47,6 +47,19 @@
     --good-text: #006300;
     --note-bg: #fff4d6;
     --note-ink: #5c4300;
+    --good-line: rgba(12, 163, 12, 0.35);
+    --good-wash: rgba(12, 163, 12, 0.07);
+    --tip-bg: #22262b;
+    --tip-ink: #f3f4f6;
+    --tip-muted: #b8bec6;
+    /* the picture: soft clay-white tiles and objects, a few real colours */
+    --iso-tile-top: #f1f3f5; --iso-tile-left: #dde2e7; --iso-tile-right: #c9d0d8; --iso-soft: rgba(30, 41, 59, 0.045); --iso-shade: rgba(30, 41, 59, 0.10);
+    --iso-wall-left: #ffffff; --iso-wall-right: #e4e8ec; --iso-roof: #34445a; --iso-roof-edge: #4a5b72; --iso-window: #bcd6f0; --iso-door: #6b7686;
+    --iso-leaf-1: #4caf50; --iso-leaf-2: #3d9142; --iso-leaf-3: #6cc56f; --iso-trunk: #8a6a4f;
+    --iso-panel: #1f3d66; --iso-panel-hi: #2d5a92; --iso-panel-line: rgba(160, 196, 235, 0.55); --iso-frame: #d5dde6; --iso-leg: #9aa6b2;
+    --iso-steel: #9ba6b2; --iso-wire: #aab4be;
+    --iso-bat-top: #f6f8fa; --iso-bat-left: #ffffff; --iso-bat-right: #e1e6eb; --iso-bat-window: #e6ebf0; --iso-bat-level: #3cc46b; --iso-bat-level-hi: #74dc95;
+    --iso-line: #c3cdd8; --iso-hub: #ffffff; --iso-hub-ring: #b9c4d0;
     --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 6px 18px rgba(11, 11, 11, 0.05);
     --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     --r-card: 22px;
@@ -60,6 +73,14 @@
       --brand: #8fd3c7; --on-brand: #0a1715; --brand-text: #8fd3c7;
       --c-solar: #c98500; --c-home: #3987e5; --c-grid: #d55181; --c-battery: #008300;
       --good-soft: #1d4d1d; --cell: #2c2c2a; --good-text: #0ca30c; --note-bg: #2e2510; --note-ink: #f2d690; --shadow: none;
+      --good-line: rgba(12, 163, 12, 0.45); --good-wash: rgba(12, 163, 12, 0.12); --tip-bg: #2a2e33; --tip-ink: #f3f4f6; --tip-muted: #aeb5be;
+      --iso-tile-top: #2a2d31; --iso-tile-left: #212428; --iso-tile-right: #1a1c1f; --iso-soft: rgba(0, 0, 0, 0.22); --iso-shade: rgba(0, 0, 0, 0.35);
+      --iso-wall-left: #d9dee4; --iso-wall-right: #aeb6bf; --iso-roof: #25303e; --iso-roof-edge: #334155; --iso-window: #7fa7cf; --iso-door: #4b5563;
+      --iso-leaf-1: #3b8f3f; --iso-leaf-2: #2f7433; --iso-leaf-3: #4fa853; --iso-trunk: #6d5440;
+      --iso-panel: #1b3557; --iso-panel-hi: #274b7a; --iso-panel-line: rgba(140, 180, 225, 0.45); --iso-frame: #8d99a6; --iso-leg: #6b7682;
+      --iso-steel: #8a96a3; --iso-wire: #6f7b88;
+      --iso-bat-top: #c9d0d7; --iso-bat-left: #dde2e7; --iso-bat-right: #aab3bd; --iso-bat-window: #3a4048; --iso-bat-level: #2fb35c; --iso-bat-level-hi: #5fd487;
+      --iso-line: #3c4550; --iso-hub: #1a1a19; --iso-hub-ring: #56606b;
     }
   }
   :root[data-theme="dark"] {
@@ -69,6 +90,14 @@
     --brand: #8fd3c7; --on-brand: #0a1715; --brand-text: #8fd3c7;
     --c-solar: #c98500; --c-home: #3987e5; --c-grid: #d55181; --c-battery: #008300;
     --good-soft: #1d4d1d; --cell: #2c2c2a; --good-text: #0ca30c; --note-bg: #2e2510; --note-ink: #f2d690; --shadow: none;
+    --good-line: rgba(12, 163, 12, 0.45); --good-wash: rgba(12, 163, 12, 0.12); --tip-bg: #2a2e33; --tip-ink: #f3f4f6; --tip-muted: #aeb5be;
+    --iso-tile-top: #2a2d31; --iso-tile-left: #212428; --iso-tile-right: #1a1c1f; --iso-soft: rgba(0, 0, 0, 0.22); --iso-shade: rgba(0, 0, 0, 0.35);
+    --iso-wall-left: #d9dee4; --iso-wall-right: #aeb6bf; --iso-roof: #25303e; --iso-roof-edge: #334155; --iso-window: #7fa7cf; --iso-door: #4b5563;
+    --iso-leaf-1: #3b8f3f; --iso-leaf-2: #2f7433; --iso-leaf-3: #4fa853; --iso-trunk: #6d5440;
+    --iso-panel: #1b3557; --iso-panel-hi: #274b7a; --iso-panel-line: rgba(140, 180, 225, 0.45); --iso-frame: #8d99a6; --iso-leg: #6b7682;
+    --iso-steel: #8a96a3; --iso-wire: #6f7b88;
+    --iso-bat-top: #c9d0d7; --iso-bat-left: #dde2e7; --iso-bat-right: #aab3bd; --iso-bat-window: #3a4048; --iso-bat-level: #2fb35c; --iso-bat-level-hi: #5fd487;
+    --iso-line: #3c4550; --iso-hub: #1a1a19; --iso-hub-ring: #56606b;
   }
 
   * { box-sizing: border-box; }
@@ -115,31 +144,41 @@
   .note .i, .banner .i { width: 18px; height: 18px; margin-top: 1px; }
   .stack { display: grid; gap: 14px; }
 
-  /* right now: the power flow */
-  .now-grid { display: grid; gap: 16px; align-items: center; }
-  @container (min-width: 600px) { .now-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; } }
-  .flow { margin: 0; }
-  .flow svg { display: block; width: 100%; max-width: 400px; height: auto; margin: 0 auto; }
-  .flow .track { stroke-width: 2; stroke-opacity: 0.22; stroke-linecap: round; }
-  .flow .dots { stroke-width: 4.5; stroke-linecap: round; stroke-dasharray: 0.01 13; animation: run var(--dur, 1s) linear infinite; }
-  .flow .chev { display: none; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  @keyframes run { to { stroke-dashoffset: -13.01; } }
-  .flow .ring { fill: var(--surface); stroke: var(--c); stroke-width: 2.5; }
-  .flow .idle .ring { stroke-opacity: 0.35; }
-  .flow .glyph { fill: none; stroke: var(--c); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .flow .glyph .solid { fill: var(--c); stroke: none; }
-  .flow .idle .glyph { stroke: var(--muted); }
-  .flow .idle .glyph .solid { fill: var(--muted); }
-  .flow .hub { fill: var(--surface); stroke: var(--axis); stroke-width: 2; }
-  .flow .val { font-size: 20px; font-weight: 650; fill: var(--ink); text-anchor: middle; letter-spacing: -0.01em; }
-  .flow .val tspan { font-size: 13px; font-weight: 550; fill: var(--ink-2); letter-spacing: 0; }
-  .flow .lab { font-size: 13px; fill: var(--ink-2); text-anchor: middle; }
+  /* right now: the picture, drawn in isometric 3D like the FoxESS dashboard */
+  .iso-scene { position: relative; max-width: 560px; margin: 0 auto; }
+  .iso-scene svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .iso-label { position: absolute; transform: translate(0, -100%); white-space: nowrap; line-height: 1.15; pointer-events: none; }
+  .iso-label.right { transform: translate(-100%, -100%); text-align: right; }
+  .iso-label .k { font-size: 12.5px; color: var(--ink-2); }
+  .iso-label .v { font-size: 21px; font-weight: 650; letter-spacing: -0.01em; }
+  .iso-label .v small { font-size: 13px; font-weight: 550; color: var(--ink-2); margin-left: 2px; letter-spacing: 0; }
+  @container (max-width: 380px) { .iso-label .v { font-size: 18px; } .iso-label .k { font-size: 12px; } }
+  .iso-tile-top { fill: var(--iso-tile-top); } .iso-tile-side { fill: url(#iso-side); } .iso-soft { fill: var(--iso-soft); } .iso-shade { fill: var(--iso-shade); }
+  .iso-wall-l { fill: var(--iso-wall-left); } .iso-wall-r { fill: var(--iso-wall-right); } .iso-roof { fill: var(--iso-roof); } .iso-roof-edge { fill: var(--iso-roof-edge); }
+  .iso-window { fill: var(--iso-window); } .iso-door { fill: var(--iso-door); } .iso-trunk { fill: var(--iso-trunk); }
+  .iso-leaf-1 { fill: var(--iso-leaf-1); } .iso-leaf-2 { fill: var(--iso-leaf-2); } .iso-leaf-3 { fill: var(--iso-leaf-3); }
+  .iso-panel { fill: url(#iso-glass); stroke: var(--iso-frame); stroke-width: 0.9; stroke-linejoin: round; }
+  .iso-cells { fill: none; stroke: var(--iso-panel-line); stroke-width: 0.6; }
+  .iso-leg { stroke: var(--iso-leg); stroke-width: 1.4; stroke-linecap: round; }
+  .iso-steel { fill: none; stroke: var(--iso-steel); stroke-width: 1.15; stroke-linecap: round; } .iso-wire { fill: none; stroke: var(--iso-wire); stroke-width: 0.8; }
+  .iso-bat-t { fill: var(--iso-bat-top); } .iso-bat-l { fill: var(--iso-bat-left); } .iso-bat-r { fill: var(--iso-bat-right); }
+  .iso-bat-window { fill: var(--iso-bat-window); } .iso-bat-level { fill: url(#iso-charge); } .iso-led { fill: var(--c-battery); }
+  .iso-link { stroke: var(--iso-line); stroke-width: 2.2; stroke-linecap: round; }
+  .iso-dots { fill: none; stroke-width: 4.2; stroke-linecap: round; stroke-dasharray: 0.01 12; animation: run var(--dur, 1s) linear infinite; }
+  .iso-chev { display: none; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .iso-hub { fill: var(--iso-hub); stroke: var(--iso-hub-ring); stroke-width: 2.4; }
+  @keyframes run { to { stroke-dashoffset: -12.01; } }
   @media (prefers-reduced-motion: reduce) {
-    .flow .dots { display: none; }
-    .flow .track.on { stroke-opacity: 0.9; }
-    .flow .chev { display: inline; }
+    .iso-dots { display: none; }
+    .iso-link.on { stroke: var(--c); }
+    .iso-chev { display: inline; }
     .dot.live { animation: none; }
   }
+  .now-tools { gap: 10px; }
+  .live-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--good-text);
+                border: 1px solid var(--good-line); background: var(--good-wash); border-radius: 7px; padding: 3px 9px; }
+  .live-badge.late { color: var(--note-ink); border-color: var(--line); background: var(--note-bg); }
+  .now-words { margin-top: 10px; }
   .story { font-size: 18px; line-height: 1.4; font-weight: 550; text-wrap: pretty; }
   .share-title { font-size: 13.5px; color: var(--ink-2); margin-bottom: 7px; }
   .share-bar { display: flex; gap: 2px; height: 12px; border-radius: 6px; overflow: hidden; }
@@ -178,31 +217,39 @@
   .btn.quiet { background: transparent; color: var(--ink); border: 1px solid var(--line); }
   .link-btn { border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; cursor: pointer; }
 
-  /* today's charts */
-  .card.busy .charts, .card.busy .tiles, .card.busy .table-wrap { opacity: 0.45; transition: opacity 0.2s; }
-  .charts { position: relative; margin-top: 16px; touch-action: pan-y; -webkit-user-select: none; user-select: none; border-radius: 12px; }
-  .readout { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; min-height: 44px; padding: 9px 12px; background: var(--well);
-             border-radius: 12px; font-size: 13.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-  .readout .when { font-weight: 650; color: var(--ink); margin-right: 2px; }
-  .readout .ro { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .readout b { color: var(--ink); font-weight: 650; }
-  .panel { margin-top: 12px; }
-  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 10px; flex-wrap: wrap; font-size: 13.5px; margin-bottom: 2px; }
+  /* the energy card: supply above the line, use below, as in FoxESS's app */
+  .card.busy .ec, .card.busy .tiles, .card.busy .table-wrap { opacity: 0.45; transition: opacity 0.2s; }
+  .period { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+  .period-nav { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+  .period-name { font-weight: 650; font-size: 15.5px; min-width: 6.5em; text-align: center; white-space: nowrap; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 6px; }
+  .chip-key { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 9px;
+              padding: 5px 9px; font-size: 13px; font-weight: 550; cursor: pointer; color: var(--ink); }
+  .chip-key[aria-pressed="false"] { color: var(--muted); }
+  .chip-key[aria-pressed="false"] .sw { background: transparent; box-shadow: inset 0 0 0 1.5px var(--c); }
+  .ec { position: relative; touch-action: pan-y; -webkit-user-select: none; user-select: none; border-radius: 10px; }
+  .st-area { stroke: none; fill-opacity: 0.78; }
+  .st-edge { fill: none; stroke-width: 1.3; stroke-linejoin: round; }
+  .st-bar { stroke: none; }
+  .tip { position: absolute; top: 6px; min-width: 196px; background: var(--tip-bg); color: var(--tip-ink); border-radius: 12px; padding: 10px 12px 9px;
+         font-size: 13px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22); pointer-events: none; z-index: 2; font-variant-numeric: tabular-nums; }
+  .tip-time { font-weight: 650; margin-bottom: 5px; }
+  .tip-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; line-height: 1.75; }
+  .tip-row span { color: var(--tip-muted); }
+  .tip-row b { font-weight: 650; text-align: right; }
+  .tip-gap { height: 4px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 10px; flex-wrap: wrap; font-size: 13.5px; margin: 10px 0 2px; }
   .panel-title { font-weight: 600; color: var(--ink); }
   .panel-title small { font-weight: 400; color: var(--ink-2); font-size: 12.5px; margin-left: 4px; }
-  .panel-head .keys { margin: 0; font-size: 13px; }
   .plot { display: block; overflow: visible; }
   .plot .gl { stroke: var(--gridline); stroke-width: 1; shape-rendering: crispEdges; }
-  .plot .zero { stroke: var(--axis); stroke-width: 1; shape-rendering: crispEdges; }
+  .plot .zero { stroke: var(--axis); stroke-width: 1.2; shape-rendering: crispEdges; }
   .plot .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
   .plot .dir { fill: var(--muted); font-size: 11px; }
   .plot .ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-  .plot .ar { stroke: none; fill-opacity: 0.12; }
   .plot .end { stroke: var(--surface); stroke-width: 2; }
   .plot .cross { stroke: var(--ink-2); stroke-width: 1; shape-rendering: crispEdges; }
-  .plot .seg-a { stroke: none; }
-  .plot .hit { fill: transparent; cursor: pointer; }
-  .plot .picked { fill: var(--ink); fill-opacity: 0.06; }
+  .plot .picked { fill: var(--ink); fill-opacity: 0.07; }
 
   /* tables */
   .table-wrap { overflow-x: auto; margin-top: 14px; border-radius: 12px; border: 1px solid var(--line); }
@@ -274,18 +321,18 @@
   @media (min-width: 720px) {
     .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
     .card { padding: 22px; }
-    #card-now, #card-today, #card-best, #card-numbers, .wide { grid-column: 1 / -1; }
+    #card-now, #card-energy, #card-best, #card-numbers, .wide { grid-column: 1 / -1; }
     #card-alerts, #card-shower { align-self: start; }
   }
   @media (min-width: 1100px) {
     .grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
     #card-best, #card-numbers { grid-column: span 7; }
     #card-alerts, #card-tariff, #card-shower { grid-column: span 5; }
-    /* a wall screen: the live flow with the alerts under it, today's charts beside both */
+    /* a wall screen: the live picture with the alerts under it, the energy chart beside both */
     .grid.live { grid-template-rows: auto 1fr; }
     .grid.live #card-now { grid-column: 1 / span 5; grid-row: 1; align-self: start; }
     .grid.live #card-alerts { grid-column: 1 / span 5; grid-row: 2; }
-    .grid.live #card-today { grid-column: 6 / span 7; grid-row: 1 / span 2; }
+    .grid.live #card-energy { grid-column: 6 / span 7; grid-row: 1 / span 2; }
   }
 </style>
 </head>
@@ -323,7 +370,7 @@ const HIDDEN_KEY = "hidden-alerts";
 const CARDS_KEY = "hidden-cards";
 const ZONE = "Europe/London";
 const PERIODS = [["yesterday", "Yesterday"], ["this_month", "This month"], ["last_month", "Last month"], ["last_12_months", "12 months"]];
-const CARDS = [["now", "Right now"], ["today", "Today's charts"], ["best", "Best times to use power"], ["alerts", "Alerts"],
+const CARDS = [["now", "Right now"], ["energy", "Energy"], ["best", "Best times to use power"], ["alerts", "Alerts"],
                ["numbers", "The numbers"], ["tariff", "Tariff"], ["shower", "The shower"]];
 // Live figures (#165): the inverter's readings, about every 5 minutes, from a small script in the
 // house's own Google account. Its address is private: it's read from the figures repository with this
@@ -334,9 +381,9 @@ const LATE_MINUTES = 20;            // a reading older than this means the inver
 const ON_KW = 0.02;                 // anything less counts as nothing flowing
 const FIRST_DAY = "2023-07-01";     // the earliest day the charts go back to
 const live = { url: "", reading: store("live-last"), error: "", asked: 0, version: 0 };
-const days = { shown: "", drawn: "", loaded: {}, error: "" };     // the day charts: shown "" means today
+const days = { loaded: {} };                                    // each day's readings, by date
 const extra = { months: {}, years: {} };                        // month and year totals, for the bar charts
-let daily = null, dailyStale = false, wakeLock = null, chart = null, bars = null, resizer = null;
+let daily = null, dailyStale = false, wakeLock = null, chart = null, resizer = null;
 (() => {
   const last = store("day-last");
   if (last && last.date && last.points) { days.loaded[last.date] = last; live.version = last.version || 0; }
@@ -436,7 +483,7 @@ function shareBar(title, parts) {
     <ul class="keys">${shown.map((p, i) => `<li><i class="sw" style="--c: var(--c-${p[0]})"></i><b>${pct[i]}%</b>${esc(p[1])}</li>`).join("")}</ul></div>`;
 }
 
-// ---- right now: where the power is going
+// ---- right now: a picture of where the power is going, in the style of the FoxESS dashboard
 function flows(r) {
   const v = k => Math.max(0, num(r[k]) || 0);
   return { solar: v("solar_kw"), house: v("house_kw"), buy: v("buying_kw"), sell: v("selling_kw"),
@@ -460,71 +507,205 @@ function story(r) {
   return text;
 }
 
-function flowSvg(r) {
-  const f = flows(r);
-  const grid = f.buy >= ON_KW ? { kw: f.buy, out: false, lab: "Buying" } : f.sell >= ON_KW ? { kw: f.sell, out: true, lab: "Selling" }
-                              : { kw: 0, lab: "Grid idle" };
-  const bat = f.give >= ON_KW ? { kw: f.give, out: false, lab: `Giving ${kw(f.give)} kW` }
-            : f.charge >= ON_KW ? { kw: f.charge, out: true, lab: `Charging ${kw(f.charge)} kW` } : { kw: 0, lab: "Resting" };
-  // each line runs from where the power comes from to where it goes, so its dots move forwards
-  const lines = [
-    ["solar", f.solar, [180, 114], [180, 165]],
-    ["home", f.house, [187, 172], [267, 172]],
-    ["grid", grid.kw].concat(grid.out ? [[173, 172], [93, 172]] : [[93, 172], [173, 172]]),
-    ["battery", bat.kw].concat(bat.out ? [[180, 179], [180, 227]] : [[180, 227], [180, 179]]),
-  ];
-  const line = ([key, power, a, b]) => {
-    const on = power >= ON_KW, speed = 12 + 18 * Math.sqrt(Math.min(power, 12));      // pixels a second
-    const style = `style="stroke: var(--c-${key})${on ? `; --dur: ${(13.01 / speed).toFixed(2)}s` : ""}"`;
-    const xy = `x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"`;
-    if (!on) return `<line class="track" ${xy} ${style}/>`;
-    const deg = Math.round(Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI);
-    return `<line class="track on" ${xy} ${style}/><line class="dots" ${xy} ${style}/>` +
-      `<path class="chev" d="M-3.5 -4.5 L1.5 0 L-3.5 4.5" transform="translate(${(a[0] + b[0]) / 2} ${(a[1] + b[1]) / 2}) rotate(${deg})" ${style}/>`;
-  };
-  const node = (key, x, y, glyph, on) => `<g class="node${on ? "" : " idle"}" style="--c: var(--c-${key})">
-      <circle class="ring" cx="${x}" cy="${y}" r="30"/><g class="glyph" transform="translate(${x - 12} ${y - 12})">${glyph}</g></g>`;
-  const words = (x, y1, value, unit, y2, label) =>
-    `<text class="val" x="${x}" y="${y1}">${value}${unit ? `<tspan dx="3">${unit}</tspan>` : ""}</text><text class="lab" x="${x}" y="${y2}">${esc(label)}</text>`;
-  const pct = f.pct == null ? null : Math.max(0, Math.min(100, f.pct));
-  const level = pct == null ? "" : `<rect class="solid" x="4.5" y="9" width="${(13 * pct / 100).toFixed(1)}" height="6" rx="1"/>`;
-  const label = `Solar ${kw(f.solar)} kW, house ${kw(f.house)} kW, ${grid.kw ? `${grid.lab.toLowerCase()} ${kw(grid.kw)} kW ${grid.out ? "to" : "from"} the grid`
-    : "nothing to or from the grid"}, battery ${pct == null ? "level unknown" : Math.round(pct) + "%"} and ${bat.lab.toLowerCase()}.`;
-  return `<svg viewBox="0 0 360 340" role="img" aria-label="${esc(label)}">
-    ${lines.map(line).join("")}
-    <circle class="hub" cx="180" cy="172" r="6"/>
-    ${node("solar", 180, 84, ICONS.sun, f.solar >= ON_KW)}
-    ${node("grid", 62, 172, ICONS.grid, grid.kw >= ON_KW)}
-    ${node("home", 298, 172, ICONS.house, f.house >= ON_KW)}
-    ${node("battery", 180, 258, `<rect x="2" y="6.5" width="18" height="11" rx="2.5"/><path d="M22.5 10.5v3"/>${level}`, bat.kw >= ON_KW || (pct || 0) > 0)}
-    ${words(180, 42, kw(f.solar), "kW", 18, "Solar")}
-    ${words(62, 226, kw(grid.kw), "kW", 245, grid.lab)}
-    ${words(298, 226, kw(f.house), "kW", 245, "House")}
-    ${words(180, 312, pct == null ? "–" : Math.round(pct) + "%", "", 331, bat.lab)}
-  </svg>`;
+// The picture is drawn here in isometric 3D (x runs down to the right, y down to the left, z up), from
+// simple shapes: nothing in it is copied from FoxESS's own artwork. Colours come from the --iso tokens.
+const C30 = Math.cos(Math.PI / 6), TILE = 104, GAP = 146, THICK = 9;
+const SCENE = { x: -228, y: -226, w: 456, h: 432 };
+function iso(x, y, z = 0) { return [(x - y) * C30, (x + y) * 0.5 - z]; }
+function f1(n) { return n.toFixed(1); }
+function xy(p) { return `${f1(p[0])},${f1(p[1])}`; }
+function face(points, cls) { return `<path class="${cls}" d="M${points.map(p => xy(iso(...p))).join("L")}Z"/>`; }
+function block(x, y, z, w, d, h, [top, left, right]) {
+  return face([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], top) +
+         face([[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]], left) +
+         face([[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]], right);
+}
+function seg(a, b, cls) { const p = iso(...a), q = iso(...b); return `<line class="${cls}" x1="${f1(p[0])}" y1="${f1(p[1])}" x2="${f1(q[0])}" y2="${f1(q[1])}"/>`; }
+function outline(cx, cy, half, r) {                 // a rounded square on the ground, as (x, y) points
+  const pts = [];
+  for (const [sx, sy, a0] of [[1, 1, 0], [-1, 1, 90], [-1, -1, 180], [1, -1, 270]])
+    for (let k = 0; k <= 6; k++) { const a = (a0 + k * 15) * Math.PI / 180; pts.push([cx + sx * (half - r) + r * Math.cos(a), cy + sy * (half - r) + r * Math.sin(a)]); }
+  return pts;
+}
+
+function tileSvg(cx, cy) {
+  const pts = outline(cx, cy, TILE / 2, 16), top = pts.map(([x, y]) => iso(x, y, THICK));
+  const shadow = (grow, drop) => `<path class="iso-soft" d="M${outline(cx, cy, TILE / 2 + grow, 16 + grow).map(([x, y]) => xy(iso(x, y, -drop))).join("L")}Z"/>`;
+  // the side that can be seen: the outline from its leftmost point to its rightmost, along the front
+  let iL = 0, iR = 0;
+  top.forEach((p, i) => { if (p[0] < top[iL][0]) iL = i; if (p[0] > top[iR][0]) iR = i; });
+  const n = pts.length, walk = dir => { const out = []; for (let i = iL; ; i = (i + dir + n) % n) { out.push(i); if (i === iR) break; } return out; };
+  const a = walk(1), b = walk(-1), low = list => Math.max(...list.map(i => top[i][1]));
+  const front = low(a) > low(b) ? a : b;
+  const side = front.map(i => iso(pts[i][0], pts[i][1], THICK)).concat(front.slice().reverse().map(i => iso(pts[i][0], pts[i][1], 0)));
+  return shadow(2, 7) + shadow(6, 10) + `<path class="iso-tile-side" d="M${side.map(xy).join("L")}Z"/><path class="iso-tile-top" d="M${top.map(xy).join("L")}Z"/>`;
+}
+
+function houseSvg(cx, cy) {
+  const w = 58, d = 46, h = 30, rh = 19, o = 4, x = cx - w / 2 + 2, y = cy - d / 2 + 2, z = THICK;
+  const drop = o * rh / (d / 2), ridge = z + h + rh, eave = z + h - drop, th = 2.6;
+  let s = "";
+  // a tree behind, to the right
+  const tx = cx + 34, ty = cy - 30;
+  s += face([[tx - 10, ty - 6, z + 0.2], [tx + 12, ty - 6, z + 0.2], [tx + 12, ty + 12, z + 0.2], [tx - 10, ty + 12, z + 0.2]], "iso-shade");
+  s += block(tx - 1.5, ty - 1.5, z, 3, 3, 14, ["iso-trunk", "iso-trunk", "iso-trunk"]);
+  const c = iso(tx, ty, z + 26), c2 = iso(tx + 6, ty - 4, z + 20), c3 = iso(tx - 5, ty + 5, z + 19);
+  s += `<circle class="iso-leaf-2" cx="${f1(c2[0])}" cy="${f1(c2[1])}" r="10"/><circle class="iso-leaf-2" cx="${f1(c3[0])}" cy="${f1(c3[1])}" r="9.5"/>` +
+       `<circle class="iso-leaf-1" cx="${f1(c[0])}" cy="${f1(c[1])}" r="12"/><circle class="iso-leaf-3" cx="${f1(c[0] - 4)}" cy="${f1(c[1] - 4)}" r="5.5"/>`;
+  // its shadow, the walls and the gable end
+  s += face([[x + w, y, z + 0.2], [x + w + 16, y + 6, z + 0.2], [x + w + 16, y + d + 10, z + 0.2], [x + 6, y + d + 10, z + 0.2], [x, y + d, z + 0.2]], "iso-shade");
+  s += block(x, y, z, w, d, h, ["iso-wall-r", "iso-wall-l", "iso-wall-r"]);
+  s += face([[x + w, y, z + h], [x + w, y + d, z + h], [x + w, y + d / 2, ridge]], "iso-wall-r");
+  // windows along the front, a door and a window at the end
+  for (const wx of [x + 8, x + 24, x + 40]) s += face([[wx, y + d, z + 11], [wx + 10, y + d, z + 11], [wx + 10, y + d, z + 22], [wx, y + d, z + 22]], "iso-window");
+  s += face([[x + w, y + 25, z], [x + w, y + 36, z], [x + w, y + 36, z + 19], [x + w, y + 25, z + 19]], "iso-door");
+  s += face([[x + w, y + 8, z + 11], [x + w, y + 18, z + 11], [x + w, y + 18, z + 21], [x + w, y + 8, z + 21]], "iso-window");
+  // the roof's front slope (the back one is hidden behind it), with its edges showing over the gable
+  s += face([[x + w + o, y - o, eave], [x + w + o, y + d / 2, ridge], [x + w + o, y + d / 2, ridge - th], [x + w + o, y - o, eave - th]], "iso-roof-edge");
+  s += face([[x - o, y + d / 2, ridge], [x + w + o, y + d / 2, ridge], [x + w + o, y + d + o, eave], [x - o, y + d + o, eave]], "iso-roof");
+  s += face([[x + w + o, y + d / 2, ridge], [x + w + o, y + d + o, eave], [x + w + o, y + d + o, eave - th], [x + w + o, y + d / 2, ridge - th]], "iso-roof-edge");
+  s += face([[x - o, y + d + o, eave], [x + w + o, y + d + o, eave], [x + w + o, y + d + o, eave - th], [x - o, y + d + o, eave - th]], "iso-roof-edge");
+  // a chimney on the slope
+  const cyy = y + d * 0.66, roofAt = ridge - (cyy - (y + d / 2)) * rh / (d / 2);
+  return s + block(x + w * 0.66, cyy, roofAt - 4, 6, 6, 13, ["iso-wall-r", "iso-wall-l", "iso-wall-r"]);
+}
+
+function solarSvg(cx, cy) {
+  const z = THICK, pw = 21, pl = 30, tilt = 30 * Math.PI / 180, lift = 7, cs = Math.cos(tilt), sn = Math.sin(tilt);
+  let s = "";
+  for (const by of [cy - 14, cy + 26]) {                 // the back row first
+    for (let k = 0; k < 3; k++) {
+      const px = cx - 36 + k * (pw + 3), top = [by - pl * cs, z + lift + pl * sn];
+      for (const [lx, ly, lz] of [[px + 3, by, z + lift], [px + pw - 3, by, z + lift], [px + 3, top[0], top[1]], [px + pw - 3, top[0], top[1]]]) {
+        s += seg([lx, ly, lz], [lx, ly, z], "iso-leg");
+      }
+      s += face([[px, by, z + lift], [px + pw, by, z + lift], [px + pw, top[0], top[1]], [px, top[0], top[1]]], "iso-panel");
+      let cells = "";
+      const p1 = iso(px + pw / 2, by, z + lift), p2 = iso(px + pw / 2, top[0], top[1]);
+      cells += `M${xy(p1)}L${xy(p2)}`;
+      for (let j = 1; j < 4; j++) {
+        const v = j / 4, a = iso(px, by - pl * cs * v, z + lift + pl * sn * v), b = iso(px + pw, by - pl * cs * v, z + lift + pl * sn * v);
+        cells += `M${xy(a)}L${xy(b)}`;
+      }
+      s += `<path class="iso-cells" d="${cells}"/>`;
+    }
+  }
+  return s;
+}
+
+function pylonSvg(cx, cy, H) {
+  const z = THICK, b = 8, b2 = 2.6, levels = [0, 0.22, 0.42, 0.6, 0.76, 0.9];
+  const corner = (u, sx, sy) => { const half = b + (b2 - b) * u; return [cx + sx * half, cy + sy * half, z + H * u]; };
+  let d = "";
+  const line = (p, q) => { d += `M${xy(iso(...p))}L${xy(iso(...q))}`; };
+  for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) line(corner(0, sx, sy), corner(0.9, sx, sy));
+  for (let i = 0; i < levels.length - 1; i++) {        // cross-bracing on the two faces that can be seen
+    const u0 = levels[i], u1 = levels[i + 1];
+    line(corner(u0, 1, -1), corner(u1, 1, 1)); line(corner(u0, 1, 1), corner(u1, 1, -1));
+    line(corner(u0, -1, 1), corner(u1, 1, 1)); line(corner(u0, 1, 1), corner(u1, -1, 1));
+    line(corner(u1, -1, 1), corner(u1, 1, 1)); line(corner(u1, 1, -1), corner(u1, 1, 1));
+  }
+  const peak = [cx, cy, z + H * 1.02], arms = [];
+  for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) line(corner(0.9, sx, sy), peak);
+  for (const [u, len] of [[0.6, 17], [0.76, 13]]) {       // two cross-arms with insulators
+    const zz = z + H * u, half = b + (b2 - b) * u;
+    line([cx - len, cy, zz], [cx + len, cy, zz]);
+    line([cx - len, cy, zz], [cx - half, cy, zz - 5]); line([cx + len, cy, zz], [cx + half, cy, zz - 5]);
+    for (const sx of [-1, 1]) { line([cx + sx * (len - 1), cy, zz], [cx + sx * (len - 1), cy, zz - 4]); arms.push([cx + sx * (len - 1), cy, zz - 4]); }
+  }
+  return { svg: `<path class="iso-steel" d="${d}"/>`, arms };
+}
+
+function gridSvg(cx, cy) {
+  const z = THICK + 0.2, back = pylonSvg(cx + 2, cy - 30, 74), front = pylonSvg(cx - 2, cy + 22, 74);
+  let wires = "";
+  back.arms.forEach((a, i) => {
+    const p = iso(...a), q = iso(...front.arms[i]);
+    wires += `M${xy(p)}Q${xy([(p[0] + q[0]) / 2, (p[1] + q[1]) / 2 + 7])} ${xy(q)}`;
+  });
+  return face([[cx - 9, cy - 39, z], [cx + 13, cy - 39, z], [cx + 13, cy - 21, z], [cx - 9, cy - 21, z]], "iso-shade") +
+         face([[cx - 13, cy + 13, z], [cx + 9, cy + 13, z], [cx + 9, cy + 31, z], [cx - 13, cy + 31, z]], "iso-shade") +
+         back.svg + `<path class="iso-wire" d="${wires}"/>` + front.svg;
+}
+
+function batterySvg(cx, cy, pct) {
+  const w = 30, d = 22, h = 60, x = cx - w / 2, y = cy - d / 2, z = THICK;
+  let s = face([[x + w, y, z + 0.2], [x + w + 14, y + 6, z + 0.2], [x + w + 14, y + d + 8, z + 0.2], [x + 4, y + d + 8, z + 0.2], [x, y + d, z + 0.2]], "iso-shade");
+  s += block(x, y, z, w, d, h, ["iso-bat-t", "iso-bat-l", "iso-bat-r"]);
+  s += block(x - 1.2, y - 1.2, z + h, w + 2.4, d + 2.4, 3, ["iso-bat-t", "iso-bat-l", "iso-bat-r"]);
+  // the level, in a window on the front: as full as the battery
+  const x0 = x + 5, x1 = x + w - 5, z0 = z + 6, z1 = z + h - 12, level = z0 + (z1 - z0) * Math.max(0, Math.min(100, pct)) / 100;
+  s += face([[x0, y + d, z0], [x1, y + d, z0], [x1, y + d, z1], [x0, y + d, z1]], "iso-bat-window");
+  if (pct > 0) s += face([[x0, y + d, z0], [x1, y + d, z0], [x1, y + d, level], [x0, y + d, level]], "iso-bat-level");
+  const led = iso(x + w, y + d / 2, z + h - 7);
+  return s + `<circle class="iso-led" cx="${f1(led[0])}" cy="${f1(led[1])}" r="1.6"/>`;
+}
+
+function sceneSvg(f) {
+  const node = { home: [-GAP, 0], solar: [0, -GAP], grid: [0, GAP], battery: [GAP, 0] };
+  const edge = { home: [-GAP + TILE / 2, 0], solar: [0, -GAP + TILE / 2], grid: [0, GAP - TILE / 2], battery: [GAP - TILE / 2, 0] };
+  // [power, towards the middle?]: each line's dots run from where the power comes from to where it goes
+  const flow = { solar: [f.solar, true], home: [f.house, false], grid: f.buy >= ON_KW ? [f.buy, true] : [f.sell, false],
+                 battery: f.give >= ON_KW ? [f.give, true] : [f.charge, false] };
+  const hub = iso(0, 0, THICK / 2);
+  let links = "";
+  for (const key of ["solar", "home", "grid", "battery"]) {
+    const end = iso(edge[key][0], edge[key][1], THICK / 2), [power, inwards] = flow[key], on = power >= ON_KW;
+    links += `<line class="iso-link${on ? " on" : ""}" x1="${f1(end[0])}" y1="${f1(end[1])}" x2="${f1(hub[0])}" y2="${f1(hub[1])}" style="--c: var(--c-${key})"/>`;
+    if (!on) continue;
+    const [a, b] = inwards ? [end, hub] : [hub, end];
+    const speed = 12 + 18 * Math.sqrt(Math.min(power, 12)), deg = Math.round(Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI);
+    const style = `style="stroke: var(--c-${key}); --dur: ${(12.01 / speed).toFixed(2)}s"`;
+    links += `<line class="iso-dots" x1="${f1(a[0])}" y1="${f1(a[1])}" x2="${f1(b[0])}" y2="${f1(b[1])}" ${style}/>` +
+             `<path class="iso-chev" d="M-3.5 -4.5 L1.5 0 L-3.5 4.5" transform="translate(${f1((a[0] + b[0]) / 2)} ${f1((a[1] + b[1]) / 2)}) rotate(${deg})" ${style}/>`;
+  }
+  const defs = `<defs>
+    <linearGradient id="iso-side" x1="0" x2="1" y1="0" y2="0"><stop offset="0" style="stop-color: var(--iso-tile-left)"/><stop offset="0.47" style="stop-color: var(--iso-tile-left)"/>
+      <stop offset="0.53" style="stop-color: var(--iso-tile-right)"/><stop offset="1" style="stop-color: var(--iso-tile-right)"/></linearGradient>
+    <linearGradient id="iso-glass" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color: var(--iso-panel-hi)"/><stop offset="1" style="stop-color: var(--iso-panel)"/></linearGradient>
+    <linearGradient id="iso-charge" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color: var(--iso-bat-level-hi)"/><stop offset="1" style="stop-color: var(--iso-bat-level)"/></linearGradient>
+  </defs>`;
+  // back to front: the solar panels, the house and the battery, then the grid
+  return defs + links + `<circle class="iso-hub" cx="${f1(hub[0])}" cy="${f1(hub[1])}" r="7"/>` +
+    tileSvg(...node.solar) + solarSvg(...node.solar) + tileSvg(...node.home) + houseSvg(...node.home) +
+    tileSvg(...node.battery) + batterySvg(...node.battery, f.pct == null ? 0 : f.pct) + tileSvg(...node.grid) + gridSvg(...node.grid);
+}
+
+function watts(kwValue) {           // as FoxESS shows power: watts under 1 kW, then kW
+  const v = Math.max(0, kwValue || 0);
+  return v < 1 ? `${Math.round(v * 1000)}<small>W</small>` : `${v.toFixed(v >= 10 ? 1 : 2)}<small>kW</small>`;
+}
+function sceneLabel(x, y, right, label, valueHtml) {
+  return `<div class="iso-label${right ? " right" : ""}" style="left: ${((x - SCENE.x) / SCENE.w * 100).toFixed(2)}%; top: ${((y - SCENE.y) / SCENE.h * 100).toFixed(2)}%">
+    <div class="k">${esc(label)}</div><div class="v">${valueHtml}</div></div>`;
 }
 
 function nowCard() {
   const r = live.reading;
   if (!r) return live.url ? card("now", "Right now", `<p class="muted">${esc(live.error || "Getting the latest reading…")}</p>`) : "";
-  const at = readingTime(r.time);
-  const late = !at || Date.now() - at > LATE_MINUTES * 60000;
+  const at = readingTime(r.time), age = at ? (Date.now() - at) / 60000 : Infinity, late = age > LATE_MINUTES;
   const time = at ? clock(at) + (londonDate(at) !== londonDate() ? " on " + shortDate(londonDate(at)) : "") : "an unknown time";
-  const f = flows(r);
-  const fromSolar = Math.min(f.solar, f.house), fromBattery = Math.min(f.give, f.house - fromSolar);
-  const share = f.house >= ON_KW ? shareBar("Where the house's power is coming from",
-    [["solar", "Solar", fromSolar], ["battery", "Battery", fromBattery], ["grid", "Grid", Math.max(0, f.house - fromSolar - fromBattery)]]) : "";
-  return card("now", "Right now", `<div class="now-grid">
-      <figure class="flow">${flowSvg(r)}</figure>
-      <div class="stack">
+  const f = flows(r), pct = f.pct == null ? null : Math.round(Math.max(0, Math.min(100, f.pct)));
+  const grid = f.buy >= ON_KW ? ["Buying from the grid", f.buy] : f.sell >= ON_KW ? ["Selling to the grid", f.sell] : ["Grid", 0];
+  const bat = f.give >= ON_KW ? ["Battery giving", f.give] : f.charge >= ON_KW ? ["Battery charging", f.charge] : null;
+  const level = pct == null ? "–" : `${pct}<small>%</small>`;
+  const labels = sceneLabel(-222, -170, false, "House using", watts(f.house)) + sceneLabel(222, -170, true, "Solar", watts(f.solar)) +
+    sceneLabel(-222, 202, false, grid[0], watts(grid[1])) +
+    sceneLabel(222, 202, true, bat ? bat[0] : "Battery resting", bat ? `${watts(bat[1])}${pct == null ? "" : ` · ${level}`}` : level);
+  const said = `House using ${kw(f.house)} kW. Solar ${kw(f.solar)} kW. ${grid[0]}${grid[1] >= ON_KW ? ` ${kw(grid[1])} kW` : ": nothing in or out"}. ` +
+    `${bat ? `${bat[0]} ${kw(bat[1])} kW` : "Battery resting"}${pct == null ? "" : `, ${pct}% full`}.`;
+  const updated = !at ? "" : late ? `Last reading ${time}` : age < 1.5 ? "Updated just now" : `Updated ${Math.round(age)} minutes ago`;
+  const tools = `<div class="tools now-tools"><span class="live-badge${late ? " late" : ""}"><span class="dot ${late ? "late" : "live"}"></span>${late ? "No new reading" : "Live"}</span>
+    <span class="fine">${esc(updated)}</span></div>`;
+  return card("now", "Right now", `<div class="iso-scene"><svg viewBox="${SCENE.x} ${SCENE.y} ${SCENE.w} ${SCENE.h}" role="img" aria-label="${esc(said)}">${sceneSvg(f)}</svg>${labels}</div>
+      <div class="stack now-words">
         <p class="story">${esc(story(r))}</p>
-        ${share}
         ${late ? `<div class="note">${icon("alert")}<span>FoxESS's last reading was at ${esc(time)}. The inverter or its internet connection may be off.</span></div>` : ""}
         <p class="fine">FoxESS's reading at ${esc(time)}. New readings come about every 5 minutes.${live.error ? ` ${esc(live.error)} Showing the last reading.` : ""}</p>
-      </div></div>`);
+      </div>`, tools);
 }
 
-// ---- today (or another day): totals, money and the 5-minute charts
+// ---- money for a day: FoxESS's meter totals, priced by when the power was used, at today's prices
 function usedKwh(t) {
   const need = ["solar", "gave", "bought", "charged", "sold"];
   return need.every(k => num(t[k]) != null) ? Math.max(0, t.solar + t.gave + t.bought - t.charged - t.sold) : null;
@@ -549,7 +730,6 @@ function at(d, col, i) { const a = d.points[col]; return a && a[i] != null ? Mat
 function energy(d, col, i, h) { return (at(d, col, i) + at(d, col, i - 1)) / 2 * h; }
 
 function dayMoney(d) {
-  // the day's money at today's prices: FoxESS's meter totals, priced by when the power was used
   const prices = daily && daily.prices;
   if (!prices || !prices.import_bands || !d.points || !d.totals) return null;
   const sum = { buy: [0, 0], sell: [0, 0], use: [0, 0] };
@@ -580,39 +760,6 @@ function priceWords() {
   return `Money at today's prices (${esc(p.import)}: ${unit}, ${pence(p.standing_p_day)} a day; ${exp.every(v => !v) ? "exports aren't paid" : `exports earn ${exp.map(pence).join(" to ")}`}).`;
 }
 
-function todayCard() {
-  if (!live.url && !live.reading) return "";
-  const today = londonDate(), want = days.shown || today;
-  const date = days.loaded[want] ? want : days.loaded[days.drawn] ? days.drawn : want;     // keep the last chart while another day loads
-  const d = days.loaded[date];
-  days.drawn = d ? date : "";
-  const view = store("day-view") === "table" ? "table" : "chart";
-  if (live.version === 1) {
-    return card("today", "Today's charts", `<p class="muted">The charts need the live script's update: part 5 of the walk-through, about 3 minutes at a computer.
-      Right now's figures keep working until then.</p>`);
-  }
-  const tools = `<div class="tools">
-      <button class="icon-btn" id="day-back" aria-label="The day before"${want <= FIRST_DAY ? " disabled" : ""}>${icon("left")}</button>
-      <button class="icon-btn" id="day-next" aria-label="The day after"${want >= today ? " disabled" : ""}>${icon("right")}</button>
-      <div class="seg icons" role="group" aria-label="Show the day as">
-        <button data-view="chart" aria-pressed="${view === "chart"}" aria-label="Charts">${icon("chart")}</button>
-        <button data-view="table" aria-pressed="${view === "table"}" aria-label="A table">${icon("table")}</button>
-      </div></div>`;
-  const title = esc(dayName(want));
-  if (!d) return card("today", title, `<p class="muted">${esc(days.error || "Getting the day's readings…")}</p>`, tools);
-  const t = d.totals || {}, money = dayMoney(d), isToday = d.date === today;
-  const tiles = [tile("Solar made", kwh(t.solar), "kWh", "solar"), tile("House used", kwh(usedKwh(t)), "kWh", "home"),
-                 tile("Bought", kwh(t.bought), "kWh", "grid"), tile("Sold", kwh(t.sold), "kWh", "grid")];
-  if (money) tiles.push(tile(isToday ? "Spent so far" : "Spent", gbp(money.spent), "", "", `with the ${pence(money.standing)} daily charge`),
-                        tile("Saved", gbp(money.saved), "", "", "by the solar and battery"));
-  const body = `<div class="tiles">${tiles.join("")}</div>` +
-    (view === "table" ? dayTable(d) : `<div class="charts" id="today-charts" tabindex="0" role="group"
-       aria-label="${esc(dayName(date))}'s readings every 5 minutes. Use the left and right arrow keys to move along the day."></div>`) +
-    `<p class="fine" style="margin-top: 12px">${view === "chart" ? "Drag across the charts to see any 5 minutes. " : ""}Readings every 5 minutes from FoxESS; the day's totals from its meters. ${priceWords()}</p>` +
-    (days.error ? `<p class="fine" role="status" style="margin-top: 6px">${esc(days.error)}</p>` : "");
-  return card("today", title, body, tools, want !== date ? "busy" : "");
-}
-
 function hourRows(d) {
   // kWh in each hour from the 5-minute readings, scaled so each column adds up to FoxESS's meter total
   const cols = { solar: "solar", house: "house", bought: "buying", sold: "selling", charged: "charging", gave: "giving" };
@@ -633,19 +780,224 @@ function hourRows(d) {
   return list;
 }
 
-function dayTable(d) {
-  const rows = hourRows(d), t = d.totals || {};
-  const cell = v => `<td>${v == null ? "–" : v < 0.05 ? "0" : v.toFixed(1)}</td>`;
-  return `<div class="table-wrap"><table class="data">
-    <caption class="sr-only">${esc(dayName(d.date))}, kWh in each hour</caption>
-    <thead><tr><th scope="col">Hour</th><th scope="col">Solar</th><th scope="col">House</th><th scope="col">Bought</th><th scope="col">Sold</th>
-      <th scope="col">Battery in</th><th scope="col">Battery out</th><th scope="col">Level</th></tr></thead>
-    <tbody>${rows.map(r => `<tr><td>${clock(new Date((d.start + r.n * 3600) * 1000))}</td>${cell(r.solar)}${cell(r.house)}${cell(r.bought)}${cell(r.sold)}${cell(r.charged)}${cell(r.gave)}<td>${r.level == null ? "–" : Math.round(r.level) + "%"}</td></tr>`).join("")}</tbody>
-    <tfoot><tr><th scope="row">Day</th>${cell(num(t.solar))}${cell(usedKwh(t))}${cell(num(t.bought))}${cell(num(t.sold))}${cell(num(t.charged))}${cell(num(t.gave))}<td></td></tr></tfoot>
-  </table></div><p class="fine" style="margin-top: 8px">kWh in each hour, worked out from the 5-minute readings and scaled to FoxESS's meters for the day. Level: the battery at the end of the hour.</p>`;
+function tableHtml(caption, first, rows, foot, note) {
+  // rows: [[first cell, solar, house, bought, sold, battery in, battery out, level?]]
+  const cell = v => `<td>${v == null ? "–" : typeof v === "string" ? v : v < 0.05 ? "0" : kwh(v)}</td>`;
+  const level = rows.some(r => r.length > 7);
+  return `<div class="table-wrap"><table class="data"><caption class="sr-only">${esc(caption)}</caption>
+    <thead><tr><th scope="col">${first}</th><th scope="col">Solar</th><th scope="col">House</th><th scope="col">Bought</th><th scope="col">Sold</th>
+      <th scope="col">Battery in</th><th scope="col">Battery out</th>${level ? `<th scope="col">Level</th>` : ""}</tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${esc(r[0])}</td>${r.slice(1).map(cell).join("")}</tr>`).join("")}</tbody>
+    ${foot ? `<tfoot><tr><th scope="row">${esc(foot[0])}</th>${foot.slice(1).map(cell).join("")}${level ? "<td></td>" : ""}</tr></tfoot>` : ""}
+  </table></div><p class="fine" style="margin-top: 8px">${note}</p>`;
 }
 
-// ---- the charts (drawn once the page knows how wide they are)
+// ---- the energy card: a day's power every 5 minutes, or each day of a month, or each month of a year.
+// What came in (solar, the battery, the grid) is stacked above the line, and where it went (the house,
+// the battery, the grid) below it, as in FoxESS's own app.
+const IN = [["solar", "Solar"], ["battery", "From the battery"], ["grid", "Bought"]];
+const OUT = [["home", "House"], ["battery", "Into the battery"], ["grid", "Sold"]];
+const CHIPS = [["solar", "Solar"], ["battery", "Battery"], ["grid", "Grid"], ["home", "House"]];
+const MODES = [["day", "Day"], ["month", "Month"], ["year", "Year"]];
+const FIRST = { day: FIRST_DAY, month: FIRST_DAY.slice(0, 7), year: FIRST_DAY.slice(0, 4) };
+const view = { mode: ["day", "month", "year"].includes(store("energy-mode")) ? store("energy-mode") : "day",
+               day: "", month: "", year: "", error: "", loading: "", before: null, last: null };
+
+async function getAnswer(kept, key, params, keepMinutes) {
+  const found = kept[key];
+  if (found && Date.now() - found.at < keepMinutes * 60000) return found.answer;
+  const answer = await ask(params);
+  if (!(answer.version >= 2)) throw new Error("the live script needs its update first");
+  kept[key] = { at: Date.now(), answer };
+  return answer;
+}
+function balanceRow(get, i) {
+  const v = k => num(get[k] && get[k][i]);
+  const solar = v("solar"), bought = v("bought"), sold = v("sold"), charged = v("charged"), gave = v("gave");
+  if ([solar, bought, sold, charged, gave].some(x => x == null)) return null;
+  return { solar, bought, sold, charged, gave, used: Math.max(0, solar + gave + bought - charged - sold) };
+}
+
+function now3() { const today = londonDate(); return { day: today, month: today.slice(0, 7), year: today.slice(0, 4) }; }
+function selected() { const current = now3(); return { mode: view.mode, key: view[view.mode] || current[view.mode], current: current[view.mode] }; }
+function sameSel(a, b) { return a && b && a.mode === b.mode && a.key === b.key; }
+function periodName(sel) {
+  if (sel.mode === "day") return dayName(sel.key);
+  const so = sel.key === sel.current ? " so far" : "";
+  if (sel.mode === "month") return new Date(sel.key + "-15T12:00:00Z").toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" }) + so;
+  return sel.key + so;
+}
+function stepKey(sel, n) {
+  if (sel.mode === "day") return shiftDate(sel.key, n);
+  if (sel.mode === "month") return new Date(Date.UTC(+sel.key.slice(0, 4), +sel.key.slice(5, 7) - 1 + n, 1)).toISOString().slice(0, 7);
+  return String(+sel.key + n);
+}
+function keptKey(sel) { return sel.key === sel.current ? sel.key + " so far" : sel.key; }    // kept apart, so a "so far" copy isn't reused once it's over
+function periodAnswer(sel) {
+  if (sel.mode === "day") return days.loaded[sel.key] || null;
+  const found = (sel.mode === "month" ? extra.months : extra.years)[keptKey(sel)];
+  return found ? found.answer : null;
+}
+function periodStale(sel) {
+  if (sel.mode === "day" || sel.key !== sel.current) return false;
+  const found = (sel.mode === "month" ? extra.months : extra.years)[keptKey(sel)];
+  return !!found && Date.now() - found.at > (sel.mode === "month" ? 15 : 60) * 60000;
+}
+async function fetchPeriod(sel) {
+  if (sel.mode === "day") {
+    const answer = await ask({ want: "day", date: sel.key });
+    if (!(answer.version >= 2)) throw new Error("the live script needs its update first");
+    days.loaded[answer.date] = answer;
+    forgetOldDays(answer.date);
+    return;
+  }
+  const current = sel.key === sel.current;
+  await getAnswer(sel.mode === "month" ? extra.months : extra.years, keptKey(sel), { want: sel.mode, date: sel.key },
+                  current ? (sel.mode === "month" ? 15 : 60) : 360);
+}
+async function loadPeriod(sel) {
+  const id = sel.mode + " " + sel.key;
+  if (view.loading === id) return;
+  view.loading = id;
+  try {
+    await fetchPeriod(sel);
+    if (sameSel(selected(), sel)) view.error = "";
+  } catch (e) {
+    // still the one wanted and nothing to show for it: go back to what was showing. (A failed refresh of
+    // figures already on screen just leaves them there.)
+    if (sameSel(selected(), sel) && !periodAnswer(sel)) {
+      if (view.before) Object.assign(view, view.before);
+      view.error = `Couldn't get ${periodName(sel)}: ${message(e)}.`;
+    }
+  }
+  if (view.loading === id) view.loading = "";
+  refreshCards("energy");
+}
+function go(change) {
+  const before = { mode: view.mode, day: view.day, month: view.month, year: view.year };
+  if (change.mode) { view.mode = change.mode; store("energy-mode", change.mode); }
+  if (change.step) {
+    const sel = selected(), key = stepKey(sel, change.step);
+    if (key < FIRST[sel.mode] || key > sel.current) return;
+    view[sel.mode] = key === sel.current ? "" : key;
+  }
+  view.before = before;
+  view.error = "";
+  refreshCards("energy");                                    // the new name at once; the last chart stays, dimmed, until the new one arrives
+}
+function forgetOldDays(keep) {
+  // the 12 days fetched most recently stay in memory, plus today, the one just fetched and the one on screen
+  const today = londonDate(), shown = view.day || today;
+  const old = Object.keys(days.loaded).filter(k => k !== today && k !== keep && k !== shown);
+  old.slice(0, Math.max(0, old.length - 12)).forEach(k => { delete days.loaded[k]; });
+}
+
+function energyModel(sel, a) {
+  if (sel.mode === "day") {
+    const P = a.points || {}, t = P.t || [];
+    // FoxESS sometimes puts the house below zero for a few minutes on sunny days: every power is drawn as zero or more
+    const col = name => t.map((_, i) => P[name] && P[name][i] != null ? Math.max(0, +P[name][i]) : null);
+    return { sel, a, unit: "kW", t, span: (a.end - a.start) || 86400, start: a.start, count: t.length,
+             up: { solar: col("solar"), battery: col("giving"), grid: col("buying") },
+             down: { home: col("house"), battery: col("charging"), grid: col("selling") },
+             level: col("battery"), roofs: [col("roof1"), col("roof2")] };
+  }
+  const get = (sel.mode === "month" ? a.days : a.months) || {};
+  const count = sel.mode === "month" ? new Date(Date.UTC(+sel.key.slice(0, 4), +sel.key.slice(5, 7), 0)).getUTCDate() : 12;
+  const today = londonDate(), rows = [];
+  for (let i = 0; i < count; i++) {
+    const key = `${sel.key}-${String(i + 1).padStart(2, "0")}`;            // a day of the month, or a month of the year
+    const future = sel.mode === "month" ? key > today : key > today.slice(0, 7);
+    rows.push(future ? null : balanceRow(get, i));
+  }
+  const pick = k => rows.map(r => r ? r[k] : null);
+  return { sel, a, unit: "kWh", rows, count,
+           up: { solar: pick("solar"), battery: pick("gave"), grid: pick("bought") },
+           down: { home: pick("used"), battery: pick("charged"), grid: pick("sold") } };
+}
+
+function hiddenSeries() { return store("energy-hidden") || {}; }
+function layers(m) {
+  const hidden = hiddenSeries();
+  return { up: IN.filter(([k]) => !hidden[k]).map(([k, name]) => [k, name, m.up[k]]),
+           down: OUT.filter(([k]) => !hidden[k]).map(([k, name]) => [k, name, m.down[k]]) };
+}
+
+function energyTiles(m) {
+  if (m.sel.mode === "day") {
+    const t = m.a.totals || {}, money = dayMoney(m.a), isToday = m.sel.key === m.sel.current;
+    const tiles = [tile("Solar made", kwh(t.solar), "kWh", "solar"), tile("House used", kwh(usedKwh(t)), "kWh", "home"),
+                   tile("Bought", kwh(t.bought), "kWh", "grid"), tile("Sold", kwh(t.sold), "kWh", "grid")];
+    if (money) tiles.push(tile(isToday ? "Spent so far" : "Spent", gbp(money.spent), "", "", `with the ${pence(money.standing)} daily charge`),
+                          tile("Saved", gbp(money.saved), "", "", "by the solar and battery"));
+    return tiles.join("");
+  }
+  const sum = k => m.rows.reduce((a, r) => a + (r ? r[k] : 0), 0), used = sum("used"), bought = sum("bought");
+  return [tile("Solar made", kwh(sum("solar")), "kWh", "solar"), tile("House used", kwh(used), "kWh", "home"),
+          tile("Bought", kwh(bought), "kWh", "grid"), tile("Sold", kwh(sum("sold")), "kWh", "grid"),
+          tile("From solar", used ? Math.round(Math.max(0, used - bought) / used * 100) + "%" : "–", "", "solar", "of the house's use"),
+          tile("Battery", kwh(sum("gave")), "kWh", "battery", "given to the house")].join("");
+}
+
+function energyCard() {
+  if (!live.url && !live.reading) return "";
+  if (live.version === 1) {
+    return card("energy", "Energy", `<p class="muted">The charts need the live script's update: part 5 of the walk-through, about 3 minutes at a computer.
+      Right now's figures keep working until then.</p>`);
+  }
+  const sel = selected(), a = periodAnswer(sel);
+  if (a) view.last = energyModel(sel, a);
+  if ((!a || periodStale(sel)) && !view.error) setTimeout(() => loadPeriod(sel), 0);
+  const m = a ? view.last : view.last && view.last.sel.mode === sel.mode ? view.last : null;   // while loading, the last chart of the same kind, dimmed
+  const asTable = store("energy-view") === "table";
+  const tabs = `<div class="seg" role="group" aria-label="Period">${MODES.map(([k, name]) => `<button data-mode="${k}" aria-pressed="${k === sel.mode}">${name}</button>`).join("")}</div>`;
+  const hidden = hiddenSeries();
+  const nav = `<div class="period">
+      <div class="period-nav">
+        <button class="icon-btn" id="period-back" aria-label="Before"${stepKey(sel, -1) < FIRST[sel.mode] ? " disabled" : ""}>${icon("left")}</button>
+        <span class="period-name" aria-live="polite">${esc(periodName(sel))}</span>
+        <button class="icon-btn" id="period-next" aria-label="After"${sel.key >= sel.current ? " disabled" : ""}>${icon("right")}</button>
+      </div>
+      <div class="seg icons" role="group" aria-label="Show as">
+        <button data-view="chart" aria-pressed="${!asTable}" aria-label="A chart">${icon("chart")}</button>
+        <button data-view="table" aria-pressed="${asTable}" aria-label="A table">${icon("table")}</button>
+      </div></div>`;
+  if (!m) return card("energy", "Energy", nav + `<p class="muted">${esc(view.error || `Getting ${periodName(sel)}…`)}</p>`, tabs);
+  const chips = `<div class="chips" role="group" aria-label="Show or hide">${CHIPS.map(([k, name]) =>
+    `<button class="chip-key" data-series="${k}" aria-pressed="${!hidden[k]}" style="--c: var(--c-${k})"><i class="sw"></i>${name}</button>`).join("")}</div>`;
+  const what = sel.mode === "day" ? "readings every 5 minutes" : sel.mode === "month" ? "each day" : "each month";
+  const body = asTable ? energyTable(m)
+    : chips + `<div class="ec" id="energy-chart" tabindex="0" role="group" aria-label="${esc(periodName(m.sel))}: ${what}. Use the left and right arrow keys to move along it."></div>`;
+  const note = sel.mode === "day"
+    ? `${asTable ? "" : "Drag across the chart to see any 5 minutes. "}Readings every 5 minutes from FoxESS; the day's totals from its meters. ${priceWords()}`
+    : `${asTable ? "" : `Tap a bar to see that ${sel.mode === "month" ? "day" : "month"}. `}Totals from FoxESS's meters. House used: what came in less what went out.`;
+  return card("energy", "Energy", nav + `<div class="tiles">${energyTiles(m)}</div>` + body +
+    `<p class="fine" style="margin-top: 12px">${note}</p>` + (view.error ? `<p class="fine" role="status" style="margin-top: 6px">${esc(view.error)}</p>` : ""),
+    tabs, a ? "" : "busy");
+}
+
+function energyTable(m) {
+  if (m.sel.mode === "day") {
+    const d = m.a, t = d.totals || {};
+    const rows = hourRows(d).map(r => [clock(new Date((d.start + r.n * 3600) * 1000)), r.solar, r.house, r.bought, r.sold, r.charged, r.gave,
+                                       r.level == null ? "–" : Math.round(r.level) + "%"]);
+    return tableHtml(`${periodName(m.sel)}, kWh in each hour`, "Hour", rows,
+      ["Day", num(t.solar), usedKwh(t), num(t.bought), num(t.sold), num(t.charged), num(t.gave)],
+      "kWh in each hour, worked out from the 5-minute readings and scaled to FoxESS's meters for the day. Level: the battery at the end of the hour.");
+  }
+  const rows = [], sum = { solar: 0, used: 0, bought: 0, sold: 0, charged: 0, gave: 0 };
+  m.rows.forEach((r, i) => {
+    if (!r) return;
+    const name = m.sel.mode === "month" ? shortDate(`${m.sel.key}-${String(i + 1).padStart(2, "0")}`)
+      : new Date(Date.UTC(+m.sel.key, i, 15)).toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" });
+    rows.push([name, r.solar, r.used, r.bought, r.sold, r.charged, r.gave]);
+    for (const k of Object.keys(sum)) sum[k] += r[k];
+  });
+  return tableHtml(`${periodName(m.sel)}, kWh`, m.sel.mode === "month" ? "Day" : "Month", rows,
+    ["Total", sum.solar, sum.used, sum.bought, sum.sold, sum.charged, sum.gave], "kWh, from FoxESS's meters.");
+}
+
+// ---- drawing the chart (once the page knows how wide it is)
 function niceStep(peak) {
   const p = Math.pow(10, Math.floor(Math.log10(peak / 4)));
   let best = null;
@@ -655,155 +1007,154 @@ function niceStep(peak) {
   }
   return best ? best[0] : 10 * p;
 }
-function lineAndArea(t, vals, x, y, y0) {
-  // paths that break where a reading is missing or the gap is over 20 minutes
-  let line = "", area = "", seg = [];
-  const flush = () => {
-    if (seg.length > 1) {
-      const pts = seg.map(p => p.join(",")).join("L");
-      line += "M" + pts;
-      area += `M${seg[0][0]},${y0}L${pts}L${seg[seg.length - 1][0]},${y0}Z`;
-    }
-    seg = [];
-  };
-  for (let i = 0; i < t.length; i++) {
-    if (vals[i] == null || (i && t[i] - t[i - 1] > 1200)) flush();
-    if (vals[i] != null) seg.push([x(t[i]).toFixed(1), y(vals[i]).toFixed(1)]);
-  }
-  flush();
-  return { line, area };
-}
-
-function buildChart(d, W) {
-  const P = d.points, t = P.t;
-  // FoxESS sometimes puts the house below zero for a few minutes on sunny days: every power is drawn as zero or more
-  const col = name => t.map((_, i) => P[name] && P[name][i] != null ? Math.max(0, +P[name][i]) : null);
-  const net = (a, b) => t.map((_, i) => (P[a] && P[a][i] != null) || (P[b] && P[b][i] != null)
-    ? Math.max(0, +(P[a] && P[a][i]) || 0) - Math.max(0, +(P[b] && P[b][i]) || 0) : null);
-  const S = { solar: col("solar"), house: col("house"), grid: net("buying", "selling"), battery: net("giving", "charging"), level: col("battery"),
-              roof1: col("roof1"), roof2: col("roof2") };
-  const span = (d.end - d.start) || 86400, padL = 30, padR = 8, plotW = Math.max(60, W - padL - padR), PT = 6, PB = 6;
-  const x = s => padL + Math.max(0, Math.min(span, s)) / span * plotW;
-  const hi = a => Math.max(0, ...a.filter(v => v != null && v > 0.05)), lo = a => Math.max(0, ...a.filter(v => v != null && v < -0.05).map(v => -v));
-  const step = niceStep(Math.max(hi(S.solar), hi(S.house), hi(S.grid), lo(S.grid), hi(S.battery), lo(S.battery), 0.4));
-  const up = v => Math.ceil(v / step - 1e-9) * step;
-  const top1 = up(Math.max(hi(S.solar), hi(S.house))) || step;
-  const k = (W < 520 ? 128 : 156) / top1;           // pixels a kW, the same in the three power charts
-  const last = (() => { for (let i = t.length - 1; i >= 0; i--) if (S.house[i] != null || S.solar[i] != null) return i; return t.length - 1; })();
-  const isToday = d.date === londonDate();
-  // clock hours along the bottom (summer-time changes make two days a year 23 or 25 hours long)
-  const hours = (W < 520 ? [0, 6, 12, 18, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24]).map(h => {
-    const s = h * 3600 - (ukOffset(d.start + h * 3600) - ukOffset(d.start));
-    return { h, s: Math.min(span, s) };
-  });
-  const sumKwh = vals => { let e = 0; for (let i = 1; i < t.length; i++) { const h = (t[i] - t[i - 1]) / 3600; if (h > 0 && h <= 0.5) e += ((vals[i] || 0) + (vals[i - 1] || 0)) / 2 * h; } return e; };
-  const kwPanel = (spec) => {
-    if (!spec.top && !spec.bottom) spec.top = step;
-    const top = spec.top, bottom = spec.bottom || 0, h = Math.max(spec.min || 40, (top + bottom) * k);
-    const kk = h / (top + bottom);
-    const y = v => PT + (top - v) * kk;
-    const ticks = [];
-    for (let v = -bottom; v <= top + 1e-9; v += step) ticks.push(Math.round(v * 100) / 100);
-    return Object.assign(spec, { h: h + PT + PB, y, y0: y(0), ticks, fmt: v => String(Math.abs(v)) });
-  };
-  const roofs = S.roof1.some(v => v) || S.roof2.some(v => v);
-  const solarTotal = num((d.totals || {}).solar), r1 = sumKwh(S.roof1), r2 = sumKwh(S.roof2), scale = solarTotal && r1 + r2 > 0.05 ? solarTotal / (r1 + r2) : 1;
-  const panels = [
-    kwPanel({ title: "Solar and house", unit: "kW", top: top1, series: [["solar", S.solar, true], ["home", S.house, false]],
-              legend: [["solar", "Solar"], ["home", "House"]],
-              note: roofs ? `Roof 1 ${kwh(r1 * scale)} · Roof 2 ${kwh(r2 * scale)} kWh` : "" }),
-    kwPanel({ title: "Grid", unit: "kW", top: up(hi(S.grid)), bottom: up(lo(S.grid)), series: [["grid", S.grid, true]],
-              dirs: ["Buying", "Selling"], min: 36 }),
-    kwPanel({ title: "Battery", unit: "kW", top: up(hi(S.battery)), bottom: up(lo(S.battery)), series: [["battery", S.battery, true]],
-              dirs: ["Giving", "Charging"], min: 36,
-              note: d.totals ? `In ${kwh(d.totals.charged)} · Out ${kwh(d.totals.gave)} kWh` : "" }),
-  ];
-  const lh = 64;
-  panels.push({ title: "Battery level", unit: "%", series: [["battery", S.level, true]], h: lh + PT + PB, y: v => PT + (100 - v) / 100 * lh,
-                y0: PT + lh, ticks: [0, 50, 100], fmt: v => String(v) });
-  return { d, W, t, S, span, padL, plotW, x, panels, hours, last, isToday };
-}
-
-function chartSvg(m, p, n) {
-  const W = m.W, right = m.padL + m.plotW;
-  let g = m.hours.map(hh => `<line class="gl" x1="${m.x(hh.s).toFixed(1)}" x2="${m.x(hh.s).toFixed(1)}" y1="${p.y(p.ticks[p.ticks.length - 1])}" y2="${p.y(p.ticks[0])}"/>`).join("");
-  g += p.ticks.map(v => `<line class="${v === 0 && p.unit === "kW" ? "zero" : "gl"}" x1="${m.padL}" x2="${right}" y1="${p.y(v).toFixed(1)}" y2="${p.y(v).toFixed(1)}"/>` +
-    `<text class="tick" x="${m.padL - 6}" y="${(p.y(v) + 3.5).toFixed(1)}" text-anchor="end">${p.fmt(v)}</text>`).join("");
-  if (p.dirs) {
-    if (p.top) g += `<text class="dir" x="${m.padL + 5}" y="${(p.y(p.top) + 12).toFixed(1)}">${p.dirs[0]}</text>`;
-    if (p.bottom) g += `<text class="dir" x="${m.padL + 5}" y="${(p.y(-p.bottom) - 5).toFixed(1)}">${p.dirs[1]}</text>`;
-  }
-  let marks = "";
-  for (const [key, vals, area] of p.series) {
-    const { line, area: fill } = lineAndArea(m.t, vals, m.x, p.y, p.y0);
-    if (area && fill) marks += `<path class="ar" d="${fill}" style="fill: var(--c-${key})"/>`;
-    if (line) marks += `<path class="ln" d="${line}" style="stroke: var(--c-${key})"/>`;
-    const v = vals[m.last];
-    if (m.isToday && v != null) marks += `<circle class="end" cx="${m.x(m.t[m.last]).toFixed(1)}" cy="${p.y(v).toFixed(1)}" r="4" style="fill: var(--c-${key})"/>`;
-  }
-  const label = `${p.title}, ${p.unit}, through the day.` + (p.dirs ? ` Above the line: ${p.dirs[0].toLowerCase()}; below: ${p.dirs[1].toLowerCase()}.` : "");
-  return `<svg class="plot" id="plot-${n}" width="${W}" height="${p.h.toFixed(0)}" viewBox="0 0 ${W} ${p.h.toFixed(0)}" role="img" aria-label="${esc(label)}">${g}${marks}<g class="hover"></g></svg>`;
-}
 
 function watchSize() {
-  // charts are drawn at their real width, so they're drawn again when it changes (turning a tablet).
-  // Only the charts on the page now are watched: a screen left on for days would otherwise keep
-  // every replaced chart in memory, one every 5 minutes.
+  // the chart is drawn at its real width, so it's drawn again when that changes (turning a tablet). Only the
+  // chart on the page now is watched: a screen left on for days would otherwise keep every old one in memory.
   if (!("ResizeObserver" in window)) return;
   if (!resizer) {
     resizer = new ResizeObserver(() => requestAnimationFrame(() => {
-      const b = document.getElementById("today-charts");
-      if (b && chart && Math.abs(b.clientWidth - chart.W) > 3) drawCharts();
-      const p = document.getElementById("period-bars");
-      if (p && bars && Math.abs(p.clientWidth - bars.W) > 3) drawBars();
+      const box = document.getElementById("energy-chart");
+      if (box && chart && Math.abs(box.clientWidth - chart.W) > 3) drawEnergy();
     }));
   }
   resizer.disconnect();
-  for (const id of ["today-charts", "period-bars"]) { const el = document.getElementById(id); if (el) resizer.observe(el); }
+  const box = document.getElementById("energy-chart");
+  if (box) resizer.observe(box);
 }
 
-function drawCharts() {
-  const box = document.getElementById("today-charts");
+function drawEnergy() {
+  const box = document.getElementById("energy-chart");
   if (!box) { chart = null; return; }
-  const d = days.loaded[days.drawn];
-  if (!d) return;
-  if (!d.points || !d.points.t || d.points.t.length < 2) { box.innerHTML = `<p class="muted">No readings for this day yet.</p>`; chart = null; return; }
-  const W = Math.floor(box.clientWidth);
-  if (W < 120) return;
-  chart = buildChart(d, W);
-  const m = chart;
-  const axis = `<svg class="plot" width="${W}" height="18" viewBox="0 0 ${W} 18" aria-hidden="true">${m.hours.map((hh, i) =>
-    `<text class="tick" x="${m.x(hh.s).toFixed(1)}" y="13" text-anchor="${i === 0 ? "start" : i === m.hours.length - 1 ? "end" : "middle"}">${String(hh.h).padStart(2, "0")}:00</text>`).join("")}</svg>`;
-  box.innerHTML = `<div class="readout" id="readout" aria-live="off"></div>` + m.panels.map((p, n) => `<div class="panel">
-      <div class="panel-head"><span class="panel-title">${p.title}<small>${p.unit}</small></span>${p.legend ? `<ul class="keys">${p.legend.map(([key, name]) =>
-        `<li><i class="lk" style="--c: var(--c-${key})"></i>${name}</li>`).join("")}</ul>` : ""}${p.note ? `<span class="fine">${p.note}</span>` : ""}</div>
-      ${chartSvg(m, p, n)}</div>`).join("") + axis;
+  const m = view.last, W = Math.floor(box.clientWidth);
+  if (!m || W < 120) return;
+  const L = layers(m), day = m.sel.mode === "day";
+  if (day && m.count < 2) { box.innerHTML = `<p class="muted">No readings for this day yet.</p>`; chart = null; return; }
+  const n = m.count, total = (group, i) => group.reduce((s, [, , vals]) => s + (vals[i] || 0), 0);
+  let up = 0, down = 0;
+  for (let i = 0; i < n; i++) { up = Math.max(up, total(L.up, i)); down = Math.max(down, total(L.down, i)); }
+  const step = niceStep(Math.max(up, down, day ? 0.4 : 1));
+  const top = Math.max(step, Math.ceil(up / step - 1e-9) * step), bottom = Math.max(step, Math.ceil(down / step - 1e-9) * step);
+  const padL = 32, padR = 6, PT = 8, plotW = Math.max(60, W - padL - padR), H = W < 520 ? 230 : 270, k = H / (top + bottom);
+  const y = v => PT + (top - v) * k, y0 = y(0);
+  const slot = plotW / n;
+  const x = day ? s => padL + Math.max(0, Math.min(m.span, s)) / m.span * plotW : i => padL + slot * (i + 0.5);
+  let svg = "";
+  // the time along the bottom: clock hours (a day), days of the month or months
+  const ticks = [];
+  if (day) {
+    for (const h of W < 520 ? [0, 6, 12, 18, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24]) {
+      const s = h * 3600 - (ukOffset(m.start + h * 3600) - ukOffset(m.start));     // two days a year are 23 or 25 hours long
+      ticks.push([x(Math.min(m.span, s)), `${String(h).padStart(2, "0")}:00`]);
+    }
+  } else if (m.sel.mode === "month") {
+    for (let i = 0; i < n; i += 7) ticks.push([x(i), String(i + 1)]);
+  } else {
+    for (let i = 0; i < 12; i++) ticks.push([x(i), new Date(Date.UTC(2026, i, 15)).toLocaleDateString("en-GB", { month: "narrow", timeZone: "UTC" })]);
+  }
+  for (let v = -bottom; v <= top + 1e-9; v += step) {
+    const yy = f1(y(v));
+    svg += `<line class="${Math.abs(v) < 1e-9 ? "zero" : "gl"}" x1="${padL}" x2="${W - padR}" y1="${yy}" y2="${yy}"/>` +
+           `<text class="tick" x="${padL - 6}" y="${f1(y(v) + 3.5)}" text-anchor="end">${Math.round(Math.abs(v) * 100) / 100}</text>`;
+  }
+  if (day) svg += ticks.map(([tx]) => `<line class="gl" x1="${f1(tx)}" x2="${f1(tx)}" y1="${PT}" y2="${f1(PT + H)}"/>`).join("");
+  svg += `<text class="dir" x="${padL + 6}" y="${PT + 13}">Coming in</text><text class="dir" x="${padL + 6}" y="${f1(PT + H - 6)}">Going out</text>`;
+  // the stacks: outward from the line, in the order of the legend
+  if (day) {
+    const runs = [];                                        // stretches with readings, broken where one is missing or 20 minutes apart
+    let run = [];
+    for (let i = 0; i < n; i++) {
+      const missing = [...Object.values(m.up), ...Object.values(m.down)].every(a => a[i] == null);
+      if (missing || (i && m.t[i] - m.t[i - 1] > 1200)) { if (run.length > 1) runs.push(run); run = []; }
+      if (!missing) run.push(i);
+    }
+    if (run.length > 1) runs.push(run);
+    for (const [group, sign] of [[L.up, 1], [L.down, -1]]) {
+      const base = new Array(n).fill(0);
+      for (const [key, , vals] of group) {
+        let area = "", edge = "";
+        for (const r of runs) {
+          const outer = r.map(i => [x(m.t[i]), y(sign * (base[i] + (vals[i] || 0)))]);
+          const inner = r.map(i => [x(m.t[i]), y(sign * base[i])]).reverse();
+          area += "M" + outer.concat(inner).map(xy).join("L") + "Z";
+          edge += "M" + outer.map(xy).join("L");
+        }
+        svg += `<path class="st-area" d="${area}" style="fill: var(--c-${key})"/><path class="st-edge" d="${edge}" style="stroke: var(--c-${key})"/>`;
+        for (let i = 0; i < n; i++) base[i] += vals[i] || 0;
+      }
+    }
+  } else {
+    const bw = Math.max(3, Math.min(24, slot * 0.64)), r = Math.min(3, bw / 3);
+    const piece = (cx, from, to, round) => {                // from the line outwards; a 2px gap between pieces; the outer end rounded
+      const lo = Math.min(from, to), hi = Math.max(from, to), h = hi - lo;
+      if (h < 0.4) return "";
+      const x0 = cx - bw / 2, rr = round ? Math.min(r, h) : 0;
+      if (to < from) return `M${f1(x0)},${f1(hi)}V${f1(lo + rr)}q0,${f1(-rr)} ${f1(rr)},${f1(-rr)}h${f1(bw - 2 * rr)}q${f1(rr)},0 ${f1(rr)},${f1(rr)}V${f1(hi)}Z`;
+      return `M${f1(x0)},${f1(lo)}V${f1(hi - rr)}q0,${f1(rr)} ${f1(rr)},${f1(rr)}h${f1(bw - 2 * rr)}q${f1(rr)},0 ${f1(rr)},${f1(-rr)}V${f1(lo)}Z`;
+    };
+    for (let i = 0; i < n; i++) {
+      if (!m.rows[i]) continue;
+      for (const [group, sign] of [[L.up, 1], [L.down, -1]]) {
+        const shown = group.filter(([, , vals]) => (vals[i] || 0) > 0);
+        let base = 0;
+        shown.forEach(([key, , vals], j) => {
+          const v = vals[i], from = y(sign * base) - sign * (j ? 1 : 0), to = y(sign * (base + v)) + sign * (j < shown.length - 1 ? 1 : 0);
+          svg += `<path class="st-bar" d="${piece(x(i), from, to, j === shown.length - 1)}" style="fill: var(--c-${key})"/>`;
+          base += v;
+        });
+      }
+    }
+  }
+  const axis = ticks.map(([tx, label], i) => `<text class="tick" x="${f1(tx)}" y="${f1(PT + H + 15)}" text-anchor="${day ? (i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle") : "middle"}">${label}</text>`).join("");
+  const mainH = PT + H + 20;
+  let html = `<svg class="plot" id="energy-main" width="${W}" height="${mainH}" viewBox="0 0 ${W} ${mainH}" role="img"
+      aria-label="${esc(`${periodName(m.sel)}: coming in above the line (${L.up.map(l => l[1].toLowerCase()).join(", ")}), going out below it (${L.down.map(l => l[1].toLowerCase()).join(", ")}).`)}">${svg}${axis}<g class="hover"></g></svg>`;
+  // a day also has the battery's level, as its own small chart (one scale per chart)
+  let levelY = null;
+  if (day) {
+    const LH = 64, LT = 6;
+    levelY = v => LT + (100 - v) / 100 * LH;
+    let ls = "";
+    for (const v of [0, 50, 100]) ls += `<line class="gl" x1="${padL}" x2="${W - padR}" y1="${f1(levelY(v))}" y2="${f1(levelY(v))}"/><text class="tick" x="${padL - 6}" y="${f1(levelY(v) + 3.5)}" text-anchor="end">${v}</text>`;
+    let line = "", run = [];
+    const flush = () => { if (run.length > 1) line += "M" + run.join("L"); run = []; };
+    m.level.forEach((v, i) => { if (v == null || (i && m.t[i] - m.t[i - 1] > 1200)) flush(); if (v != null) run.push(xy([x(m.t[i]), levelY(v)])); });
+    flush();
+    html += `<div class="panel-head"><span class="panel-title">Battery level<small>%</small></span></div>
+      <svg class="plot" id="energy-level" width="${W}" height="${LH + LT + 6}" viewBox="0 0 ${W} ${LH + LT + 6}" role="img" aria-label="The battery's level through the day">
+      ${ls}<path class="ln" d="${line}" style="stroke: var(--c-battery)"/><g class="hover"></g></svg>`;
+  }
+  box.innerHTML = html + `<div class="tip" id="energy-tip" hidden></div>`;
+  chart = { m, W, n, x, y, H, PT, padL, plotW, slot, day, L, levelY, focus: null,
+            last: day ? (() => { for (let i = n - 1; i >= 0; i--) if (m.down.home[i] != null || m.up.solar[i] != null) return i; return n - 1; })()
+                      : (() => { for (let i = n - 1; i >= 0; i--) if (m.rows[i]) return i; return 0; })() };
   watchSize();
-  wireCrosshair(box);
-  showAt(null);
+  wireChart(box);
 }
 
-function showAt(i) {
-  const m = chart, box = document.getElementById("readout");
-  if (!m || !box) return;
-  const k = i == null ? m.last : i, S = m.S;
-  const time = clock(new Date((m.d.start + m.t[k]) * 1000));
-  const g = S.grid[k], b = S.battery[k];
-  const row = (key, value, words) => `<span class="ro"><i class="lk" style="--c: var(--c-${key})"></i><b>${value}</b>${words}</span>`;
-  box.innerHTML = `<span class="when">${i == null && m.isToday ? "Latest, " : ""}${time}</span>` +
-    row("solar", kw(S.solar[k]), "kW solar") + row("home", kw(S.house[k]), "kW house") +
-    row("grid", Math.abs(g || 0) < ON_KW ? "0" : kw(Math.abs(g)), g > ON_KW ? "kW buying" : g < -ON_KW ? "kW selling" : "kW grid") +
-    row("battery", Math.abs(b || 0) < ON_KW ? "0" : kw(Math.abs(b)), b > ON_KW ? "kW from the battery" : b < -ON_KW ? "kW charging" : "kW battery") +
-    row("battery", S.level[k] == null ? "–" : Math.round(S.level[k]) + "%", "battery level");
-  m.panels.forEach((p, n) => {
-    const hover = document.querySelector(`#plot-${n} .hover`);
-    if (!hover) return;
-    if (i == null) { hover.innerHTML = ""; return; }
-    const x = m.x(m.t[k]).toFixed(1);
-    hover.innerHTML = `<line class="cross" x1="${x}" x2="${x}" y1="0" y2="${p.h.toFixed(0)}"/>` + p.series.map(([key, vals]) => vals[k] == null ? "" :
-      `<circle class="end" cx="${x}" cy="${p.y(vals[k]).toFixed(1)}" r="4" style="fill: var(--c-${key})"/>`).join("");
-  });
-  m.focus = i;
+function showTip(i) {
+  const c = chart, tip = document.getElementById("energy-tip");
+  if (!c || !tip) return;
+  const main = document.querySelector("#energy-main .hover"), level = document.querySelector("#energy-level .hover");
+  if (i == null) { tip.hidden = true; if (main) main.innerHTML = ""; if (level) level.innerHTML = ""; c.focus = null; return; }
+  const m = c.m, cx = c.day ? c.x(m.t[i]) : c.x(i);
+  if (main) main.innerHTML = c.day ? `<line class="cross" x1="${f1(cx)}" x2="${f1(cx)}" y1="${c.PT}" y2="${f1(c.PT + c.H)}"/>`
+                                   : `<rect class="picked" x="${f1(cx - c.slot / 2)}" y="${c.PT}" width="${f1(c.slot)}" height="${c.H}"/>`;
+  if (level) level.innerHTML = m.level[i] == null ? "" : `<line class="cross" x1="${f1(cx)}" x2="${f1(cx)}" y1="0" y2="80"/>` +
+    `<circle class="end" cx="${f1(cx)}" cy="${f1(c.levelY(m.level[i]))}" r="4" style="fill: var(--c-battery)"/>`;
+  const fmt = v => v == null ? "–" : c.day ? `${kw(v)} kW` : `${kwh(v)} kWh`;
+  const when = c.day ? clock(new Date((m.start + m.t[i]) * 1000))
+    : m.sel.mode === "month" ? shortDate(`${m.sel.key}-${String(i + 1).padStart(2, "0")}`)
+    : new Date(Date.UTC(+m.sel.key, i, 15)).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+  const row = (key, name, v) => `<div class="tip-row"><i class="sw" style="--c: var(--c-${key})"></i><span>${name}</span><b>${fmt(v)}</b></div>`;
+  tip.innerHTML = `<div class="tip-time">${esc(when)}</div>` + IN.map(([k, name]) => row(k, name, m.up[k][i])).join("") +
+    `<div class="tip-gap"></div>` + OUT.map(([k, name]) => row(k, name, m.down[k][i])).join("") +
+    (c.day && m.level[i] != null ? `<div class="tip-gap"></div><div class="tip-row"><i class="sw" style="--c: var(--c-battery)"></i><span>Battery level</span><b>${Math.round(m.level[i])}%</b></div>` : "");
+  tip.hidden = false;
+  const box = document.getElementById("energy-chart"), w = tip.offsetWidth;
+  const left = cx > c.padL + c.plotW / 2 ? cx - w - 12 : cx + 12;
+  tip.style.left = Math.max(0, Math.min(box.clientWidth - w, left)) + "px";
+  c.focus = i;
 }
 
 function nearest(t, s) {
@@ -812,32 +1163,50 @@ function nearest(t, s) {
   return Math.abs(t[a] - s) <= Math.abs(t[b] - s) ? a : b;
 }
 
-function wireCrosshair(box) {
+function wireChart(box) {
   let timer = null;
   const pick = e => {
-    const m = chart, plot = box.querySelector(".plot");
-    if (!m || !plot) return;
-    const left = plot.getBoundingClientRect().left;
-    showAt(Math.min(m.last, nearest(m.t, (e.clientX - left - m.padL) / m.plotW * m.span)));
+    const c = chart, plot = document.getElementById("energy-main");
+    if (!c || !plot) return;
+    const px = e.clientX - plot.getBoundingClientRect().left - c.padL;
+    if (c.day) showTip(Math.min(c.last, nearest(c.m.t, px / c.plotW * c.m.span)));
+    else { const i = Math.floor(px / c.slot); if (i >= 0 && i < c.n && c.m.rows[i]) showTip(i); }
   };
   box.onpointerdown = e => { clearTimeout(timer); pick(e); };
   box.onpointermove = e => { if (e.pointerType !== "pen" || e.pressure > 0) pick(e); };   // touch moves only come while touching
-  box.onpointerleave = e => { if (e.pointerType === "mouse") showAt(null); };
-  box.onpointerup = box.onpointercancel = e => { if (e.pointerType !== "mouse") { clearTimeout(timer); timer = setTimeout(() => showAt(null), 4000); } };
+  box.onpointerleave = e => { if (e.pointerType === "mouse") showTip(null); };
+  box.onpointerup = box.onpointercancel = e => { if (e.pointerType !== "mouse") { clearTimeout(timer); timer = setTimeout(() => showTip(null), 4000); } };
   box.onkeydown = e => {
-    const m = chart;
-    if (!m) return;
+    const c = chart;
+    if (!c) return;
     const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -12, PageDown: 12 };
-    let k = m.focus == null ? m.last : m.focus;
+    let k = c.focus == null ? c.last : c.focus;
     if (e.key in moves) k += moves[e.key] * (e.shiftKey ? 12 : 1);
     else if (e.key === "Home") k = 0;
-    else if (e.key === "End") k = m.last;
-    else if (e.key === "Escape") { showAt(null); return; }
+    else if (e.key === "End") k = c.last;
+    else if (e.key === "Escape") { showTip(null); return; }
     else return;
     e.preventDefault();
-    showAt(Math.max(0, Math.min(m.last, k)));
+    k = Math.max(0, Math.min(c.last, k));
+    if (!c.day) while (k > 0 && !c.m.rows[k]) k--;
+    showTip(k);
   };
-  box.onblur = () => showAt(null);
+  box.onblur = () => showTip(null);
+}
+
+function wireEnergy() {
+  document.querySelectorAll("button[data-mode]").forEach(b => b.onclick = () => go({ mode: b.dataset.mode }));
+  document.querySelectorAll("button[data-view]").forEach(b => b.onclick = () => { store("energy-view", b.dataset.view); refreshCards("energy"); });
+  document.querySelectorAll("button[data-series]").forEach(b => b.onclick = () => {
+    const hidden = hiddenSeries();
+    if (hidden[b.dataset.series]) delete hidden[b.dataset.series]; else hidden[b.dataset.series] = 1;
+    if (CHIPS.every(([k]) => hidden[k])) return;              // keep at least one
+    store("energy-hidden", hidden);
+    refreshCards("energy");
+  });
+  const back = document.getElementById("period-back"), next = document.getElementById("period-next");
+  if (back) back.onclick = () => go({ step: -1 });
+  if (next) next.onclick = () => go({ step: 1 });
 }
 
 // ---- the best times to use power
@@ -897,128 +1266,10 @@ function numbersCard() {
                  tile("Cost", gbp(n.cost_gbp), "", ""), tile("Saved", gbp(n.saved_gbp), "", "", "against no solar or battery")];
   const share = num(n.used_kwh) > 0 && num(n.bought_kwh) != null ? shareBar("Where the house's power came from",
     [["solar", "From solar, straight or stored", Math.max(0, n.used_kwh - n.bought_kwh)], ["grid", "Bought from the grid", n.bought_kwh]]) : "";
-  const chartBox = period !== "yesterday" && live.version >= 2 ? `<div class="charts" id="period-bars" data-bars="${period}" tabindex="0" role="group"
-      aria-label="Each ${period === "last_12_months" ? "month" : "day"}'s use. Use the left and right arrow keys to move between them."></div>` : "";
   return card("numbers", "The numbers", `<div class="stack">
       <div class="seg full" role="group" aria-label="Period">${PERIODS.map(([k, label]) => `<button data-period="${k}" aria-pressed="${k === period}">${label}</button>`).join("")}</div>
-      <div class="tiles">${tiles.join("")}</div>${share}</div>${chartBox}
+      <div class="tiles">${tiles.join("")}</div>${share}</div>
     <p class="fine" style="margin-top: 12px">Saved: what the same use would have cost with no solar or battery, less what was paid. At today's prices.</p>`);
-}
-
-async function getAnswer(store_, key, params, keepMinutes) {
-  const kept = store_[key];
-  if (kept && Date.now() - kept.at < keepMinutes * 60000) return kept.answer;
-  const answer = await ask(params);
-  store_[key] = { at: Date.now(), answer };
-  return answer;
-}
-function balanceRow(get, i) {
-  const v = k => num(get[k] && get[k][i]);
-  const solar = v("solar"), bought = v("bought"), sold = v("sold"), charged = v("charged"), gave = v("gave");
-  if ([solar, bought, sold, charged, gave].some(x => x == null)) return null;
-  return { solar, bought, sold, used: Math.max(0, solar + gave + bought - charged - sold) };
-}
-async function periodRows(period) {
-  const today = londonDate(), month = today.slice(0, 7);
-  const prevMonth = m => shiftDate(m + "-01", -1).slice(0, 7);
-  if (period === "this_month" || period === "last_month") {
-    const m = period === "this_month" ? month : prevMonth(month);
-    // "so far" copies are kept apart, so a month fetched on its last day isn't reused once it's over
-    const answer = await getAnswer(extra.months, m === month ? m + " so far" : m, { want: "month", date: m }, m === month ? 15 : 360);
-    const count = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0)).getUTCDate();
-    const rows = [];
-    for (let i = 0; i < count; i++) {
-      const date = `${m}-${String(i + 1).padStart(2, "0")}`;
-      if (date >= today) break;
-      const r = balanceRow(answer.days || {}, i);
-      if (r) rows.push(Object.assign(r, { name: shortDate(date), tick: String(i + 1), every: 7 }));
-    }
-    return rows;
-  }
-  const year = +today.slice(0, 4);
-  const [before, now] = await Promise.all([getAnswer(extra.years, String(year - 1), { want: "year", date: String(year - 1) }, 360),
-                                           getAnswer(extra.years, year + " so far", { want: "year", date: String(year) }, 60)]);
-  const rows = [];
-  for (let back = 11; back >= 0; back--) {
-    const d = new Date(Date.UTC(year, +month.slice(5, 7) - 1 - back, 1)), y = d.getUTCFullYear(), mi = d.getUTCMonth();
-    const r = balanceRow(((y === year ? now : before) || {}).months || {}, mi);
-    const name = d.toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" });
-    if (r) rows.push(Object.assign(r, { name: back ? name : name + " so far", tick: d.toLocaleDateString("en-GB", { month: "narrow", timeZone: "UTC" }), every: 1 }));
-  }
-  return rows;
-}
-
-async function drawBars() {
-  const box = document.getElementById("period-bars");
-  if (!box) { bars = null; return; }
-  const period = box.dataset.bars;
-  let rows;
-  try { rows = await periodRows(period); }
-  catch (e) { if (box.isConnected) box.innerHTML = `<p class="fine">Couldn't get the chart: ${esc(message(e))}.</p>`; return; }
-  if (!box.isConnected || !rows.length) { if (box.isConnected) box.innerHTML = ""; return; }
-  const W = Math.floor(box.clientWidth);
-  if (W < 120) return;
-  const padL = 30, padR = 4, plotW = W - padL - padR, H = W < 520 ? 140 : 170, PT = 8, PB = 20;
-  const peak = Math.max(...rows.map(r => r.used), 1), step = niceStep(peak), top = Math.ceil(peak / step) * step;
-  const y = v => PT + (top - v) / top * H, slot = plotW / rows.length, bw = Math.max(3, Math.min(24, slot * 0.66));
-  let svg = "";
-  for (let v = 0; v <= top + 1e-9; v += step) {
-    svg += `<line class="${v ? "gl" : "zero"}" x1="${padL}" x2="${W - padR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/>` +
-           `<text class="tick" x="${padL - 6}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end">${Math.round(v * 10) / 10}</text>`;
-  }
-  const column = (x, top, bottom, round) => {
-    const h = bottom - top;
-    if (h <= 0.3) return "";
-    const r = round ? Math.min(4, bw / 2, h) : 0, f = v => v.toFixed(1);
-    return `M${f(x)},${f(bottom)}V${f(top + r)}` + (r ? `q0,${f(-r)} ${f(r)},${f(-r)}h${f(bw - 2 * r)}q${f(r)},0 ${f(r)},${f(r)}` : `h${f(bw)}`) + `V${f(bottom)}Z`;
-  };
-  rows.forEach((r, i) => {
-    const cx = padL + slot * (i + 0.5), x0 = cx - bw / 2, home = Math.max(0, r.used - r.bought);
-    const yHome = y(home), yTop = y(r.used), base = y(0);
-    // from solar (straight or stored) at the bottom, bought on top, with a 2px gap in the surface colour between them
-    const a = column(x0, yHome, base, r.bought <= 0), b = column(x0, yTop, yHome - (home > 0 ? 2 : 0), true);
-    if (a) svg += `<path class="seg-a" d="${a}" style="fill: var(--c-solar)"/>`;
-    if (b) svg += `<path class="seg-a" d="${b}" style="fill: var(--c-grid)"/>`;
-    if (i % r.every === 0 || i === rows.length - 1 && r.every === 1) svg += `<text class="tick" x="${cx.toFixed(1)}" y="${PT + H + 14}" text-anchor="middle">${esc(r.tick)}</text>`;
-    svg += `<rect class="hit" data-i="${i}" x="${(padL + slot * i).toFixed(1)}" y="${PT}" width="${slot.toFixed(1)}" height="${H}"/>`;
-  });
-  const what = period === "last_12_months" ? "month" : "day";
-  box.innerHTML = `<div class="panel-head" style="margin-bottom: 6px"><span class="panel-title">House use each ${what}<small>kWh</small></span>
-      <ul class="keys"><li><i class="sw" style="--c: var(--c-solar)"></i>From solar</li><li><i class="sw" style="--c: var(--c-grid)"></i>Bought</li></ul></div>
-    <svg class="plot" width="${W}" height="${PT + H + PB}" viewBox="0 0 ${W} ${PT + H + PB}" role="img" aria-label="House use each ${what}, split into from solar and bought">${svg}<g class="hover"></g></svg>
-    <div class="readout" id="bars-readout"></div>
-    <details class="more"><summary>${what === "day" ? "Day by day" : "Month by month"}</summary><div class="table-wrap"><table class="data">
-      <thead><tr><th scope="col">${what === "day" ? "Day" : "Month"}</th><th scope="col">Solar</th><th scope="col">Used</th><th scope="col">Bought</th><th scope="col">Sold</th><th scope="col">From solar</th></tr></thead>
-      <tbody>${rows.map(r => `<tr><td>${esc(r.name)}</td><td>${kwh(r.solar)}</td><td>${kwh(r.used)}</td><td>${kwh(r.bought)}</td><td>${kwh(r.sold)}</td><td>${r.used ? Math.round(Math.max(0, r.used - r.bought) / r.used * 100) + "%" : "–"}</td></tr>`).join("")}</tbody>
-    </table></div></details>`;
-  bars = { W, rows, slot, padL, picked: null };
-  const pick = i => {
-    const out = document.getElementById("bars-readout"), hover = box.querySelector(".hover");
-    if (!out || !hover) return;
-    if (i == null) { out.innerHTML = `<span>Tap a bar to see that ${what}'s figures.</span>`; hover.innerHTML = ""; bars.picked = null; return; }
-    const r = rows[i], home = Math.max(0, r.used - r.bought);
-    out.innerHTML = `<span class="when">${esc(r.name)}</span><span class="ro"><b>${kwh(r.used)}</b>kWh used</span>
-      <span class="ro"><i class="sw" style="--c: var(--c-solar)"></i><b>${kwh(home)}</b>from solar (${r.used ? Math.round(home / r.used * 100) : 0}%)</span>
-      <span class="ro"><i class="sw" style="--c: var(--c-grid)"></i><b>${kwh(r.bought)}</b>bought</span><span class="ro"><b>${kwh(r.solar)}</b>kWh solar</span>`;
-    hover.innerHTML = `<rect class="picked" x="${(padL + slot * i).toFixed(1)}" y="${PT}" width="${slot.toFixed(1)}" height="${H}"/>`;
-    bars.picked = i;
-  };
-  box.onpointerdown = box.onpointermove = e => {
-    if (!e.target.closest || !e.target.closest(".plot")) return;              // not the table under it
-    if (e.type === "pointermove" && e.pointerType === "pen" && !(e.pressure > 0)) return;   // a pen hovering
-    const left = box.querySelector(".plot").getBoundingClientRect().left;
-    const i = Math.floor((e.clientX - left - padL) / slot);
-    if (i >= 0 && i < rows.length) pick(i);
-  };
-  box.onpointerleave = e => { if (e.pointerType === "mouse") pick(null); };
-  box.onkeydown = e => {
-    const moves = { ArrowLeft: -1, ArrowRight: 1 };
-    if (!(e.key in moves)) { if (e.key === "Escape") pick(null); return; }
-    e.preventDefault();
-    pick(Math.max(0, Math.min(rows.length - 1, (bars.picked == null ? rows.length : bars.picked) + moves[e.key])));
-  };
-  pick(null);
-  watchSize();
 }
 
 // ---- the tariff and the shower
@@ -1051,11 +1302,8 @@ function showerCard(s) {
 
 // ---- the page
 function setStatus() {
-  const el = document.getElementById("status"), r = live.reading, at = r && readingTime(r.time);
-  if (at) {
-    const late = Date.now() - at > LATE_MINUTES * 60000, day = londonDate(at) !== londonDate() ? shortDate(londonDate(at)) + " " : "";
-    el.innerHTML = `<span class="dot ${late ? "late" : "live"}"></span>${late ? "Last reading " + esc(day) : "Live · "}${esc(clock(at))}`;
-  } else if (daily) el.innerHTML = `<span class="dot"></span>Updated ${esc(when(daily.made))}`;
+  const el = document.getElementById("status");
+  el.textContent = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: ZONE });
   const button = document.getElementById("keep-awake");
   if ("wakeLock" in navigator && daily) {
     const on = !!store("keep-awake");
@@ -1068,7 +1316,7 @@ function setStatus() {
 }
 
 function cards() {
-  return { now: nowCard, today: todayCard, best: () => daily ? bestTimesCard(daily.best_times) : "", alerts: () => daily ? alertsCard(daily.alerts || []) : "",
+  return { now: nowCard, energy: energyCard, best: () => daily ? bestTimesCard(daily.best_times) : "", alerts: () => daily ? alertsCard(daily.alerts || []) : "",
            numbers: () => daily ? numbersCard() : "", tariff: () => daily ? tariffCard(daily.tariff) : "", shower: () => daily ? showerCard(daily.shower) : "" };
 }
 
@@ -1080,12 +1328,11 @@ function render() {
   const main = document.getElementById("main");
   document.getElementById("banner").innerHTML = warn;
   main.innerHTML = CARDS.filter(([id]) => !hidden[id]).map(([id]) => html[id]()).join("");
-  main.classList.toggle("live", !!document.getElementById("card-now") && !!document.getElementById("card-today"));
+  main.classList.toggle("live", !!document.getElementById("card-now") && !!document.getElementById("card-energy"));
   setStatus();
   renderFooter();
   wire();
-  drawCharts();
-  drawBars();
+  drawEnergy();
 }
 
 function refreshCards(...ids) {
@@ -1100,8 +1347,7 @@ function refreshCards(...ids) {
   }
   setStatus();
   wire();
-  if (ids.includes("today")) drawCharts();
-  if (ids.includes("numbers")) drawBars();
+  if (ids.includes("energy")) drawEnergy();
 }
 
 function renderFooter() {
@@ -1129,10 +1375,7 @@ function wire() {
     const hidden = store(HIDDEN_KEY) || {}; hidden[b.dataset.hide] = Date.now(); store(HIDDEN_KEY, hidden); refreshCards("alerts");
   });
   document.querySelectorAll("button[data-period]").forEach(b => b.onclick = () => { store("period", b.dataset.period); refreshCards("numbers"); });
-  document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => { store("day-view", b.dataset.view); refreshCards("today"); });
-  const back = document.getElementById("day-back"), next = document.getElementById("day-next");
-  if (back) back.onclick = () => showDay(shiftDate(days.shown || londonDate(), -1));
-  if (next) next.onclick = () => showDay(shiftDate(days.shown || londonDate(), 1));
+  wireEnergy();
   const awake = document.getElementById("keep-awake");
   awake.onclick = () => { const on = !store("keep-awake"); store("keep-awake", on); keepAwake(on); setStatus(); };
 }
@@ -1170,13 +1413,14 @@ async function refreshLive(force) {
   live.asked = Date.now();
   const version = live.version;
   live.url = await liveUrl(source && source.key ? source : null);
-  if (!live.url) { live.reading = null; store("live-last", null); refreshCards("now", "today"); return; }
+  if (!live.url) { live.reading = null; store("live-last", null); refreshCards("now", "energy"); return; }
   try {
     const answer = await ask({ want: "day" });
     if (answer.version >= 2) {
       live.version = answer.version;
       days.loaded[answer.date] = answer;
       forgetOldDays(answer.date);
+      if (view.mode === "day" && !view.day) view.error = "";
       store("day-last", answer);
       if (answer.now) { live.reading = answer.now; store("live-last", answer.now); }
     } else {                                                  // the first version of the script: just the latest reading
@@ -1188,35 +1432,7 @@ async function refreshLive(force) {
   } catch (e) {
     live.error = `Couldn't get a new reading: ${message(e)}.`;
   }
-  refreshCards("now", "today", ...(live.version !== version ? ["numbers"] : []));
-}
-
-async function showDay(date) {
-  const today = londonDate();
-  if (date > today) date = today;
-  if (date < FIRST_DAY) return;
-  const before = days.shown;
-  days.shown = date === today ? "" : date;
-  days.error = "";
-  refreshCards("today");                                       // the new day's name, with the last charts dimmed until it arrives
-  if (days.loaded[date]) return;
-  try {
-    const answer = await ask({ want: "day", date });
-    if (!(answer.version >= 2)) throw new Error("the live script needs its update first");
-    days.loaded[answer.date] = answer;
-    forgetOldDays(answer.date);
-  } catch (e) {
-    if ((days.shown || londonDate()) !== date) return;         // another day was asked for since: leave that one
-    days.shown = before;
-    days.error = `Couldn't get ${dayName(date)}: ${message(e)}.`;
-  }
-  refreshCards("today");
-}
-
-function forgetOldDays(keep) {
-  // the 12 days fetched most recently stay in memory, plus today and the one just fetched
-  const today = londonDate(), old = Object.keys(days.loaded).filter(k => k !== today && k !== keep && k !== days.drawn);
-  old.slice(0, Math.max(0, old.length - 12)).forEach(k => { delete days.loaded[k]; });
+  refreshCards("now", "energy");
 }
 
 async function keepAwake(on) {
