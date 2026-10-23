@@ -207,6 +207,8 @@
   .seg.icons button { padding: 6px 9px; }
   .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--line); }
   .seg.full { display: grid; grid-template-columns: repeat(4, minmax(0, auto)); justify-content: start; }
+  .seg.modes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); width: 100%; margin-bottom: 12px; }
+  .seg.modes button { padding: 7px 2px; }
   @container (max-width: 380px) { .seg.full { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; }
                                   .seg.full button { padding: 7px 4px; font-size: 13px; } }
   .icon-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; width: 38px; height: 38px; display: inline-grid;
@@ -379,15 +381,28 @@ const CARDS = [["now", "Right now"], ["energy", "Energy"], ["best", "Best times 
 const LIVE_EVERY = 5 * 60 * 1000;
 const LATE_MINUTES = 20;            // a reading older than this means the inverter may be off
 const ON_KW = 0.02;                 // anything less counts as nothing flowing
-const FIRST_DAY = "2023-07-01";     // the earliest day the charts go back to
+const FIRST_DAY = "2023-07-05";     // the earliest day the charts go back to: the day the system was switched on
+// FoxESS's own history has two holes. Its solar meter counted nothing before 22 February 2024 (then 1,930 kWh
+// in one go on the 21st), though the 5-minute readings of the panels go back to the start; and it has nothing
+// at all from 6 March to 24 August 2024 (the Wi-Fi). Missing figures show as missing (–), never as nought.
+const SOLAR_FROM = "2024-02-22";
+const GAP_UNTIL = "2024-08-25";     // periods starting before this may have missing figures
 const live = { url: "", reading: store("live-last"), error: "", asked: 0, version: 0 };
 const days = { loaded: {} };                                    // each day's readings, by date
 const extra = { months: {}, years: {} };                        // month and year totals, for the bar charts
 let daily = null, dailyStale = false, wakeLock = null, chart = null, resizer = null;
 (() => {
   const last = store("day-last");
-  if (last && last.date && last.points) { days.loaded[last.date] = last; live.version = last.version || 0; }
+  if (last && last.date && last.points) { days.loaded[last.date] = last; live.version = last.version || 0; }   // saved after cleanDay
 })();
+function cleanDay(a) {
+  // a past day where every meter reads nought has no figures (the Wi-Fi gap); before SOLAR_FROM, no solar figure
+  const t = a.totals;
+  if (!t) return a;
+  if (a.date < londonDate() && ["solar", "bought", "sold", "charged", "gave"].every(k => !num(t[k]))) for (const k of Object.keys(t)) t[k] = null;
+  if (a.date < SOLAR_FROM) t.solar = null;
+  return a;
+}
 
 // ---- small helpers
 function esc(text) {
@@ -470,7 +485,7 @@ function card(id, title, body, tools = "", cls = "") {
 }
 function tile(label, value, unit, key, sub) {
   return `<div class="tile"><div class="tile-label">${key ? `<i class="sw" style="--c: var(--c-${key})"></i>` : ""}${esc(label)}</div>
-    <div class="tile-value">${value}${unit ? `<small>${unit}</small>` : ""}</div>${sub ? `<div class="tile-sub">${esc(sub)}</div>` : ""}</div>`;
+    <div class="tile-value">${value}${unit && value !== "–" ? `<small>${unit}</small>` : ""}</div>${sub ? `<div class="tile-sub">${esc(sub)}</div>` : ""}</div>`;
 }
 function shareBar(title, parts) {
   // a part-to-whole bar: [[colour key, label, amount], ...]
@@ -707,8 +722,10 @@ function nowCard() {
 
 // ---- money for a day: FoxESS's meter totals, priced by when the power was used, at today's prices
 function usedKwh(t) {
+  // what came in less what went out, as FoxESS's app shows it; without a solar figure, FoxESS's own house meter
+  // (version 3 of the live script sends it), which leaves out a few per cent of losses
   const need = ["solar", "gave", "bought", "charged", "sold"];
-  return need.every(k => num(t[k]) != null) ? Math.max(0, t.solar + t.gave + t.bought - t.charged - t.sold) : null;
+  return need.every(k => num(t[k]) != null) ? Math.max(0, t.solar + t.gave + t.bought - t.charged - t.sold) : num(t.house);
 }
 function priceAt(bands, minute) {
   for (const [start, end, p] of bands || []) {
@@ -728,6 +745,15 @@ function steps(d, fn) {
 }
 function at(d, col, i) { const a = d.points[col]; return a && a[i] != null ? Math.max(0, +a[i]) : 0; }
 function energy(d, col, i, h) { return (at(d, col, i) + at(d, col, i - 1)) / 2 * h; }
+function dayTotal(d, key) {
+  // a day's solar or house total: FoxESS's meter, or where it has none (before its solar meter started), the
+  // 5-minute readings added up. [kWh, true when from the readings]
+  const meter = key === "house" ? usedKwh(d.totals || {}) : num((d.totals || {})[key]);
+  if (meter != null || !d.points || !d.points.t || d.points.t.length < 2) return [meter, false];
+  let sum = 0;
+  steps(d, (i, h) => { sum += energy(d, key, i, h); });
+  return [sum, true];
+}
 
 function dayMoney(d) {
   const prices = daily && daily.prices;
@@ -798,10 +824,11 @@ function tableHtml(caption, first, rows, foot, note) {
 const IN = [["solar", "Solar"], ["battery", "From the battery"], ["grid", "Bought"]];
 const OUT = [["home", "House"], ["battery", "Into the battery"], ["grid", "Sold"]];
 const CHIPS = [["solar", "Solar"], ["battery", "Battery"], ["grid", "Grid"], ["home", "House"]];
-const MODES = [["day", "Day"], ["month", "Month"], ["year", "Year"]];
-const FIRST = { day: FIRST_DAY, month: FIRST_DAY.slice(0, 7), year: FIRST_DAY.slice(0, 4) };
-const view = { mode: ["day", "month", "year"].includes(store("energy-mode")) ? store("energy-mode") : "day",
-               day: "", month: "", year: "", error: "", loading: "", before: null, last: null };
+const MODES = [["day", "Day"], ["week", "Week"], ["month", "Month"], ["year", "Year"], ["total", "Total"]];
+const FIRST = { day: FIRST_DAY, week: mondayOf(FIRST_DAY), month: FIRST_DAY.slice(0, 7), year: FIRST_DAY.slice(0, 4), total: "all" };
+const view = { mode: MODES.some(([k]) => k === store("energy-mode")) ? store("energy-mode") : "day",
+               day: "", week: "", month: "", year: "", total: "", error: "", loading: "", before: null, last: null, tried: {} };
+const RETRY_MS = 2 * 60 * 1000;     // a period is asked for again at most this often (a failed refresh would otherwise loop)
 
 async function getAnswer(kept, key, params, keepMinutes) {
   const found = kept[key];
@@ -811,54 +838,91 @@ async function getAnswer(kept, key, params, keepMinutes) {
   kept[key] = { at: Date.now(), answer };
   return answer;
 }
-function balanceRow(get, i) {
+function balanceRow(get, i, from) {
+  // one day's or month's figures (from: its first day). Null when FoxESS has nothing for it; solar null before
+  // its solar meter started, and the house then from FoxESS's own house meter when the script sends it.
   const v = k => num(get[k] && get[k][i]);
   const solar = v("solar"), bought = v("bought"), sold = v("sold"), charged = v("charged"), gave = v("gave");
-  if ([solar, bought, sold, charged, gave].some(x => x == null)) return null;
+  if ([bought, sold, charged, gave].some(x => x == null) || ![solar, bought, sold, charged, gave].some(Boolean)) return null;
+  if (from < SOLAR_FROM || solar == null) return { solar: null, bought, sold, charged, gave, used: v("house") };
   return { solar, bought, sold, charged, gave, used: Math.max(0, solar + gave + bought - charged - sold) };
 }
 
-function now3() { const today = londonDate(); return { day: today, month: today.slice(0, 7), year: today.slice(0, 4) }; }
-function selected() { const current = now3(); return { mode: view.mode, key: view[view.mode] || current[view.mode], current: current[view.mode] }; }
+function mondayOf(date) { return shiftDate(date, -((new Date(date + "T12:00:00Z").getUTCDay() + 6) % 7)); }
+function nowKeys() { const today = londonDate(); return { day: today, week: mondayOf(today), month: today.slice(0, 7), year: today.slice(0, 4), total: "all" }; }
+function selected() { const current = nowKeys(); return { mode: view.mode, key: view[view.mode] || current[view.mode], current: current[view.mode] }; }
 function sameSel(a, b) { return a && b && a.mode === b.mode && a.key === b.key; }
+function monthName(m, long) { return new Date(m + "-15T12:00:00Z").toLocaleDateString("en-GB", { month: long ? "long" : "short", year: "numeric", timeZone: "UTC" }); }
 function periodName(sel) {
-  if (sel.mode === "day") return dayName(sel.key);
   const so = sel.key === sel.current ? " so far" : "";
-  if (sel.mode === "month") return new Date(sel.key + "-15T12:00:00Z").toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" }) + so;
-  return sel.key + so;
+  if (sel.mode === "day") return dayName(sel.key);
+  if (sel.mode === "week") {
+    if (sel.key === sel.current) return "This week";
+    if (sel.key === shiftDate(sel.current, -7)) return "Last week";
+    const a = new Date(sel.key + "T12:00:00Z"), b = new Date(shiftDate(sel.key, 6) + "T12:00:00Z");
+    const mon = d => d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" });
+    return a.getUTCMonth() === b.getUTCMonth() ? `${a.getUTCDate()}–${b.getUTCDate()} ${mon(b)}` : `${a.getUTCDate()} ${mon(a)} – ${b.getUTCDate()} ${mon(b)}`;
+  }
+  if (sel.mode === "month") return monthName(sel.key) + so;
+  if (sel.mode === "year") return sel.key + so;
+  return "Every year";
 }
 function stepKey(sel, n) {
   if (sel.mode === "day") return shiftDate(sel.key, n);
+  if (sel.mode === "week") return shiftDate(sel.key, 7 * n);
   if (sel.mode === "month") return new Date(Date.UTC(+sel.key.slice(0, 4), +sel.key.slice(5, 7) - 1 + n, 1)).toISOString().slice(0, 7);
-  return String(+sel.key + n);
+  if (sel.mode === "year") return String(+sel.key + n);
+  return sel.key;                                            // every year: nothing to step through
 }
-function keptKey(sel) { return sel.key === sel.current ? sel.key + " so far" : sel.key; }    // kept apart, so a "so far" copy isn't reused once it's over
+// Month and year totals are kept by period. A copy fetched while the period was still going on is kept
+// apart ("so far"), so it isn't reused once the period is over.
+function monthKey(m) { return m === londonDate().slice(0, 7) ? m + " so far" : m; }
+function yearKey(y) { return y === londonDate().slice(0, 4) ? y + " so far" : y; }
+function keptMonth(m) { const f = extra.months[monthKey(m)]; return f ? f.answer : null; }
+function keptYear(y) { const f = extra.years[yearKey(y)]; return f ? f.answer : null; }
+function getMonth(m) { return getAnswer(extra.months, monthKey(m), { want: "month", date: m }, m === londonDate().slice(0, 7) ? 15 : 360); }
+function getYear(y) { return getAnswer(extra.years, yearKey(y), { want: "year", date: y }, y === londonDate().slice(0, 4) ? 60 : 360); }
+function weekMonths(monday) { const a = monday.slice(0, 7), b = shiftDate(monday, 6).slice(0, 7); return a === b ? [a] : [a, b]; }
+function everyYear() { const out = []; for (let y = +FIRST_DAY.slice(0, 4); y <= +londonDate().slice(0, 4); y++) out.push(String(y)); return out; }
 function periodAnswer(sel) {
   if (sel.mode === "day") return days.loaded[sel.key] || null;
-  const found = (sel.mode === "month" ? extra.months : extra.years)[keptKey(sel)];
-  return found ? found.answer : null;
+  if (sel.mode === "month") return keptMonth(sel.key);
+  if (sel.mode === "year") return keptYear(sel.key);
+  if (sel.mode === "week") { const ms = weekMonths(sel.key); return ms.every(keptMonth) ? { months: Object.fromEntries(ms.map(m => [m, keptMonth(m)])) } : null; }
+  const ys = everyYear();
+  return ys.every(keptYear) ? { years: Object.fromEntries(ys.map(y => [y, keptYear(y)])) } : null;
 }
 function periodStale(sel) {
-  if (sel.mode === "day" || sel.key !== sel.current) return false;
-  const found = (sel.mode === "month" ? extra.months : extra.years)[keptKey(sel)];
-  return !!found && Date.now() - found.at > (sel.mode === "month" ? 15 : 60) * 60000;
+  // a period still going on is fetched again after a while: this month's figures after 15 minutes, this year's after an
+  // hour; and a past day fetched before it ended (it was "today" then), once
+  const old = (kept, key, minutes) => { const f = kept[key]; return !!f && Date.now() - f.at > minutes * 60000; };
+  const month = londonDate().slice(0, 7), year = londonDate().slice(0, 4);
+  if (sel.mode === "day") {
+    const d = days.loaded[sel.key];
+    return !!d && sel.key < londonDate() && !!d.fetched && Date.parse(d.fetched) < d.end * 1000;
+  }
+  if (sel.mode === "week") return weekMonths(sel.key).includes(month) && old(extra.months, monthKey(month), 15);
+  if (sel.mode === "month") return sel.key === month && old(extra.months, monthKey(month), 15);
+  if (sel.mode === "year") return sel.key === year && old(extra.years, yearKey(year), 60);
+  if (sel.mode === "total") return old(extra.years, yearKey(year), 60);
+  return false;
 }
 async function fetchPeriod(sel) {
   if (sel.mode === "day") {
     const answer = await ask({ want: "day", date: sel.key });
     if (!(answer.version >= 2)) throw new Error("the live script needs its update first");
-    days.loaded[answer.date] = answer;
+    days.loaded[answer.date] = cleanDay(answer);
     forgetOldDays(answer.date);
-    return;
-  }
-  const current = sel.key === sel.current;
-  await getAnswer(sel.mode === "month" ? extra.months : extra.years, keptKey(sel), { want: sel.mode, date: sel.key },
-                  current ? (sel.mode === "month" ? 15 : 60) : 360);
+  } else if (sel.mode === "week") await Promise.all(weekMonths(sel.key).map(getMonth));
+  else if (sel.mode === "month") await getMonth(sel.key);
+  else if (sel.mode === "year") await getYear(sel.key);
+  else await Promise.all(everyYear().map(getYear));
 }
 async function loadPeriod(sel) {
   const id = sel.mode + " " + sel.key;
   if (view.loading === id) return;
   view.loading = id;
+  view.tried[id] = Date.now();
   try {
     await fetchPeriod(sel);
     if (sameSel(selected(), sel)) view.error = "";
@@ -874,11 +938,11 @@ async function loadPeriod(sel) {
   refreshCards("energy");
 }
 function go(change) {
-  const before = { mode: view.mode, day: view.day, month: view.month, year: view.year };
+  const before = { mode: view.mode, day: view.day, week: view.week, month: view.month, year: view.year };
   if (change.mode) { view.mode = change.mode; store("energy-mode", change.mode); }
   if (change.step) {
     const sel = selected(), key = stepKey(sel, change.step);
-    if (key < FIRST[sel.mode] || key > sel.current) return;
+    if (key === sel.key || key < FIRST[sel.mode] || key > sel.current) return;
     view[sel.mode] = key === sel.current ? "" : key;
   }
   view.before = before;
@@ -892,6 +956,60 @@ function forgetOldDays(keep) {
   old.slice(0, Math.max(0, old.length - 12)).forEach(k => { delete days.loaded[k]; });
 }
 
+function barRows(sel, a) {
+  // one bar for each day of a week or month, each month of a year, or each year; nothing for the future
+  // gaps: past bars missing some or all of their figures. whole: the days or months with every figure, for the share from solar.
+  // missing: for each figure, how many past days or months FoxESS has nothing for.
+  const KEYS = ["solar", "bought", "sold", "charged", "gave", "used"];
+  const today = londonDate(), month = today.slice(0, 7), out = { rows: [], names: [], ticks: [], gaps: [], whole: [], missing: {} };
+  const miss = (row, k) => { if (!row || row[k] == null) out.missing[k] = (out.missing[k] || 0) + 1; };
+  const push = (row, name, tick, past, gap) => {
+    out.rows.push(row); out.names.push(name); out.ticks.push(tick);
+    out.gaps.push(past && (gap || !row || row.solar == null || row.used == null));
+    if (sel.mode === "total") return;                          // every year: whole months and what's missing, counted below
+    if (past) KEYS.forEach(k => miss(row, k));
+    if (row && !out.gaps[out.gaps.length - 1]) out.whole.push(row);
+  };
+  const pad = n => String(n).padStart(2, "0");
+  if (sel.mode === "week") {
+    for (let i = 0; i < 7; i++) {
+      const date = shiftDate(sel.key, i), days = ((a.months || {})[date.slice(0, 7)] || {}).days || {};
+      push(date > today ? null : balanceRow(days, +date.slice(8, 10) - 1, date), shortDate(date),
+           new Date(date + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "short", timeZone: "UTC" }), date < today && date >= FIRST_DAY);
+    }
+  } else if (sel.mode === "month") {
+    const count = new Date(Date.UTC(+sel.key.slice(0, 4), +sel.key.slice(5, 7), 0)).getUTCDate();
+    for (let i = 0; i < count; i++) {
+      const date = `${sel.key}-${pad(i + 1)}`;
+      push(date > today ? null : balanceRow(a.days || {}, i, date), shortDate(date), i % 7 === 0 ? String(i + 1) : "", date < today && date >= FIRST_DAY);
+    }
+  } else if (sel.mode === "year") {
+    for (let i = 0; i < 12; i++) {
+      const m = `${sel.key}-${pad(i + 1)}`;
+      push(m > month ? null : balanceRow(a.months || {}, i, m + "-01"), monthName(m, true),
+           new Date(m + "-15T12:00:00Z").toLocaleDateString("en-GB", { month: "narrow", timeZone: "UTC" }), m < month && m >= FIRST_DAY.slice(0, 7));
+    }
+  } else {
+    // each year: what FoxESS has for its months added up, and marked when some of it is missing
+    for (const y of everyYear()) {
+      const months = ((a.years || {})[y] || {}).months || {}, sum = {};
+      let gap = false;
+      for (let i = 0; i < 12; i++) {
+        const m = `${y}-${pad(i + 1)}`;
+        if (m > month || m < FIRST_DAY.slice(0, 7)) continue;
+        const r = balanceRow(months, i, m + "-01");
+        if (!r && m === month) continue;                       // nothing yet this month
+        if (r && r.solar != null && r.used != null) out.whole.push(r);
+        for (const k of KEYS) { if (r && r[k] != null) sum[k] = (sum[k] || 0) + r[k]; else gap = true; miss(r, k); }
+      }
+      const first = y === FIRST_DAY.slice(0, 4) ? ` (from ${new Date(FIRST_DAY + "T12:00:00Z").toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" })})` : "";
+      const row = Object.keys(sum).length ? Object.fromEntries(KEYS.map(k => [k, sum[k] ?? null])) : null;
+      push(row, y + (y === today.slice(0, 4) ? " so far" : first), y, y < today.slice(0, 4) || !!row, gap);
+    }
+  }
+  return out;
+}
+
 function energyModel(sel, a) {
   if (sel.mode === "day") {
     const P = a.points || {}, t = P.t || [];
@@ -902,16 +1020,8 @@ function energyModel(sel, a) {
              down: { home: col("house"), battery: col("charging"), grid: col("selling") },
              level: col("battery"), roofs: [col("roof1"), col("roof2")] };
   }
-  const get = (sel.mode === "month" ? a.days : a.months) || {};
-  const count = sel.mode === "month" ? new Date(Date.UTC(+sel.key.slice(0, 4), +sel.key.slice(5, 7), 0)).getUTCDate() : 12;
-  const today = londonDate(), rows = [];
-  for (let i = 0; i < count; i++) {
-    const key = `${sel.key}-${String(i + 1).padStart(2, "0")}`;            // a day of the month, or a month of the year
-    const future = sel.mode === "month" ? key > today : key > today.slice(0, 7);
-    rows.push(future ? null : balanceRow(get, i));
-  }
-  const pick = k => rows.map(r => r ? r[k] : null);
-  return { sel, a, unit: "kWh", rows, count,
+  const b = barRows(sel, a), pick = k => b.rows.map(r => r ? r[k] : null);
+  return { sel, a, unit: "kWh", rows: b.rows, names: b.names, ticks: b.ticks, gaps: b.gaps, whole: b.whole, missing: b.missing, count: b.rows.length,
            up: { solar: pick("solar"), battery: pick("gave"), grid: pick("bought") },
            down: { home: pick("used"), battery: pick("charged"), grid: pick("sold") } };
 }
@@ -926,19 +1036,24 @@ function layers(m) {
 function energyTiles(m) {
   if (m.sel.mode === "day") {
     const t = m.a.totals || {}, money = dayMoney(m.a), isToday = m.sel.key === m.sel.current;
-    const tiles = [tile("Solar made", kwh(t.solar), "kWh", "solar"), tile("House used", kwh(usedKwh(t)), "kWh", "home"),
+    const [solar, solarRead] = dayTotal(m.a, "solar"), [house, houseRead] = dayTotal(m.a, "house"), read = "from the 5-minute readings";
+    const tiles = [tile("Solar made", kwh(solar), "kWh", "solar", solarRead ? read : ""), tile("House used", kwh(house), "kWh", "home", houseRead ? read : ""),
                    tile("Bought", kwh(t.bought), "kWh", "grid"), tile("Sold", kwh(t.sold), "kWh", "grid")];
     if (money) tiles.push(tile(isToday ? "Spent so far" : "Spent", gbp(money.spent), "", "", `with the ${pence(money.standing)} daily charge`),
                           tile("Saved", gbp(money.saved), "", "", "by the solar and battery"));
     return tiles.join("");
   }
-  const sum = k => m.rows.reduce((a, r) => a + (r ? r[k] : 0), 0), used = sum("used"), bought = sum("bought");
-  return [tile("Solar made", kwh(sum("solar")), "kWh", "solar"), tile("House used", kwh(used), "kWh", "home"),
-          tile("Bought", kwh(bought), "kWh", "grid"), tile("Sold", kwh(sum("sold")), "kWh", "grid"),
+  // what FoxESS has, added up (a figure it has for none of the bars shows as –)
+  const sum = k => m.rows.some(r => r && r[k] != null) ? m.rows.reduce((a, r) => a + ((r && r[k]) || 0), 0) : null;
+  const whole = k => m.whole.reduce((a, r) => a + r[k], 0), used = whole("used"), bought = whole("bought");
+  const part = k => m.missing[k] && sum(k) != null ? `some ${["week", "month"].includes(m.sel.mode) ? "days" : "months"} missing` : "";
+  return [tile("Solar made", kwh(sum("solar")), "kWh", "solar", part("solar")), tile("House used", kwh(sum("used")), "kWh", "home", part("used")),
+          tile("Bought", kwh(sum("bought")), "kWh", "grid", part("bought")), tile("Sold", kwh(sum("sold")), "kWh", "grid", part("sold")),
           tile("From solar", used ? Math.round(Math.max(0, used - bought) / used * 100) + "%" : "–", "", "solar", "of the house's use"),
-          tile("Battery", kwh(sum("gave")), "kWh", "battery", "given to the house")].join("");
+          tile("Battery", kwh(sum("gave")), "kWh", "battery", part("gave") || "given to the house")].join("");
 }
 
+const BAR_OF = { week: "day", month: "day", year: "month", total: "year" };
 function energyCard() {
   if (!live.url && !live.reading) return "";
   if (live.version === 1) {
@@ -947,33 +1062,50 @@ function energyCard() {
   }
   const sel = selected(), a = periodAnswer(sel);
   if (a) view.last = energyModel(sel, a);
-  if ((!a || periodStale(sel)) && !view.error) setTimeout(() => loadPeriod(sel), 0);
+  // fetched when missing or out of date, but not more than once every 2 minutes after a try (a failed refresh would loop)
+  const since = Date.now() - (view.tried[sel.mode + " " + sel.key] || 0);
+  if (a ? periodStale(sel) && since > RETRY_MS : !view.error || since > RETRY_MS) setTimeout(() => loadPeriod(sel), 0);
   const m = a ? view.last : view.last && view.last.sel.mode === sel.mode ? view.last : null;   // while loading, the last chart of the same kind, dimmed
   const asTable = store("energy-view") === "table";
-  const tabs = `<div class="seg" role="group" aria-label="Period">${MODES.map(([k, name]) => `<button data-mode="${k}" aria-pressed="${k === sel.mode}">${name}</button>`).join("")}</div>`;
-  const hidden = hiddenSeries();
-  const nav = `<div class="period">
+  const tabs = `<div class="seg modes" role="group" aria-label="Period">${MODES.map(([k, name]) => `<button data-mode="${k}" aria-pressed="${k === sel.mode}">${name}</button>`).join("")}</div>`;
+  const hidden = hiddenSeries(), fixed = sel.mode === "total";
+  const nav = tabs + `<div class="period">
       <div class="period-nav">
-        <button class="icon-btn" id="period-back" aria-label="Before"${stepKey(sel, -1) < FIRST[sel.mode] ? " disabled" : ""}>${icon("left")}</button>
+        <button class="icon-btn" id="period-back" aria-label="Before"${fixed || stepKey(sel, -1) < FIRST[sel.mode] ? " disabled" : ""}>${icon("left")}</button>
         <span class="period-name" aria-live="polite">${esc(periodName(sel))}</span>
-        <button class="icon-btn" id="period-next" aria-label="After"${sel.key >= sel.current ? " disabled" : ""}>${icon("right")}</button>
+        <button class="icon-btn" id="period-next" aria-label="After"${fixed || sel.key >= sel.current ? " disabled" : ""}>${icon("right")}</button>
       </div>
       <div class="seg icons" role="group" aria-label="Show as">
         <button data-view="chart" aria-pressed="${!asTable}" aria-label="A chart">${icon("chart")}</button>
         <button data-view="table" aria-pressed="${asTable}" aria-label="A table">${icon("table")}</button>
       </div></div>`;
-  if (!m) return card("energy", "Energy", nav + `<p class="muted">${esc(view.error || `Getting ${periodName(sel)}…`)}</p>`, tabs);
+  if (!m) return card("energy", "Energy", nav + `<p class="muted">${esc(view.error || `Getting ${periodName(sel)}…`)}</p>`);
   const chips = `<div class="chips" role="group" aria-label="Show or hide">${CHIPS.map(([k, name]) =>
     `<button class="chip-key" data-series="${k}" aria-pressed="${!hidden[k]}" style="--c: var(--c-${k})"><i class="sw"></i>${name}</button>`).join("")}</div>`;
-  const what = sel.mode === "day" ? "readings every 5 minutes" : sel.mode === "month" ? "each day" : "each month";
+  const what = sel.mode === "day" ? "readings every 5 minutes" : `each ${BAR_OF[sel.mode]}`;
   const body = asTable ? energyTable(m)
     : chips + `<div class="ec" id="energy-chart" tabindex="0" role="group" aria-label="${esc(periodName(m.sel))}: ${what}. Use the left and right arrow keys to move along it."></div>`;
   const note = sel.mode === "day"
-    ? `${asTable ? "" : "Drag across the chart to see any 5 minutes. "}Readings every 5 minutes from FoxESS; the day's totals from its meters. ${priceWords()}`
-    : `${asTable ? "" : `Tap a bar to see that ${sel.mode === "month" ? "day" : "month"}. `}Totals from FoxESS's meters. House used: what came in less what went out.`;
+    ? `${asTable || m.count < 2 ? "" : "Drag across the chart to see any 5 minutes. "}Readings every 5 minutes from FoxESS; the day's totals from its meters. ${priceWords()}`
+    : `${asTable ? "" : `Tap a bar to see that ${BAR_OF[sel.mode]}. `}Totals from FoxESS's meters. House used: what came in less what went out.`;
   return card("energy", "Energy", nav + `<div class="tiles">${energyTiles(m)}</div>` + body +
-    `<p class="fine" style="margin-top: 12px">${note}</p>` + (view.error ? `<p class="fine" role="status" style="margin-top: 6px">${esc(view.error)}</p>` : ""),
-    tabs, a ? "" : "busy");
+    `<p class="fine" style="margin-top: 12px">${note}${gapNote(m)}</p>` + (view.error ? `<p class="fine" role="status" style="margin-top: 6px">${esc(view.error)}</p>` : ""),
+    "", a ? "" : "busy");
+}
+
+function periodStart(sel) {
+  return { day: sel.key, week: sel.key, month: sel.key + "-01", year: sel.key + "-01-01" }[sel.mode] || FIRST_DAY;
+}
+function gapNote(m) {
+  // says why figures are missing, where some are
+  if (m.sel.mode === "day") {
+    const read = ["solar", "house"].filter(k => dayTotal(m.a, k)[1]);
+    if (!read.length) return "";
+    return ` ${read.length > 1 ? "Solar and house use are" : read[0] === "solar" ? "Solar is" : "House use is"} the 5-minute readings added up: FoxESS's solar meter started on 22 February 2024.`;
+  }
+  if (!m.gaps.some(Boolean)) return "";
+  return " – means FoxESS has no figure there, and the totals above leave it out." + (periodStart(m.sel) < GAP_UNTIL
+    ? " FoxESS counted no solar before 22 February 2024, and has nothing at all from 6 March to 24 August 2024 (the Wi-Fi)." : "");
 }
 
 function energyTable(m) {
@@ -982,18 +1114,19 @@ function energyTable(m) {
     const rows = hourRows(d).map(r => [clock(new Date((d.start + r.n * 3600) * 1000)), r.solar, r.house, r.bought, r.sold, r.charged, r.gave,
                                        r.level == null ? "–" : Math.round(r.level) + "%"]);
     return tableHtml(`${periodName(m.sel)}, kWh in each hour`, "Hour", rows,
-      ["Day", num(t.solar), usedKwh(t), num(t.bought), num(t.sold), num(t.charged), num(t.gave)],
+      ["Day", dayTotal(d, "solar")[0], dayTotal(d, "house")[0], num(t.bought), num(t.sold), num(t.charged), num(t.gave)],
       "kWh in each hour, worked out from the 5-minute readings and scaled to FoxESS's meters for the day. Level: the battery at the end of the hour.");
   }
   const rows = [], sum = { solar: 0, used: 0, bought: 0, sold: 0, charged: 0, gave: 0 };
+  const has = {};
   m.rows.forEach((r, i) => {
-    if (!r) return;
-    const name = m.sel.mode === "month" ? shortDate(`${m.sel.key}-${String(i + 1).padStart(2, "0")}`)
-      : new Date(Date.UTC(+m.sel.key, i, 15)).toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" });
-    rows.push([name, r.solar, r.used, r.bought, r.sold, r.charged, r.gave]);
-    for (const k of Object.keys(sum)) sum[k] += r[k];
+    if (!r && !m.gaps[i]) return;                              // still to come
+    rows.push([m.names[i], ...["solar", "used", "bought", "sold", "charged", "gave"].map(k => r ? r[k] : null)]);
+    if (r) for (const k of Object.keys(sum)) if (r[k] != null) { sum[k] += r[k]; has[k] = true; }
   });
-  return tableHtml(`${periodName(m.sel)}, kWh`, m.sel.mode === "month" ? "Day" : "Month", rows,
+  for (const k of Object.keys(sum)) if (!has[k]) sum[k] = null;
+  const first = BAR_OF[m.sel.mode];
+  return tableHtml(`${periodName(m.sel)}, kWh`, first[0].toUpperCase() + first.slice(1), rows,
     ["Total", sum.solar, sum.used, sum.bought, sum.sold, sum.charged, sum.gave], "kWh, from FoxESS's meters.");
 }
 
@@ -1029,16 +1162,37 @@ function drawEnergy() {
   const m = view.last, W = Math.floor(box.clientWidth);
   if (!m || W < 120) return;
   const L = layers(m), day = m.sel.mode === "day";
-  if (day && m.count < 2) { box.innerHTML = `<p class="muted">No readings for this day yet.</p>`; chart = null; return; }
+  if (day && m.count < 2) {
+    box.innerHTML = `<p class="muted">${m.sel.key === m.sel.current ? "No readings for this day yet." : "FoxESS has no readings for this day."}</p>`;
+    chart = null; return;
+  }
   const n = m.count, total = (group, i) => group.reduce((s, [, , vals]) => s + (vals[i] || 0), 0);
   let up = 0, down = 0;
   for (let i = 0; i < n; i++) { up = Math.max(up, total(L.up, i)); down = Math.max(down, total(L.down, i)); }
   const step = niceStep(Math.max(up, down, day ? 0.4 : 1));
-  const top = Math.max(step, Math.ceil(up / step - 1e-9) * step), bottom = Math.max(step, Math.ceil(down / step - 1e-9) * step);
-  const padL = 32, padR = 6, PT = 8, plotW = Math.max(60, W - padL - padR), H = W < 520 ? 230 : 270, k = H / (top + bottom);
+  let top = Math.max(step, Math.ceil(up / step - 1e-9) * step), bottom = Math.max(step, Math.ceil(down / step - 1e-9) * step);
+  const label = v => (Math.round(Math.abs(v) * 100) / 100).toLocaleString("en-GB");
+  const padR = 6, PT = 8, H = W < 520 ? 230 : 270;
+  let padL, plotW, slot, x, k;
+  for (let tries = 0; ; tries++) {
+    let longest = 1;                                          // room for the longest number on the scale
+    for (let v = -bottom; v <= top + 1e-9; v += step) longest = Math.max(longest, label(v).length);
+    padL = Math.max(30, Math.round(longest * 6.6) + 10);
+    plotW = Math.max(60, W - padL - padR); slot = plotW / n; k = H / (top + bottom);
+    x = day ? s => padL + Math.max(0, Math.min(m.span, s)) / m.span * plotW : i => padL + slot * (i + 0.5);
+    // "Coming in" and "Going out" sit in the top and bottom left corners: a stack that would reach either gets another step of room
+    if (tries === 3) break;
+    const near = [];
+    for (let i = 0; i < n; i++) {
+      const left = day ? x(m.t[i]) : x(i) - slot / 2, right = day ? left : x(i) + slot / 2;
+      if (right >= padL && left <= padL + 72) near.push(i);
+    }
+    const upNear = Math.max(0, ...near.map(i => total(L.up, i))), downNear = Math.max(0, ...near.map(i => total(L.down, i)));
+    if ((top - upNear) * k < 18) top += step;
+    else if ((bottom - downNear) * k < 18) bottom += step;
+    else break;
+  }
   const y = v => PT + (top - v) * k, y0 = y(0);
-  const slot = plotW / n;
-  const x = day ? s => padL + Math.max(0, Math.min(m.span, s)) / m.span * plotW : i => padL + slot * (i + 0.5);
   let svg = "";
   // the time along the bottom: clock hours (a day), days of the month or months
   const ticks = [];
@@ -1047,15 +1201,13 @@ function drawEnergy() {
       const s = h * 3600 - (ukOffset(m.start + h * 3600) - ukOffset(m.start));     // two days a year are 23 or 25 hours long
       ticks.push([x(Math.min(m.span, s)), `${String(h).padStart(2, "0")}:00`]);
     }
-  } else if (m.sel.mode === "month") {
-    for (let i = 0; i < n; i += 7) ticks.push([x(i), String(i + 1)]);
   } else {
-    for (let i = 0; i < 12; i++) ticks.push([x(i), new Date(Date.UTC(2026, i, 15)).toLocaleDateString("en-GB", { month: "narrow", timeZone: "UTC" })]);
+    m.ticks.forEach((label, i) => { if (label) ticks.push([x(i), label]); });
   }
   for (let v = -bottom; v <= top + 1e-9; v += step) {
     const yy = f1(y(v));
     svg += `<line class="${Math.abs(v) < 1e-9 ? "zero" : "gl"}" x1="${padL}" x2="${W - padR}" y1="${yy}" y2="${yy}"/>` +
-           `<text class="tick" x="${padL - 6}" y="${f1(y(v) + 3.5)}" text-anchor="end">${Math.round(Math.abs(v) * 100) / 100}</text>`;
+           `<text class="tick" x="${padL - 6}" y="${f1(y(v) + 3.5)}" text-anchor="end">${label(v)}</text>`;
   }
   if (day) svg += ticks.map(([tx]) => `<line class="gl" x1="${f1(tx)}" x2="${f1(tx)}" y1="${PT}" y2="${f1(PT + H)}"/>`).join("");
   svg += `<text class="dir" x="${padL + 6}" y="${PT + 13}">Coming in</text><text class="dir" x="${padL + 6}" y="${f1(PT + H - 6)}">Going out</text>`;
@@ -1084,7 +1236,7 @@ function drawEnergy() {
       }
     }
   } else {
-    const bw = Math.max(3, Math.min(24, slot * 0.64)), r = Math.min(3, bw / 3);
+    const bw = Math.max(3, Math.min(n <= 7 ? 32 : 24, slot * 0.64)), r = Math.min(3, bw / 3);
     const piece = (cx, from, to, round) => {                // from the line outwards; a 2px gap between pieces; the outer end rounded
       const lo = Math.min(from, to), hi = Math.max(from, to), h = hi - lo;
       if (h < 0.4) return "";
@@ -1127,7 +1279,7 @@ function drawEnergy() {
   box.innerHTML = html + `<div class="tip" id="energy-tip" hidden></div>`;
   chart = { m, W, n, x, y, H, PT, padL, plotW, slot, day, L, levelY, focus: null,
             last: day ? (() => { for (let i = n - 1; i >= 0; i--) if (m.down.home[i] != null || m.up.solar[i] != null) return i; return n - 1; })()
-                      : (() => { for (let i = n - 1; i >= 0; i--) if (m.rows[i]) return i; return 0; })() };
+                      : (() => { for (let i = n - 1; i >= 0; i--) if (m.rows[i] || m.gaps[i]) return i; return 0; })() };
   watchSize();
   wireChart(box);
 }
@@ -1143,12 +1295,11 @@ function showTip(i) {
   if (level) level.innerHTML = m.level[i] == null ? "" : `<line class="cross" x1="${f1(cx)}" x2="${f1(cx)}" y1="0" y2="80"/>` +
     `<circle class="end" cx="${f1(cx)}" cy="${f1(c.levelY(m.level[i]))}" r="4" style="fill: var(--c-battery)"/>`;
   const fmt = v => v == null ? "–" : c.day ? `${kw(v)} kW` : `${kwh(v)} kWh`;
-  const when = c.day ? clock(new Date((m.start + m.t[i]) * 1000))
-    : m.sel.mode === "month" ? shortDate(`${m.sel.key}-${String(i + 1).padStart(2, "0")}`)
-    : new Date(Date.UTC(+m.sel.key, i, 15)).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+  const when = c.day ? clock(new Date((m.start + m.t[i]) * 1000)) : m.names[i];
   const row = (key, name, v) => `<div class="tip-row"><i class="sw" style="--c: var(--c-${key})"></i><span>${name}</span><b>${fmt(v)}</b></div>`;
-  tip.innerHTML = `<div class="tip-time">${esc(when)}</div>` + IN.map(([k, name]) => row(k, name, m.up[k][i])).join("") +
-    `<div class="tip-gap"></div>` + OUT.map(([k, name]) => row(k, name, m.down[k][i])).join("") +
+  tip.innerHTML = `<div class="tip-time">${esc(when)}</div>` + (!c.day && !m.rows[i] ? `<div class="tip-row"><span>FoxESS has no figures</span></div>` :
+    IN.map(([k, name]) => row(k, name, m.up[k][i])).join("") +
+    `<div class="tip-gap"></div>` + OUT.map(([k, name]) => row(k, name, m.down[k][i])).join("")) +
     (c.day && m.level[i] != null ? `<div class="tip-gap"></div><div class="tip-row"><i class="sw" style="--c: var(--c-battery)"></i><span>Battery level</span><b>${Math.round(m.level[i])}%</b></div>` : "");
   tip.hidden = false;
   const box = document.getElementById("energy-chart"), w = tip.offsetWidth;
@@ -1170,7 +1321,7 @@ function wireChart(box) {
     if (!c || !plot) return;
     const px = e.clientX - plot.getBoundingClientRect().left - c.padL;
     if (c.day) showTip(Math.min(c.last, nearest(c.m.t, px / c.plotW * c.m.span)));
-    else { const i = Math.floor(px / c.slot); if (i >= 0 && i < c.n && c.m.rows[i]) showTip(i); }
+    else { const i = Math.floor(px / c.slot); if (i >= 0 && i < c.n && (c.m.rows[i] || c.m.gaps[i])) showTip(i); }
   };
   box.onpointerdown = e => { clearTimeout(timer); pick(e); };
   box.onpointermove = e => { if (e.pointerType !== "pen" || e.pressure > 0) pick(e); };   // touch moves only come while touching
@@ -1180,15 +1331,20 @@ function wireChart(box) {
     const c = chart;
     if (!c) return;
     const moves = { ArrowLeft: -1, ArrowRight: 1, PageUp: -12, PageDown: 12 };
-    let k = c.focus == null ? c.last : c.focus;
-    if (e.key in moves) k += moves[e.key] * (e.shiftKey ? 12 : 1);
-    else if (e.key === "Home") k = 0;
+    const from = c.focus == null ? c.last : c.focus;
+    let k = from, way = -1;
+    if (e.key in moves) { way = Math.sign(moves[e.key]); k += moves[e.key] * (e.shiftKey ? 12 : 1); }
+    else if (e.key === "Home") { k = 0; way = 1; }
     else if (e.key === "End") k = c.last;
     else if (e.key === "Escape") { showTip(null); return; }
     else return;
     e.preventDefault();
     k = Math.max(0, Math.min(c.last, k));
-    if (!c.day) while (k > 0 && !c.m.rows[k]) k--;
+    if (!c.day) {                                              // bars: skip the empty ones (before the start), the way the key moves
+      const ok = i => !!(c.m.rows[i] || c.m.gaps[i]);
+      while (k >= 0 && k <= c.last && !ok(k)) k += way;
+      if (k < 0 || k > c.last) k = ok(from) ? from : c.last;
+    }
     showTip(k);
   };
   box.onblur = () => showTip(null);
@@ -1418,7 +1574,7 @@ async function refreshLive(force) {
     const answer = await ask({ want: "day" });
     if (answer.version >= 2) {
       live.version = answer.version;
-      days.loaded[answer.date] = answer;
+      days.loaded[answer.date] = cleanDay(answer);
       forgetOldDays(answer.date);
       if (view.mode === "day" && !view.day) view.error = "";
       store("day-last", answer);

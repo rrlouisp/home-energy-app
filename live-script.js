@@ -6,7 +6,8 @@
  * It reads the inverter's figures from FoxESS and hands them to the family app,
  * about every 5 minutes, which is as often as FoxESS's cloud updates.
  *
- * - It only reads: the four FoxESS calls below. Nothing here can change the inverter.
+ * - It only reads: the FoxESS calls in READ_ONLY below, the same reading calls the playbook's
+ *   own download may make. Nothing here can change the inverter.
  * - The FoxESS key stays in this script's properties (FOXESS_API_KEY). Nobody has to
  *   type it: the playbook's daily job hands it over (doPost below), and it's only
  *   kept once FoxESS has accepted it. It's never sent back out, to the app or anyone.
@@ -22,22 +23,44 @@
  *   ?want=day&date=Y-M-D    a day's 5-minute readings and its totals (no date: today)
  *   ?want=month&date=Y-M    each day's totals in a month
  *   ?want=year&date=Y       each month's totals in a year
+ *   ?want=fox&path=P&body=B&keep=S
+ *                           any of FoxESS's reading calls in RELAY, passed on as it is (B: the
+ *                           call's JSON body; S: seconds to keep the answer). This is what lets the
+ *                           app show new kinds of figures without this script being pasted again.
+ *   ?want=version           this script's version, and how many FoxESS calls it has made today
  * Version 2, 2026-10-23: the day, month and year answers, for the app's charts.
+ * Version 3, 2026-10-23: ?want=fox and ?want=version, and FoxESS's own house meter in the totals.
  */
 
-var VERSION = 2;
+var VERSION = 3;
 var FOXESS = "https://www.foxesscloud.com";
-var READ_ONLY = ["/op/v0/device/list", "/op/v0/device/real/query",
-                 "/op/v0/device/history/query", "/op/v0/device/report/query"];   // nothing that changes settings
+// The only FoxESS calls this script can make: the playbook's reading calls. Nothing that changes settings.
+var READ_ONLY = ["/op/v0/device/list", "/op/v0/device/real/query", "/op/v0/device/history/query",
+                 "/op/v0/device/report/query", "/op/v0/device/generation", "/op/v0/device/battery/soc/get",
+                 "/op/v0/device/battery/forceChargeTime/get", "/op/v1/device/scheduler/get",
+                 "/op/v0/user/getAccessCount"];
+// What the app can ask FoxESS for directly (?want=fox), and how each call is sent: [method, where the
+// inverter's serial number goes]. Every reading call but the device list, which names the house.
+var RELAY = {
+  "/op/v0/device/real/query": ["post", "sn"],
+  "/op/v0/device/history/query": ["post", "sn"],
+  "/op/v0/device/report/query": ["post", "sn"],
+  "/op/v0/device/generation": ["get", "sn"],
+  "/op/v0/device/battery/soc/get": ["get", "sn"],
+  "/op/v0/device/battery/forceChargeTime/get": ["get", "sn"],
+  "/op/v1/device/scheduler/get": ["post", "deviceSN"],
+  "/op/v0/user/getAccessCount": ["get", ""]
+};
+var BODY_LIMIT = 2000;           // characters: a reading call's body is far shorter
 var VARIABLES = ["pvPower", "loadsPower", "gridConsumptionPower", "feedinPower",
                  "batChargePower", "batDischargePower", "SoC"];
 var ROOFS = ["pv1Power", "pv2Power"];                     // each roof's solar
 var NAMES = { pvPower: "solar", loadsPower: "house", gridConsumptionPower: "buying", feedinPower: "selling",
               batChargePower: "charging", batDischargePower: "giving", SoC: "battery",
               pv1Power: "roof1", pv2Power: "roof2" };
-// FoxESS's own meters, in kWh (the same five the playbook's daily figures use)
+// FoxESS's own meters, in kWh (the five the playbook's daily figures use, and its house meter)
 var TOTALS = { PVEnergyTotal: "solar", gridConsumption: "bought", feedin: "sold",
-               chargeEnergyToTal: "charged", dischargeEnergyToTal: "gave" };
+               chargeEnergyToTal: "charged", dischargeEnergyToTal: "gave", loads: "house" };
 var KEEP_SECONDS = 240;          // today: FoxESS's cloud updates about every 5 minutes
 var KEEP_YESTERDAY = 3600;       // yesterday's last readings can arrive a little late
 var KEEP_PAST = 21600;           // older: 6 hours, the longest Google keeps anything
@@ -90,6 +113,8 @@ function doGet(e) {
     else if (want === "day") answer = day_(date);
     else if (want === "month") answer = month_(date);
     else if (want === "year") answer = year_(date);
+    else if (want === "fox") answer = relay_(String(asked.path || ""), String(asked.body || ""), asked.keep);
+    else if (want === "version") answer = about_();
     else throw new Error("The app asked for something this script doesn't know: " + want.slice(0, 20) + ".");
   } catch (error) {
     answer = { ok: false, version: VERSION, error: String((error && error.message) || error).slice(0, 300) };
@@ -188,9 +213,22 @@ function monthKept_(month, fresh) {
 
 function monthFigures_(month) {
   var fox = fox_();
-  var report = call_("/op/v0/device/report/query", { sn: fox.sn, dimension: "month", year: +month.slice(0, 4),
-                                                     month: +month.slice(5, 7), variables: Object.keys(TOTALS) }, fox.key);
+  var report = report_({ sn: fox.sn, dimension: "month", year: +month.slice(0, 4), month: +month.slice(5, 7) }, fox.key);
   return { ok: true, version: VERSION, month: month, days: totals_(report), fetched: new Date().toISOString() };
+}
+
+// FoxESS's meters by day (dimension "month") or by month ("year"). Its house meter ("loads") isn't in FoxESS's
+// document, so if FoxESS ever refuses it (40257: a wrong parameter), the other five are asked for without it, as the
+// playbook's own download does.
+function report_(body, key) {
+  body.variables = Object.keys(TOTALS);
+  try {
+    return call_("/op/v0/device/report/query", body, key);
+  } catch (error) {
+    if (String((error && error.message) || error).indexOf(" 40257 ") < 0) throw error;
+    body.variables = Object.keys(TOTALS).filter(function (v) { return v !== "loads"; });
+    return call_("/op/v0/device/report/query", body, key);
+  }
 }
 
 function year_(date) {
@@ -199,10 +237,44 @@ function year_(date) {
   if (!/^\d{4}$/.test(date) || date > now || date < FIRST_MONTH.slice(0, 4)) throw new Error("There are no figures for that year.");
   return kept_("year:" + date, date === now ? 3600 : KEEP_PAST, function () {
     var fox = fox_();
-    var report = call_("/op/v0/device/report/query", { sn: fox.sn, dimension: "year", year: +date,
-                                                       variables: Object.keys(TOTALS) }, fox.key);
+    var report = report_({ sn: fox.sn, dimension: "year", year: +date }, fox.key);
     return { ok: true, version: VERSION, year: date, months: totals_(report), fetched: new Date().toISOString() };
   });
+}
+
+// Any reading call in RELAY, for the app. The script fills in the inverter's serial number (whatever
+// the app sent) and takes it back out of the answer.
+function relay_(path, bodyText, keep) {
+  var how = RELAY.hasOwnProperty(path) ? RELAY[path] : null;
+  if (!how) throw new Error("This script only passes on FoxESS's reading calls, and not the device list.");
+  if (bodyText.length > BODY_LIMIT) throw new Error("That request is too long.");
+  var body = {};
+  if (bodyText) {
+    try { body = JSON.parse(bodyText); } catch (error) { throw new Error("The request's body wasn't JSON."); }
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("The request's body wasn't a JSON object.");
+  }
+  var seconds = Math.max(60, Math.min(KEEP_PAST, Math.round(Number(keep)) || KEEP_SECONDS));
+  return kept_("fox:" + md5_(path + "\n" + JSON.stringify(body) + "\n" + seconds), seconds, function () {
+    var fox = fox_(), query = null;
+    if (how[0] === "get") {
+      body = null;
+      if (how[1]) { query = {}; query[how[1]] = fox.sn; }
+    } else if (how[1]) {
+      body[how[1]] = fox.sn;
+    }
+    var result = call_(path, body, fox.key, how[0], query);
+    var text = JSON.stringify(result === undefined ? null : result).split(fox.sn).join("");
+    return { ok: true, version: VERSION, path: path, result: JSON.parse(text), fetched: new Date().toISOString() };
+  });
+}
+
+// This script's version, what the app can ask for, and today's FoxESS calls. No FoxESS call.
+function about_() {
+  var properties = PropertiesService.getScriptProperties();
+  var today = Utilities.formatDate(new Date(), ZONE, "yyyy-MM-dd");
+  return { ok: true, version: VERSION, relay: Object.keys(RELAY), calls_limit: DAILY_CALLS,
+           calls_today: properties.getProperty("CALLS_DAY") === today ? Number(properties.getProperty("CALLS_USED")) || 0 : 0,
+           key_saved: !!(properties.getProperty("FOXESS_API_KEY") || "").trim() };
 }
 
 // FoxESS's history -> {columns: {t: [seconds after midnight], solar: [kW], ...}, last: the latest reading}
@@ -313,23 +385,28 @@ function foxTime_(text) {
   return m[7] === "+" ? utc - offset : utc + offset;
 }
 
+function md5_(text) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, text, Utilities.Charset.UTF_8)
+    .map(function (b) { return ("0" + (b & 255).toString(16)).slice(-2); }).join("");
+}
+
 // One FoxESS call, signed the way FoxESS's Open API asks: an MD5 of the path, the key
-// and the time, joined by the literal characters backslash-r-backslash-n.
-function call_(path, body, key) {
+// and the time, joined by the literal characters backslash-r-backslash-n. Sent as a POST
+// with a JSON body, or (method "get") as a GET with the query's fields in the address.
+function call_(path, body, key, method, query) {
   if (READ_ONLY.indexOf(path) < 0) throw new Error("Refused: " + path + " isn't a reading call.");
+  var get = method === "get", address = FOXESS + path;
+  if (query) {
+    address += "?" + Object.keys(query).map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(query[k]); }).join("&");
+  }
   for (var attempt = 0; ; attempt++) {
     spend_();
     var timestamp = String(Date.now());
-    var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5,
-                                         path + "\\r\\n" + key + "\\r\\n" + timestamp, Utilities.Charset.UTF_8);
-    var signature = digest.map(function (b) { return ("0" + (b & 255).toString(16)).slice(-2); }).join("");
-    var response = UrlFetchApp.fetch(FOXESS + path, {
-      method: "post",
-      contentType: "application/json",
-      payload: JSON.stringify(body),
-      headers: { token: key, timestamp: timestamp, signature: signature, lang: "en" },
-      muteHttpExceptions: true
-    });
+    var signature = md5_(path + "\\r\\n" + key + "\\r\\n" + timestamp);
+    var options = { method: get ? "get" : "post", headers: { token: key, timestamp: timestamp, signature: signature, lang: "en" },
+                    muteHttpExceptions: true };
+    if (!get) { options.contentType = "application/json"; options.payload = JSON.stringify(body || {}); }
+    var response = UrlFetchApp.fetch(address, options);
     var code = response.getResponseCode();
     if (code === 401 || code === 403) {
       throw new Error("FoxESS refused the key (" + code + "). A new key in GitHub's FOXESS_API_KEY reaches this script with the next daily update.");
